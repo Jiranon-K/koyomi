@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { isGoogleEnabled } from "@/features/auth/auth";
 import { GoogleButton } from "@/features/auth/google-button";
 import { SIGN_IN_PATH } from "@/features/auth/paths";
@@ -14,20 +13,18 @@ export default async function SignUpPage() {
   await redirectSignedIn();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <h1>Create account</h1>
-        </CardTitle>
-        <CardDescription>We will email you a link to verify your address.</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
+    <>
+      <h1 className="text-3xl font-semibold">Create your account</h1>
+      <p className="mt-2 text-muted-foreground">
+        Already have an account? <TextLink href={SIGN_IN_PATH}>Sign in</TextLink>
+      </p>
+      <div className="mt-8 grid gap-5">
+        <p className="text-sm text-muted-foreground">
+          We will email you a link to verify your address.
+        </p>
         <SignUpForm />
         {isGoogleEnabled() ? <GoogleButton /> : null}
-        <p className="text-sm text-muted-foreground">
-          Already have an account? <TextLink href={SIGN_IN_PATH}>Sign in</TextLink>
-        </p>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 }

@@ -325,6 +325,30 @@ describe("password reset", () => {
   });
 });
 
+describe("remember me", () => {
+  const credentials = { email: "ada@example.com", password: "correct horse battery" };
+
+  async function sessionCookie(body: typeof credentials & { rememberMe?: boolean }) {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    const { headers } = await auth.api.signInEmail({ body, returnHeaders: true });
+    const cookie = headers.getSetCookie().find((value) => value.includes("session_token="));
+    if (!cookie) throw new Error("No session cookie was set");
+    return cookie;
+  }
+
+  it.each([
+    ["by default", credentials],
+    ["when remembered", { ...credentials, rememberMe: true }],
+  ])("gives a session cookie that outlives the browser session %s", async (_case, body) => {
+    expect(await sessionCookie(body)).toMatch(/max-age=\d+/i);
+  });
+
+  it("gives a cookie that ends with the browser session when not remembered", async () => {
+    expect(await sessionCookie({ ...credentials, rememberMe: false })).not.toMatch(/max-age/i);
+  });
+});
+
 describe("roles", () => {
   const password = "correct horse battery";
 

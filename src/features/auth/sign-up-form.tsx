@@ -1,12 +1,14 @@
 "use client";
 
+import { cn } from "cn";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
 import { authClient, networkError, TOO_MANY_REQUESTS_MESSAGE } from "./client";
-import { focusFirstInvalid, FormError, FormField } from "./form-field";
+import { focusFirstInvalid, FormError, FormField, LARGE_CONTROL } from "./form-field";
+import { PasswordField } from "./password-field";
 import { VERIFY_EMAIL_PATH } from "./paths";
 import { rememberPendingEmail } from "./pending-email";
 import { fieldErrors, signUpSchema, type FieldErrors } from "./schema";
@@ -50,27 +52,40 @@ export function SignUpForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="grid gap-4">
-      <FormField name="name" label="Name" autoComplete="name" required error={errors.name} />
+    <form onSubmit={onSubmit} noValidate className="grid gap-5">
+      <FormField
+        name="name"
+        label="Name"
+        autoComplete="name"
+        required
+        large
+        error={errors.name}
+      />
       <FormField
         name="email"
-        label="Email"
+        label="Email address"
         type="email"
         autoComplete="email"
         required
+        large
         error={errors.email}
       />
-      <FormField
+      <PasswordField
         name="password"
         label="Password"
-        type="password"
         autoComplete="new-password"
         required
+        large
         hint="At least 8 characters."
         error={errors.password}
       />
       <FormError message={formError} />
-      <Button type="submit" disabled={pending} aria-busy={pending}>
+      <Button
+        type="submit"
+        disabled={pending}
+        aria-busy={pending}
+        className={cn(LARGE_CONTROL, "text-base")}
+      >
         {pending ? "Creating account…" : "Create account"}
       </Button>
     </form>

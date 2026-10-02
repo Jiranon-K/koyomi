@@ -20,6 +20,11 @@ export const signUpSchema = z.object({
 export const signInSchema = z.object({
   email,
   password: z.string().min(1, "Enter your password."),
+  // A checkbox: "on" in the form data when ticked, absent when not.
+  rememberMe: z
+    .literal("on")
+    .optional()
+    .transform((value) => value === "on"),
 });
 
 export const emailSchema = z.object({ email });

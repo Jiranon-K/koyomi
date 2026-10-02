@@ -38,11 +38,31 @@ describe("signInSchema", () => {
     expect(signInSchema.safeParse({ email: "ada@example.com", password: "x" }).success).toBe(true);
   });
 
+  it("reports a malformed email on the email field", () => {
+    const result = signInSchema.safeParse({ email: "not-an-email", password: "x" });
+
+    expect(result.success).toBe(false);
+    if (!result.success) expect(fieldErrors(result.error).email).toBeTruthy();
+  });
+
   it("reports a missing password", () => {
     const result = signInSchema.safeParse({ email: "ada@example.com", password: "" });
 
     expect(result.success).toBe(false);
     if (!result.success) expect(fieldErrors(result.error).password).toBeTruthy();
+  });
+});
+
+describe("signInSchema remember me", () => {
+  const credentials = { email: "ada@example.com", password: "x" };
+
+  it("turns a ticked checkbox into true", () => {
+    // A ticked checkbox arrives from FormData as "on".
+    expect(signInSchema.parse({ ...credentials, rememberMe: "on" }).rememberMe).toBe(true);
+  });
+
+  it("turns an unticked checkbox, which is absent from the form data, into false", () => {
+    expect(signInSchema.parse(credentials).rememberMe).toBe(false);
   });
 });
 

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { isGoogleEnabled } from "@/features/auth/auth";
 import { GoogleButton } from "@/features/auth/google-button";
-import { FORGOT_PASSWORD_PATH, SIGN_UP_PATH } from "@/features/auth/paths";
+import { SIGN_UP_PATH } from "@/features/auth/paths";
 import { redirectSignedIn } from "@/features/auth/session";
 import { SignInForm } from "@/features/auth/sign-in-form";
 import { TextLink } from "@/features/auth/text-link";
@@ -21,18 +20,17 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
   const googleEnabled = isGoogleEnabled();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <h1>Sign in</h1>
-        </CardTitle>
-        <CardDescription>
-          {reset
-            ? "Your password was updated. Sign in with the new one."
-            : "Welcome back. Enter your email and password."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
+    <>
+      <h1 className="text-3xl font-semibold">Welcome back</h1>
+      <p className="mt-2 text-muted-foreground">
+        Don&apos;t have an account? <TextLink href={SIGN_UP_PATH}>Sign up</TextLink>
+      </p>
+      <div className="mt-8 grid gap-5">
+        {reset ? (
+          <p className="text-sm text-muted-foreground">
+            Your password was updated. Sign in with the new one.
+          </p>
+        ) : null}
         {googleEnabled && error ? (
           <p role="alert" className="text-sm text-destructive">
             {NEEDS_VERIFICATION_ERRORS.includes(String(error))
@@ -42,13 +40,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
         ) : null}
         <SignInForm />
         {googleEnabled ? <GoogleButton /> : null}
-        <p className="text-sm text-muted-foreground">
-          <TextLink href={FORGOT_PASSWORD_PATH}>Forgot password?</TextLink>
-        </p>
-        <p className="text-sm text-muted-foreground">
-          No account yet? <TextLink href={SIGN_UP_PATH}>Create one</TextLink>
-        </p>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 }
