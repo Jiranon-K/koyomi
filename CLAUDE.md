@@ -22,7 +22,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - Validate all input with Zod at the Server Action / Route Handler boundary.
 - Server Actions write; Route Handlers are for external clients.
 - Theme tokens (Linen Stone, oklch) live in `src/app/globals.css`. Use semantic classes (`bg-card`, `text-muted-foreground`), not raw colors.
-- `src/components/ui/handwriting-text.tsx` is a verbatim third-party component; its lint exception is in `eslint.config.mjs`. It loads opentype.js and a font from CDNs at runtime and falls back to plain text.
+- `src/components/ui/handwriting-text.tsx` is a verbatim third-party component; its lint exception is in `eslint.config.mjs`. The landing page self-hosts its font at `public/fonts/handwriting.ttf` (the default CDN font is blocked by CORS). It still loads opentype.js from a CDN at runtime and falls back to plain text if that fails.
 - The Task feature is an example. Delete `src/features/tasks`, `src/app/tasks`, `src/app/api/tasks` and the landing link when starting real work.
 
 ## Next steps (not built yet)

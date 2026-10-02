@@ -20,7 +20,8 @@ export default function Home() {
           <br />
           <HandwritingText
             words={["fast.", "full-stack.", "your way."]}
-            className="text-primary"
+            fontUrl="/fonts/handwriting.ttf"
+            className="text-chart-1 dark:text-chart-2"
             height="1.15em"
           />
         </h1>
