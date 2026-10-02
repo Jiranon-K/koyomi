@@ -15,7 +15,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `src/app` — routes. `/` is the landing page.
 - `src/features/<name>` — one folder per feature (`auth` so far): `model.ts` (Mongoose), `schema.ts` (Zod), `service.ts` (DB logic), `actions.ts` (Server Actions), UI.
 - `src/features/auth` — Better Auth. `auth.ts` builds the instance lazily (`getAuth()`); `session.ts` has the guards. Auth collections belong to the library, not Mongoose. Forms call the React client in `client.ts`; route paths live in `paths.ts`.
-- `src/app/(auth)` — sign-in, sign-up and verify-email pages. `src/app/dashboard` is the protected area. `src/proxy.ts` only checks that a session cookie exists.
+- `src/app/(auth)` — sign-in, sign-up, verify-email, forgot-password and reset-password pages. `src/app/dashboard` is the protected area. `src/proxy.ts` only checks that a session cookie exists.
 - `src/lib/db/mongoose.ts` — cached connection (`connectDb`). Call it inside services, not at module top level.
 - `src/components/ui` — shadcn components. Add more with `bunx --bun shadcn@latest add <name>`.
 
@@ -29,5 +29,5 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 
 ## Next steps (not built yet)
 
-- Rest of authentication (tickets in `.scratch/better-auth/issues`): forgot/reset password screens, rate limiting, Google sign-in.
+- Rest of authentication (tickets in `.scratch/better-auth/issues`): rate limiting, Google sign-in.
 - Deployment config (none yet; defaults work on Vercel).

@@ -271,6 +271,42 @@ describe("password reset", () => {
     await expect(auth.api.signInEmail({ body: credentials })).resolves.toBeTruthy();
   });
 
+  // The emailed link itself: the library checks the token, then forwards to the screen named in
+  // `redirectTo` with either the token or an error.
+  async function followResetLink(auth: ReturnType<typeof newAuth>, message: EmailMessage) {
+    const response = await auth.handler(new Request(message.url));
+    return new URL(response.headers.get("location") ?? "", BASE_URL);
+  }
+
+  it("forwards a fresh emailed link to the reset screen with its token", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    await auth.api.requestPasswordReset({
+      body: { email: credentials.email, redirectTo: "/reset-password" },
+    });
+
+    const target = await followResetLink(auth, outbox[0]);
+
+    expect(target.pathname).toBe("/reset-password");
+    expect(target.searchParams.get("token")).toBe(resetTokenFrom(outbox[0]));
+    expect(target.searchParams.get("error")).toBeNull();
+  });
+
+  it("forwards an already-used emailed link to the reset screen with an error", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    await auth.api.requestPasswordReset({
+      body: { email: credentials.email, redirectTo: "/reset-password" },
+    });
+    await auth.api.resetPassword({ body: { newPassword, token: resetTokenFrom(outbox[0]) } });
+
+    const target = await followResetLink(auth, outbox[0]);
+
+    expect(target.pathname).toBe("/reset-password");
+    expect(target.searchParams.get("error")).toBe("INVALID_TOKEN");
+    expect(target.searchParams.get("token")).toBeNull();
+  });
+
   it("signs out existing sessions after a reset", async () => {
     const auth = newAuth();
     await signUpVerified(auth, credentials);

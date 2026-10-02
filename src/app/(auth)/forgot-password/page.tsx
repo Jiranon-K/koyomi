@@ -1,0 +1,28 @@
+import type { Metadata } from "next";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ForgotPasswordForm } from "@/features/auth/forgot-password-form";
+import { SIGN_IN_PATH } from "@/features/auth/paths";
+import { TextLink } from "@/features/auth/text-link";
+
+export const metadata: Metadata = { title: "Forgot password" };
+
+// No signed-in redirect here or on the reset page: a signed-in user may still have forgotten the password.
+export default function ForgotPasswordPage() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <h1>Forgot password</h1>
+        </CardTitle>
+        <CardDescription>Enter your email and we will send you a link to choose a new one.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <ForgotPasswordForm />
+        <p className="text-sm text-muted-foreground">
+          Remembered it? <TextLink href={SIGN_IN_PATH}>Sign in</TextLink>
+        </p>
+      </CardContent>
+    </Card>
+  );
+}

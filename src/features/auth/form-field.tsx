@@ -47,7 +47,7 @@ export function focusFirstInvalid(form: HTMLFormElement, errors: FieldErrors): v
   if (first instanceof HTMLInputElement) first.focus();
 }
 
-export function FormError({ message }: { message: string | null }) {
+export function FormError({ message }: { message: React.ReactNode }) {
   // The live region stays mounted (visually hidden while empty) so a later message is announced.
   return (
     <p role="alert" className="text-sm text-destructive empty:sr-only">

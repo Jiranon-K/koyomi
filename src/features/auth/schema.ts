@@ -5,11 +5,16 @@ const email = z.preprocess(
   z.email("Enter a valid email address."),
 );
 
+// Same bounds as the Better Auth defaults, so the forms and the server agree.
+const newPassword = z
+  .string()
+  .min(8, "Use at least 8 characters.")
+  .max(128, "Use at most 128 characters.");
+
 export const signUpSchema = z.object({
   name: z.string().trim().min(1, "Enter your name.").max(100, "Use at most 100 characters."),
   email,
-  // Same bounds as the Better Auth defaults, so the form and the server agree.
-  password: z.string().min(8, "Use at least 8 characters.").max(128, "Use at most 128 characters."),
+  password: newPassword,
 });
 
 export const signInSchema = z.object({
@@ -18,6 +23,13 @@ export const signInSchema = z.object({
 });
 
 export const emailSchema = z.object({ email });
+
+export const resetPasswordSchema = z
+  .object({ password: newPassword, confirmPassword: z.string() })
+  .refine((value) => value.password === value.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "The passwords do not match.",
+  });
 
 export type FieldErrors = Partial<Record<string, string>>;
 

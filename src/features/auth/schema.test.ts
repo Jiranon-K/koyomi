@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { fieldErrors, signInSchema, signUpSchema } from "./schema";
+import { fieldErrors, resetPasswordSchema, signInSchema, signUpSchema } from "./schema";
 
 describe("signUpSchema", () => {
   const valid = { name: "Ada", email: "ada@example.com", password: "correct horse battery" };
@@ -43,5 +43,36 @@ describe("signInSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) expect(fieldErrors(result.error).password).toBeTruthy();
+  });
+});
+
+describe("resetPasswordSchema", () => {
+  it("accepts a new password that is long enough and confirmed", () => {
+    const result = resetPasswordSchema.safeParse({
+      password: "brand new staple secret",
+      confirmPassword: "brand new staple secret",
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("reports a password shorter than 8 characters on the password field", () => {
+    const result = resetPasswordSchema.safeParse({ password: "short", confirmPassword: "short" });
+
+    expect(result.success).toBe(false);
+    if (!result.success) expect(fieldErrors(result.error).password).toMatch(/8/);
+  });
+
+  it("reports a confirmation that does not match on the confirmation field", () => {
+    const result = resetPasswordSchema.safeParse({
+      password: "brand new staple secret",
+      confirmPassword: "brand new staple secrte",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(fieldErrors(result.error).confirmPassword).toBeTruthy();
+      expect(fieldErrors(result.error).password).toBeUndefined();
+    }
   });
 });

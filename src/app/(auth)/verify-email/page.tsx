@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SIGN_IN_PATH } from "@/features/auth/paths";
 import { ResendVerificationForm } from "@/features/auth/resend-verification-form";
 import { redirectSignedIn } from "@/features/auth/session";
+import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = { title: "Verify your email" };
 
@@ -30,10 +30,7 @@ export default async function VerifyEmailPage({ searchParams }: PageProps<"/veri
       <CardContent className="grid gap-4">
         <ResendVerificationForm />
         <p className="text-sm text-muted-foreground">
-          Already verified?{" "}
-          <Link href={SIGN_IN_PATH} className="font-medium text-foreground underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-            Sign in
-          </Link>
+          Already verified? <TextLink href={SIGN_IN_PATH}>Sign in</TextLink>
         </p>
       </CardContent>
     </Card>
