@@ -29,5 +29,5 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 
 ## Next steps (not built yet)
 
-- Rest of authentication (tickets in `.scratch/better-auth/issues`): rate limiting, Google sign-in.
-- Deployment config (none yet; defaults work on Vercel).
+- Rest of authentication (tickets in `.scratch/better-auth/issues`): Google sign-in.
+- Deployment config (none yet; defaults work on Vercel). Auth rate limits are per client IP taken from `x-forwarded-for`; off Vercel, configure `advanced.ipAddress` in `src/features/auth/auth.ts` first or all clients share one bucket.

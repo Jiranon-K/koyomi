@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, networkError } from "./client";
+import { authClient, networkError, TOO_MANY_REQUESTS_MESSAGE } from "./client";
 import { focusFirstInvalid, FormError, FormField } from "./form-field";
 import { VERIFY_EMAIL_PATH } from "./paths";
 import { rememberPendingEmail } from "./pending-email";
@@ -38,7 +38,11 @@ export function SignUpForm() {
       .catch(networkError);
     if (error) {
       setPending(false);
-      setFormError("We could not create the account. Check the fields and try again.");
+      setFormError(
+        error.status === 429
+          ? TOO_MANY_REQUESTS_MESSAGE
+          : "We could not create the account. Check the fields and try again.",
+      );
       return;
     }
     rememberPendingEmail(parsed.data.email);

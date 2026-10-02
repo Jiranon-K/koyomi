@@ -5,6 +5,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import {
   createAuth,
   getAuth,
+  RATE_LIMITS,
   resetAuthForTests,
   RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS,
 } from "./auth";
@@ -397,6 +398,107 @@ describe("role changes", () => {
 
     const session = await auth.api.getSession({ headers });
     expect(session?.user.role).toBe("user");
+  });
+});
+
+// Rate limits only apply to real HTTP requests, so these go through the request handler.
+describe("rate limiting", () => {
+  const credentials = { email: "ada@example.com", password: "correct horse battery" };
+
+  function post(auth: ReturnType<typeof newAuth>, path: string, body: unknown, ip = "203.0.113.7") {
+    return auth.handler(
+      new Request(`${BASE_URL}/api/auth${path}`, {
+        method: "POST",
+        headers: { "content-type": "application/json", origin: BASE_URL, "x-forwarded-for": ip },
+        body: JSON.stringify(body),
+      }),
+    );
+  }
+
+  async function statuses(count: number, send: () => Promise<Response>) {
+    const result: number[] = [];
+    for (let i = 0; i < count; i++) result.push((await send()).status);
+    return result;
+  }
+
+  it("allows email sign-in up to the limit and refuses the next attempt", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    const { max } = RATE_LIMITS.signInEmail;
+
+    const allowed = await statuses(max, () => post(auth, "/sign-in/email", credentials));
+    const refused = await post(auth, "/sign-in/email", credentials);
+
+    expect(allowed).toEqual(Array(max).fill(200));
+    expect(refused.status).toBe(429);
+  });
+
+  it("counts failed sign-in attempts too", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    const { max } = RATE_LIMITS.signInEmail;
+    const wrong = { ...credentials, password: "not the password" };
+
+    const allowed = await statuses(max, () => post(auth, "/sign-in/email", wrong));
+    const refused = await post(auth, "/sign-in/email", credentials);
+
+    expect(allowed).toEqual(Array(max).fill(401));
+    expect(refused.status).toBe(429);
+  });
+
+  it("refuses password-reset requests beyond the limit and sends no further email", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    const { max } = RATE_LIMITS.requestPasswordReset;
+    const body = { email: credentials.email, redirectTo: "/reset-password" };
+
+    const allowed = await statuses(max, () => post(auth, "/request-password-reset", body));
+    const refused = await post(auth, "/request-password-reset", body);
+
+    expect(allowed).toEqual(Array(max).fill(200));
+    expect(refused.status).toBe(429);
+    expect(outbox).toHaveLength(max);
+  });
+
+  it("limits each client address separately", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    await statuses(RATE_LIMITS.signInEmail.max + 1, () =>
+      post(auth, "/sign-in/email", credentials, "203.0.113.7"),
+    );
+
+    const otherClient = await post(auth, "/sign-in/email", credentials, "198.51.100.9");
+
+    expect(otherClient.status).toBe(200);
+  });
+
+  it("keeps the counters in the database", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    const { max } = RATE_LIMITS.signInEmail;
+
+    await statuses(max, () => post(auth, "/sign-in/email", credentials));
+
+    // The in-memory store is shared within a process, so only the collection itself can show
+    // where the counters live.
+    const rows = await mongoose.connection.getClient().db().collection("rateLimit").find().toArray();
+    expect(rows).toHaveLength(1);
+    expect(rows[0].count).toBe(max);
+  });
+
+  it("gives the rest of the auth API a looser limit than sign-in", async () => {
+    const auth = newAuth();
+    const beyondSignInLimit = RATE_LIMITS.signInEmail.max + 1;
+
+    const result = await statuses(beyondSignInLimit, () =>
+      auth.handler(
+        new Request(`${BASE_URL}/api/auth/get-session`, {
+          headers: { "x-forwarded-for": "203.0.113.7" },
+        }),
+      ),
+    );
+
+    expect(result).toEqual(Array(beyondSignInLimit).fill(200));
   });
 });
 

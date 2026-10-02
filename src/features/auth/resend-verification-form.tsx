@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, networkError } from "./client";
+import { authClient, networkError, TOO_MANY_REQUESTS_MESSAGE } from "./client";
 import { focusFirstInvalid, FormField } from "./form-field";
 import { VERIFY_EMAIL_PATH } from "./paths";
 import { readPendingEmail } from "./pending-email";
@@ -43,9 +43,11 @@ export function ResendVerificationForm() {
     setPending(false);
     // Same wording whether or not the address has an account waiting.
     setNotice(
-      error
-        ? "Something went wrong. Please try again."
-        : "If that address has an account waiting for verification, a new link is on its way.",
+      error?.status === 429
+        ? TOO_MANY_REQUESTS_MESSAGE
+        : error
+          ? "Something went wrong. Please try again."
+          : "If that address has an account waiting for verification, a new link is on its way.",
     );
   }
 

@@ -20,6 +20,14 @@ export type Role = "user" | "admin";
 
 export const RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS = 60 * 60;
 
+// Per client IP and path; `window` is in seconds. Sign-in is tight to slow password guessing, the
+// reset request to stop email flooding.
+export const RATE_LIMITS = {
+  default: { window: 60, max: 100 },
+  signInEmail: { window: 60, max: 5 },
+  requestPasswordReset: { window: 300, max: 3 },
+} as const;
+
 function parseAdminEmails(adminEmails = ""): Set<string> {
   return new Set(
     adminEmails
@@ -52,6 +60,22 @@ export function createAuth({ db, secret, baseURL, sendEmail, adminEmails }: Auth
             return { data: { ...user, role } };
           },
         },
+      },
+    },
+    rateLimit: {
+      // On in every environment (the library default is production only), so limits are testable.
+      enabled: true,
+      // The client IP is read from a single-value `x-forwarded-for`, which is what Vercel sends.
+      // Any other hosting needs `advanced.ipAddress` configured first: with no header or a proxy
+      // chain the IP cannot be resolved and ALL clients share one bucket per path (five sign-ins a
+      // minute for the whole site), and a host reachable without a proxy trusts a header the
+      // client can forge.
+      // In the database, not memory: serverless instances do not share memory.
+      storage: "database",
+      ...RATE_LIMITS.default,
+      customRules: {
+        "/sign-in/email": RATE_LIMITS.signInEmail,
+        "/request-password-reset": RATE_LIMITS.requestPasswordReset,
       },
     },
     emailAndPassword: {

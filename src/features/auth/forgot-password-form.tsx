@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, networkError } from "./client";
+import { authClient, networkError, TOO_MANY_REQUESTS_MESSAGE } from "./client";
 import { focusFirstInvalid, FormField } from "./form-field";
 import { RESET_PASSWORD_PATH } from "./paths";
 import { emailSchema, fieldErrors, type FieldErrors } from "./schema";
@@ -36,9 +36,11 @@ export function ForgotPasswordForm() {
     setPending(false);
     // Same wording whether or not the address has an account.
     setNotice(
-      error
-        ? "Something went wrong. Please try again."
-        : "If that address has an account, a reset link is on its way. It works once and expires in 1 hour.",
+      error?.status === 429
+        ? TOO_MANY_REQUESTS_MESSAGE
+        : error
+          ? "Something went wrong. Please try again."
+          : "If that address has an account, a reset link is on its way. It works once and expires in 1 hour.",
     );
   }
 

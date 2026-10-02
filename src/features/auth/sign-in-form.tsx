@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, networkError } from "./client";
+import { authClient, networkError, TOO_MANY_REQUESTS_MESSAGE } from "./client";
 import { focusFirstInvalid, FormError, FormField } from "./form-field";
 import { DASHBOARD_PATH, VERIFY_EMAIL_PATH } from "./paths";
 import { rememberPendingEmail } from "./pending-email";
@@ -47,7 +47,11 @@ export function SignInForm() {
     }
     setPending(false);
     setFormError(
-      error.status === 401 ? "Invalid email or password." : "Something went wrong. Please try again.",
+      error.status === 401
+        ? "Invalid email or password."
+        : error.status === 429
+          ? TOO_MANY_REQUESTS_MESSAGE
+          : "Something went wrong. Please try again.",
     );
   }
 
