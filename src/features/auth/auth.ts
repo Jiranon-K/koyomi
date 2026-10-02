@@ -12,16 +12,48 @@ export type AuthOptions = {
   secret: string;
   baseURL: string;
   sendEmail: SendEmail;
+  /** Comma-separated allow-list; these addresses become admins when their account is created. */
+  adminEmails?: string;
 };
+
+export type Role = "user" | "admin";
 
 export const RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS = 60 * 60;
 
-export function createAuth({ db, secret, baseURL, sendEmail }: AuthOptions) {
+function parseAdminEmails(adminEmails = ""): Set<string> {
+  return new Set(
+    adminEmails
+      .split(",")
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
+export function createAuth({ db, secret, baseURL, sendEmail, adminEmails }: AuthOptions) {
+  const admins = parseAdminEmails(adminEmails);
+
   return betterAuth({
     secret,
     baseURL,
     // No `client` is passed on purpose: that would enable transactions, which need a replica set.
     database: mongodbAdapter(db),
+    user: {
+      additionalFields: {
+        // `input: false` keeps a role sent by the client out of the user record.
+        role: { type: ["user", "admin"], defaultValue: "user", input: false },
+      },
+    },
+    databaseHooks: {
+      user: {
+        create: {
+          // Roles are decided once, here. Editing the allow-list later does not touch existing users.
+          before: async (user) => {
+            const role: Role = admins.has(user.email.toLowerCase()) ? "admin" : "user";
+            return { data: { ...user, role } };
+          },
+        },
+      },
+    },
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
@@ -77,7 +109,13 @@ export function getAuth(): Promise<Auth> {
     const secret = requireEnv("BETTER_AUTH_SECRET");
     const baseURL = requireEnv("BETTER_AUTH_URL");
     const mongoose = await connectDb();
-    return createAuth({ db: mongoose.connection.getClient().db(), secret, baseURL, sendEmail });
+    return createAuth({
+      db: mongoose.connection.getClient().db(),
+      secret,
+      baseURL,
+      sendEmail,
+      adminEmails: process.env.ADMIN_EMAILS,
+    });
   })();
   // A failed build (e.g. missing env) must not be cached, or fixing the env would need a restart.
   cached.catch(() => {

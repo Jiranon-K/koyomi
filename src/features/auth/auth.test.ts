@@ -16,8 +16,9 @@ const BASE_URL = "http://localhost:3000";
 let server: MongoMemoryServer;
 let outbox: EmailMessage[];
 
-function newAuth() {
+function newAuth(options: { adminEmails?: string } = {}) {
   return createAuth({
+    ...options,
     db: mongoose.connection.getClient().db(),
     secret: SECRET,
     baseURL: BASE_URL,
@@ -47,6 +48,18 @@ async function signUpVerified(
   await auth.api.signUpEmail({ body: { name: "Ada", ...credentials } });
   await auth.api.verifyEmail({ query: { token: tokenFrom(outbox[0]) } });
   outbox = [];
+}
+
+async function signInHeaders(
+  auth: ReturnType<typeof newAuth>,
+  credentials: { email: string; password: string },
+): Promise<Headers> {
+  const { headers } = await auth.api.signInEmail({ body: credentials, returnHeaders: true });
+  const cookie = headers
+    .getSetCookie()
+    .map((value) => value.split(";")[0])
+    .join("; ");
+  return new Headers({ cookie });
 }
 
 beforeAll(async () => {
@@ -242,18 +255,93 @@ describe("password reset", () => {
   it("signs out existing sessions after a reset", async () => {
     const auth = newAuth();
     await signUpVerified(auth, credentials);
-    const { headers } = await auth.api.signInEmail({ body: credentials, returnHeaders: true });
-    const cookie = headers
-      .getSetCookie()
-      .map((value) => value.split(";")[0])
-      .join("; ");
-    const sessionHeaders = new Headers({ cookie });
+    const sessionHeaders = await signInHeaders(auth, credentials);
     expect(await auth.api.getSession({ headers: sessionHeaders })).not.toBeNull();
 
     await auth.api.requestPasswordReset({ body: { email: credentials.email } });
     await auth.api.resetPassword({ body: { newPassword, token: resetTokenFrom(outbox[0]) } });
 
     expect(await auth.api.getSession({ headers: sessionHeaders })).toBeNull();
+  });
+});
+
+describe("roles", () => {
+  const password = "correct horse battery";
+
+  async function roleOf(auth: ReturnType<typeof newAuth>, email: string) {
+    await signUpVerified(auth, { email, password });
+    const headers = await signInHeaders(auth, { email, password });
+    const session = await auth.api.getSession({ headers });
+    return session?.user.role;
+  }
+
+  it("makes an allow-listed email an admin", async () => {
+    const auth = newAuth({ adminEmails: "owner@example.com" });
+
+    expect(await roleOf(auth, "owner@example.com")).toBe("admin");
+  });
+
+  it("makes everyone else a regular user", async () => {
+    const auth = newAuth({ adminEmails: "owner@example.com" });
+
+    expect(await roleOf(auth, "ada@example.com")).toBe("user");
+  });
+
+  it("makes everyone a regular user when no allow-list is configured", async () => {
+    expect(await roleOf(newAuth(), "ada@example.com")).toBe("user");
+    expect(await roleOf(newAuth({ adminEmails: " , " }), "bob@example.com")).toBe("user");
+  });
+
+  it("matches the allow-list ignoring case and surrounding whitespace", async () => {
+    const auth = newAuth({ adminEmails: "first@example.com ,  Owner@Example.COM " });
+
+    expect(await roleOf(auth, "owner@example.com")).toBe("admin");
+  });
+
+  it("does not promote an existing user when the allow-list changes later", async () => {
+    await roleOf(newAuth(), "ada@example.com");
+
+    const auth = newAuth({ adminEmails: "ada@example.com" });
+    const headers = await signInHeaders(auth, { email: "ada@example.com", password });
+    const session = await auth.api.getSession({ headers });
+
+    expect(session?.user.role).toBe("user");
+  });
+
+  it("ignores a role that a raw HTTP request supplies at sign-up", async () => {
+    const auth = newAuth();
+    const credentials = { email: "mallory@example.com", password };
+
+    const response = await auth.handler(
+      new Request(`${BASE_URL}/api/auth/sign-up/email`, {
+        method: "POST",
+        headers: { "content-type": "application/json", origin: BASE_URL },
+        body: JSON.stringify({ name: "Mallory", ...credentials, role: "admin" }),
+      }),
+    );
+    expect(response.status).toBe(200);
+    await auth.api.verifyEmail({ query: { token: tokenFrom(outbox[0]) } });
+
+    const headers = await signInHeaders(auth, credentials);
+    const session = await auth.api.getSession({ headers });
+    expect(session?.user.role).toBe("user");
+  });
+});
+
+describe("role changes", () => {
+  it("refuses a signed-in user changing their own role", async () => {
+    const auth = newAuth();
+    const credentials = { email: "ada@example.com", password: "correct horse battery" };
+    await signUpVerified(auth, credentials);
+    const headers = await signInHeaders(auth, credentials);
+
+    await expect(
+      // @ts-expect-error role is not part of the update input; a raw HTTP client can still send it.
+      auth.api.updateUser({ headers, body: { role: "admin" } }),
+    ).rejects.toMatchObject({ status: "BAD_REQUEST" });
+
+    const session = await auth.api.getSession({ headers });
+    expect(session?.user.role).toBe("user");
   });
 });
 
