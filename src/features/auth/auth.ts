@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
+import type { GoogleOptions } from "better-auth/social-providers";
 import type { Db } from "mongodb";
 
 import { connectDb } from "@/lib/db/mongoose";
@@ -14,9 +15,25 @@ export type AuthOptions = {
   sendEmail: SendEmail;
   /** Comma-separated allow-list; these addresses become admins when their account is created. */
   adminEmails?: string;
+  /** Google OAuth credentials. Omit to leave Google sign-in off. */
+  google?: GoogleOptions & { clientId: string; clientSecret: string };
 };
 
 export type Role = "user" | "admin";
+
+type GoogleCredentials = NonNullable<AuthOptions["google"]>;
+
+// Both variables or nothing: half a configuration would register a provider that cannot work.
+function googleCredentialsFromEnv(): GoogleCredentials | undefined {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  return clientId && clientSecret ? { clientId, clientSecret } : undefined;
+}
+
+/** Whether to offer the Google button. Server-only: pages pass the boolean down, never the values. */
+export function isGoogleEnabled(): boolean {
+  return googleCredentialsFromEnv() !== undefined;
+}
 
 export const RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS = 60 * 60;
 
@@ -37,7 +54,14 @@ function parseAdminEmails(adminEmails = ""): Set<string> {
   );
 }
 
-export function createAuth({ db, secret, baseURL, sendEmail, adminEmails }: AuthOptions) {
+export function createAuth({
+  db,
+  secret,
+  baseURL,
+  sendEmail,
+  adminEmails,
+  google,
+}: AuthOptions) {
   const admins = parseAdminEmails(adminEmails);
 
   return betterAuth({
@@ -62,6 +86,9 @@ export function createAuth({ db, secret, baseURL, sendEmail, adminEmails }: Auth
         },
       },
     },
+    // `emailAndPassword.requireEmailVerification` does not cover social sign-in. Without this, a
+    // Google profile with an unverified email would get a session (and admin, if allow-listed).
+    socialProviders: google ? { google: { ...google, requireEmailVerification: true } } : {},
     rateLimit: {
       // On in every environment (the library default is production only), so limits are testable.
       enabled: true,
@@ -140,6 +167,7 @@ export function getAuth(): Promise<Auth> {
       baseURL,
       sendEmail,
       adminEmails: process.env.ADMIN_EMAILS,
+      google: googleCredentialsFromEnv(),
     });
   })();
   // A failed build (e.g. missing env) must not be cached, or fixing the env would need a restart.

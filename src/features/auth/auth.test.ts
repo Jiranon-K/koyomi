@@ -1,3 +1,4 @@
+import type { GoogleProfile } from "better-auth/social-providers";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -5,6 +6,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import {
   createAuth,
   getAuth,
+  isGoogleEnabled,
   RATE_LIMITS,
   resetAuthForTests,
   RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS,
@@ -17,7 +19,9 @@ const BASE_URL = "http://localhost:3000";
 let server: MongoMemoryServer;
 let outbox: EmailMessage[];
 
-function newAuth(options: { adminEmails?: string } = {}) {
+type NewAuthOptions = Pick<Parameters<typeof createAuth>[0], "adminEmails" | "google">;
+
+function newAuth(options: NewAuthOptions = {}) {
   return createAuth({
     ...options,
     db: mongoose.connection.getClient().db(),
@@ -502,6 +506,119 @@ describe("rate limiting", () => {
   });
 });
 
+describe("Google sign-in", () => {
+  const google = { clientId: "test-client-id", clientSecret: "test-client-secret" };
+  const password = "correct horse battery";
+
+  // Stands in for Google: accepts any ID token and reports the given profile, so the app's own
+  // handling of a returning Google user runs without the network.
+  function authWithGoogleProfile(
+    profile: { email: string; emailVerified: boolean },
+    options: NewAuthOptions = {},
+  ) {
+    return newAuth({
+      ...options,
+      google: {
+        ...google,
+        verifyIdToken: async () => true,
+        getUserInfo: async () => ({
+          user: { name: "Ada", ...profile },
+          data: {
+            sub: `google-${profile.email}`,
+            name: "Ada",
+            email: profile.email,
+            email_verified: profile.emailVerified,
+          } as GoogleProfile,
+        }),
+      },
+    });
+  }
+
+  async function signInWithGoogle(auth: ReturnType<typeof newAuth>) {
+    const { headers } = await auth.api.signInSocial({
+      body: { provider: "google", idToken: { token: "fake-id-token" } },
+      returnHeaders: true,
+    });
+    const cookie = headers
+      .getSetCookie()
+      .map((value) => value.split(";")[0])
+      .join("; ");
+    return auth.api.getSession({ headers: new Headers({ cookie }) });
+  }
+
+  it("signs in a new visitor whose Google email is verified as a regular user", async () => {
+    const auth = authWithGoogleProfile({ email: "ada@example.com", emailVerified: true });
+
+    const session = await signInWithGoogle(auth);
+
+    expect(session?.user.email).toBe("ada@example.com");
+    expect(session?.user.role).toBe("user");
+  });
+
+  it("makes an allow-listed Google email an admin", async () => {
+    const auth = authWithGoogleProfile(
+      { email: "owner@example.com", emailVerified: true },
+      { adminEmails: "owner@example.com" },
+    );
+
+    const session = await signInWithGoogle(auth);
+
+    expect(session?.user.role).toBe("admin");
+  });
+
+  it("gives no session when Google reports the email as unverified, even if allow-listed", async () => {
+    const auth = authWithGoogleProfile(
+      { email: "owner@example.com", emailVerified: false },
+      { adminEmails: "owner@example.com" },
+    );
+
+    const session = await signInWithGoogle(auth).catch(() => null);
+
+    expect(session).toBeNull();
+    // The address is asked to prove itself through the normal verification email instead.
+    expect(outbox.map((message) => message.to)).toEqual(["owner@example.com"]);
+  });
+
+  it("signs in to the existing account when its email is already verified", async () => {
+    const auth = authWithGoogleProfile({ email: "ada@example.com", emailVerified: true });
+    await signUpVerified(auth, { email: "ada@example.com", password });
+    const existing = await auth.api.signInEmail({ body: { email: "ada@example.com", password } });
+
+    const session = await signInWithGoogle(auth);
+
+    expect(session?.user.id).toBe(existing.user.id);
+  });
+
+  it("refuses Google sign-in for an address someone registered but never verified", async () => {
+    const auth = authWithGoogleProfile({ email: "ada@example.com", emailVerified: true });
+    await auth.api.signUpEmail({ body: { name: "Mallory", email: "ada@example.com", password } });
+
+    const session = await signInWithGoogle(auth).catch(() => null);
+
+    expect(session).toBeNull();
+  });
+
+  it("is refused when no Google credentials are configured", async () => {
+    const auth = newAuth();
+
+    await expect(
+      auth.api.signInSocial({ body: { provider: "google" } }),
+    ).rejects.toMatchObject({ status: "NOT_FOUND" });
+  });
+
+  it("sends the visitor to Google with the app's callback when credentials are configured", async () => {
+    const auth = newAuth({ google });
+
+    const result = await auth.api.signInSocial({ body: { provider: "google" } });
+
+    const target = new URL(result.url ?? "");
+    expect(target.hostname).toBe("accounts.google.com");
+    expect(target.searchParams.get("client_id")).toBe(google.clientId);
+    expect(target.searchParams.get("redirect_uri")).toBe(`${BASE_URL}/api/auth/callback/google`);
+    expect(target.href).not.toContain(google.clientSecret);
+  });
+});
+
 describe("getAuth", () => {
   const saved = { ...process.env };
 
@@ -532,6 +649,41 @@ describe("getAuth", () => {
 
     process.env.BETTER_AUTH_SECRET = SECRET;
     await expect(getAuth()).resolves.toBeDefined();
+  });
+
+  describe("Google credentials from the environment", () => {
+    beforeEach(() => {
+      delete process.env.GOOGLE_CLIENT_ID;
+      delete process.env.GOOGLE_CLIENT_SECRET;
+    });
+
+    async function googleOffered() {
+      const auth = await getAuth();
+      return auth.api.signInSocial({ body: { provider: "google" } }).then(
+        () => true,
+        () => false,
+      );
+    }
+
+    it("leaves Google off when neither variable is set", async () => {
+      expect(isGoogleEnabled()).toBe(false);
+      expect(await googleOffered()).toBe(false);
+    });
+
+    it("leaves Google off when only one of the two variables is set", async () => {
+      process.env.GOOGLE_CLIENT_ID = "test-client-id";
+
+      expect(isGoogleEnabled()).toBe(false);
+      expect(await googleOffered()).toBe(false);
+    });
+
+    it("turns Google on when both variables are set", async () => {
+      process.env.GOOGLE_CLIENT_ID = "test-client-id";
+      process.env.GOOGLE_CLIENT_SECRET = "test-client-secret";
+
+      expect(isGoogleEnabled()).toBe(true);
+      expect(await googleOffered()).toBe(true);
+    });
   });
 
   it("builds once and reuses the instance", async () => {
