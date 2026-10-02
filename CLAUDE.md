@@ -13,7 +13,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 ## Layout
 
 - `src/app` — routes. `/` is the landing page.
-- `src/features/<name>` — create one folder per feature (none yet): `model.ts` (Mongoose), `schema.ts` (Zod), `service.ts` (DB logic), `actions.ts` (Server Actions), UI.
+- `src/features/<name>` — one folder per feature (`auth` so far): `model.ts` (Mongoose), `schema.ts` (Zod), `service.ts` (DB logic), `actions.ts` (Server Actions), UI.
 - `src/lib/db/mongoose.ts` — cached connection (`connectDb`). Call it inside services, not at module top level.
 - `src/components/ui` — shadcn components. Add more with `bunx --bun shadcn@latest add <name>`.
 
