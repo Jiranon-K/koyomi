@@ -1,1 +1,30 @@
 @AGENTS.md
+
+# nextjs-fullstack
+
+Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoDB via Mongoose.
+
+## Commands (bun)
+
+- `bun dev` — dev server. Needs MongoDB at `MONGODB_URI` (copy `.env.example` to `.env.local`).
+- `./verify.sh` (`bun run verify`) — the baseline gate: lint, typecheck, tests, build. Run it before claiming work is done.
+- `bun run test` — Vitest. DB tests use `mongodb-memory-server`, so no local mongod is needed.
+
+## Layout
+
+- `src/app` — routes. `/` is the landing page.
+- `src/features/<name>` — create one folder per feature (none yet): `model.ts` (Mongoose), `schema.ts` (Zod), `service.ts` (DB logic), `actions.ts` (Server Actions), UI.
+- `src/lib/db/mongoose.ts` — cached connection (`connectDb`). Call it inside services, not at module top level.
+- `src/components/ui` — shadcn components. Add more with `bunx --bun shadcn@latest add <name>`.
+
+## Conventions
+
+- Validate all input with Zod at the Server Action / Route Handler boundary.
+- Server Actions write; Route Handlers are for external clients.
+- Theme tokens (Linen Stone, oklch) live in `src/app/globals.css`. Use semantic classes (`bg-card`, `text-muted-foreground`), not raw colors.
+- `src/components/ui/handwriting-text.tsx` is a verbatim third-party component; its lint exception is in `eslint.config.mjs`. The landing page self-hosts its font at `public/fonts/handwriting.ttf` (the default CDN font is blocked by CORS). It still loads opentype.js from a CDN at runtime and falls back to plain text if that fails.
+
+## Next steps (not built yet)
+
+- Authentication with Better Auth.
+- Deployment config (none yet; defaults work on Vercel).
