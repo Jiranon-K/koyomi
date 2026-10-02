@@ -1,8 +1,13 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createAuth, getAuth, resetAuthForTests } from "./auth";
+import {
+  createAuth,
+  getAuth,
+  resetAuthForTests,
+  RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS,
+} from "./auth";
 import type { EmailMessage } from "./email";
 
 const SECRET = "test-secret-test-secret-test-secret-1234";
@@ -26,6 +31,22 @@ function tokenFrom(message: EmailMessage): string {
   const token = new URL(message.url).searchParams.get("token");
   if (!token) throw new Error(`No token in ${message.url}`);
   return token;
+}
+
+// Reset links carry the token in the path: <baseURL>/api/auth/reset-password/<token>?callbackURL=...
+function resetTokenFrom(message: EmailMessage): string {
+  const token = new URL(message.url).pathname.split("/").pop();
+  if (!token) throw new Error(`No token in ${message.url}`);
+  return token;
+}
+
+async function signUpVerified(
+  auth: ReturnType<typeof newAuth>,
+  credentials: { email: string; password: string },
+) {
+  await auth.api.signUpEmail({ body: { name: "Ada", ...credentials } });
+  await auth.api.verifyEmail({ query: { token: tokenFrom(outbox[0]) } });
+  outbox = [];
 }
 
 beforeAll(async () => {
@@ -108,6 +129,131 @@ describe("email sign-up", () => {
     ).rejects.toBeTruthy();
     const signedIn = await auth.api.signInEmail({ body: original });
     expect(signedIn.user.name).toBe("Ada");
+  });
+});
+
+describe("password reset", () => {
+  const credentials = { email: "ada@example.com", password: "correct horse battery" };
+  const newPassword = "brand new staple secret";
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("sends a reset email to the account address", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+
+    await auth.api.requestPasswordReset({ body: { email: credentials.email } });
+
+    expect(outbox).toHaveLength(1);
+    expect(outbox[0].to).toBe(credentials.email);
+    expect(outbox[0].kind).toBe("reset-password");
+  });
+
+  it("answers an unknown email like a known one and sends nothing", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+
+    const known = await auth.api.requestPasswordReset({ body: { email: credentials.email } });
+    outbox = [];
+    const unknown = await auth.api.requestPasswordReset({ body: { email: "nobody@example.com" } });
+
+    expect(unknown).toEqual(known);
+    expect(outbox).toHaveLength(0);
+  });
+
+  it("still answers the request and logs when the email provider fails", async () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    await signUpVerified(newAuth(), credentials);
+    const auth = createAuth({
+      db: mongoose.connection.getClient().db(),
+      secret: SECRET,
+      baseURL: BASE_URL,
+      sendEmail: async () => {
+        throw new Error("provider down");
+      },
+    });
+
+    const result = await auth.api.requestPasswordReset({ body: { email: credentials.email } });
+    await vi.waitFor(() => expect(errors).toHaveBeenCalled());
+
+    expect(result.status).toBe(true);
+    errors.mockRestore();
+  });
+
+  it("lets the user sign in with the new password and refuses the old one", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    await auth.api.requestPasswordReset({ body: { email: credentials.email } });
+
+    await auth.api.resetPassword({ body: { newPassword, token: resetTokenFrom(outbox[0]) } });
+
+    const signedIn = await auth.api.signInEmail({
+      body: { email: credentials.email, password: newPassword },
+    });
+    expect(signedIn.user.email).toBe(credentials.email);
+    await expect(auth.api.signInEmail({ body: credentials })).rejects.toMatchObject({
+      status: "UNAUTHORIZED",
+    });
+  });
+
+  it("rejects a reset link that was already used", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    await auth.api.requestPasswordReset({ body: { email: credentials.email } });
+    const token = resetTokenFrom(outbox[0]);
+    await auth.api.resetPassword({ body: { newPassword, token } });
+
+    await expect(
+      auth.api.resetPassword({ body: { newPassword: "attacker chosen secret", token } }),
+    ).rejects.toMatchObject({ status: "BAD_REQUEST" });
+
+    await expect(
+      auth.api.signInEmail({ body: { email: credentials.email, password: newPassword } }),
+    ).resolves.toBeTruthy();
+  });
+
+  it("rejects an unknown token", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+
+    await expect(
+      auth.api.resetPassword({ body: { newPassword, token: "not-a-real-token" } }),
+    ).rejects.toMatchObject({ status: "BAD_REQUEST" });
+  });
+
+  it("rejects an expired token and keeps the old password", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    await auth.api.requestPasswordReset({ body: { email: credentials.email } });
+    const token = resetTokenFrom(outbox[0]);
+
+    // Only Date is faked: faking timers would stall the MongoDB driver.
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(Date.now() + (RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS + 60) * 1000);
+
+    await expect(auth.api.resetPassword({ body: { newPassword, token } })).rejects.toMatchObject({
+      status: "BAD_REQUEST",
+    });
+    await expect(auth.api.signInEmail({ body: credentials })).resolves.toBeTruthy();
+  });
+
+  it("signs out existing sessions after a reset", async () => {
+    const auth = newAuth();
+    await signUpVerified(auth, credentials);
+    const { headers } = await auth.api.signInEmail({ body: credentials, returnHeaders: true });
+    const cookie = headers
+      .getSetCookie()
+      .map((value) => value.split(";")[0])
+      .join("; ");
+    const sessionHeaders = new Headers({ cookie });
+    expect(await auth.api.getSession({ headers: sessionHeaders })).not.toBeNull();
+
+    await auth.api.requestPasswordReset({ body: { email: credentials.email } });
+    await auth.api.resetPassword({ body: { newPassword, token: resetTokenFrom(outbox[0]) } });
+
+    expect(await auth.api.getSession({ headers: sessionHeaders })).toBeNull();
   });
 });
 

@@ -14,6 +14,8 @@ export type AuthOptions = {
   sendEmail: SendEmail;
 };
 
+export const RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS = 60 * 60;
+
 export function createAuth({ db, secret, baseURL, sendEmail }: AuthOptions) {
   return betterAuth({
     secret,
@@ -23,6 +25,20 @@ export function createAuth({ db, secret, baseURL, sendEmail }: AuthOptions) {
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
+      // A reset usually means the old password leaked, so every existing session is signed out.
+      revokeSessionsOnPasswordReset: true,
+      resetPasswordTokenExpiresIn: RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS,
+      sendResetPassword: async ({ user, url }) => {
+        // Not awaited, for the same timing reason as the verification email below.
+        sendEmail({
+          to: user.email,
+          kind: "reset-password",
+          subject: "Reset your password",
+          url,
+        }).catch((error) => {
+          console.error("[auth] failed to send reset password email", error);
+        });
+      },
     },
     emailVerification: {
       sendOnSignUp: true,
