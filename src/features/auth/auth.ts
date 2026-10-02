@@ -74,6 +74,7 @@ export function createAuth({ db, secret, baseURL, sendEmail, adminEmails }: Auth
     },
     emailVerification: {
       sendOnSignUp: true,
+      autoSignInAfterVerification: true,
       sendVerificationEmail: async ({ user, url }) => {
         // Not awaited: awaiting would let response timing reveal whether the email was new.
         sendEmail({

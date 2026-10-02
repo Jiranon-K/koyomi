@@ -126,6 +126,25 @@ describe("email sign-up", () => {
     expect(result.token).toBeTruthy();
   });
 
+  it("signs the user in when the verification link is used", async () => {
+    const auth = newAuth();
+    await auth.api.signUpEmail({
+      body: { name: "Ada", email: "ada@example.com", password: "correct horse battery" },
+    });
+
+    const { headers } = await auth.api.verifyEmail({
+      query: { token: tokenFrom(outbox[0]) },
+      returnHeaders: true,
+    });
+    const cookie = headers
+      .getSetCookie()
+      .map((value) => value.split(";")[0])
+      .join("; ");
+
+    const session = await auth.api.getSession({ headers: new Headers({ cookie }) });
+    expect(session?.user.email).toBe("ada@example.com");
+  });
+
   it("answers a duplicate sign-up like a fresh one and does not change the password", async () => {
     const auth = newAuth();
     const original = { email: "ada@example.com", password: "correct horse battery" };

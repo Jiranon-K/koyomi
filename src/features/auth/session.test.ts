@@ -4,7 +4,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 
 import { getAuth, resetAuthForTests } from "./auth";
 import type { EmailMessage } from "./email";
-import { requireAdmin, requireSession } from "./session";
+import { redirectSignedIn, requireAdmin, requireSession } from "./session";
 
 // The request and navigation APIs only exist inside a Next.js request, so they are replaced here.
 // Everything else is real: the auth instance, its cookies and the database.
@@ -114,5 +114,17 @@ describe("requireAdmin", () => {
 
     expect(session.user.email).toBe("owner@example.com");
     expect(session.user.role).toBe("admin");
+  });
+});
+
+describe("redirectSignedIn", () => {
+  it("lets an anonymous request through", async () => {
+    await expect(redirectSignedIn()).resolves.toBeUndefined();
+  });
+
+  it("sends a signed-in user to the dashboard", async () => {
+    await signInAs("carol@example.com");
+
+    await expect(redirectSignedIn()).rejects.toThrow("REDIRECT /dashboard");
   });
 });
