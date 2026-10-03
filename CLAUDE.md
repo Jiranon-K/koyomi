@@ -22,7 +22,8 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `src/components` and `src/lib` must not import from `src/features` or `src/app` (lint-enforced). Features may import shared code, never the reverse.
 - `bunfig.toml` installs exact versions that are at least 3 days old. Do not lower the cooldown to get a fresh release.
 
-- CI (Continuous Integration) is `.github/workflows/ci.yml`: audit, `./verify.sh`, then the end-to-end tests, on every push to the default branch and every pull request. Actions are pinned to commit hashes; Dependabot (`.github/dependabot.yml`) proposes weekly grouped updates with the same 3-day cooldown.
+- CI (Continuous Integration) is `.github/workflows/ci.yml`: audit, `./verify.sh`, then the end-to-end tests, on every push to the default branch and every pull request. Actions are pinned to commit hashes; Dependabot (`.github/dependabot.yml`) proposes weekly grouped updates for the actions only: it cannot read this `bun.lock` (lockfile version 2). Package updates are manual: `bun outdated`, then `bun update <name>`, `bun run audit` and `./verify.sh`.
+- `main` on GitHub is protected: no force push, no deletion, and pull requests need the `verify` check. The owner can still push directly; the `pre-push` hook is the gate for that path.
 
 ## Workflow (one ticket at a time)
 
