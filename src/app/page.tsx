@@ -1,10 +1,17 @@
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { SIGN_IN_PATH } from "@/features/auth/paths";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { HandwritingText } from "@/components/ui/handwriting-text";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="mx-auto flex w-full max-w-5xl items-center justify-end px-6 py-5">
+      <header className="mx-auto flex w-full max-w-5xl items-center justify-end gap-2 px-6 py-5">
+        <Button asChild variant="ghost" size="sm">
+          <Link href={SIGN_IN_PATH}>Sign in</Link>
+        </Button>
         <ThemeToggle />
       </header>
 

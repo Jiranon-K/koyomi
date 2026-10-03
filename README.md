@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# nextjs-fullstack
 
-## Getting Started
+Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4, MongoDB via Mongoose and
+authentication with Better Auth.
 
-First, run the development server:
+## Getting started
+
+1. Copy `.env.example` to `.env.local` and fill in the values (see below).
+2. Start MongoDB at the address in `MONGODB_URI`.
+3. Run the dev server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Before calling work done, run the baseline gate (lint, typecheck, tests, production build):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+./verify.sh
+```
 
-## Learn More
+Tests use an in-memory MongoDB, so they need no local database and no secrets.
 
-To learn more about Next.js, take a look at the following resources:
+## Environment variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `MONGODB_URI` | yes | MongoDB connection string. |
+| `BETTER_AUTH_SECRET` | yes | Signing secret, at least 32 random characters. |
+| `BETTER_AUTH_URL` | yes | Public origin of the app, no trailing slash. |
+| `ADMIN_EMAILS` | no | Comma-separated emails that become admins when their account is created. |
+| `GOOGLE_CLIENT_ID` | no | Google OAuth client id. |
+| `GOOGLE_CLIENT_SECRET` | no | Google OAuth client secret. |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Never commit `.env.local`.
 
-## Deploy on Vercel
+## Authentication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Email and password with required email verification, password reset, a protected `/dashboard`,
+  and roles (`user`, `admin`).
+- Emails are printed to the server console in development (`src/features/auth/email.ts`). Open the
+  logged link to verify an address or reset a password. Swap that one function for a real provider
+  in production.
+- Auth endpoints are rate limited per client IP. The IP is read from `x-forwarded-for` as Vercel
+  sends it; on other hosting configure `advanced.ipAddress` in `src/features/auth/auth.ts` first.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Google sign-in (optional)
+
+Google sign-in is off until **both** `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set. While
+it is off the "Continue with Google" button is hidden, and the app, the build and the tests work
+without any Google configuration.
+
+To turn it on:
+
+1. Open the [Google Cloud Console](https://console.cloud.google.com/) and create or pick a project.
+2. Under **APIs & Services > OAuth consent screen**, configure the consent screen (app name,
+   support email). The default scopes (email, profile, openid) are enough.
+3. Under **APIs & Services > Credentials**, choose **Create credentials > OAuth client ID** with
+   application type **Web application**.
+4. Add an **Authorized redirect URI** for every environment, following this pattern:
+
+   ```
+   <BETTER_AUTH_URL>/api/auth/callback/google
+   ```
+
+   For local development that is `http://localhost:3000/api/auth/callback/google`. The URI must
+   match exactly, including scheme and port.
+5. Copy the client id and client secret into `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in
+   `.env.local` (or your host's environment settings) and restart the server.
+
+How Google accounts map to app accounts:
+
+- Google sign-in only succeeds when Google reports the email as verified.
+- If an account with that email already exists and is verified, Google signs in to that account.
+- If an account with that email exists but was never verified, Google sign-in is refused until the
+  address is verified through the emailed link.
+- An email listed in `ADMIN_EMAILS` becomes an admin when its account is first created, whichever
+  sign-in method created it.
