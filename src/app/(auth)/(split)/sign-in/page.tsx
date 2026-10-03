@@ -9,13 +9,10 @@ import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-// Callback errors meaning the address is unproven: Google did not verify it, or an account for it
-// exists here that was never verified (so it cannot be linked).
 const NEEDS_VERIFICATION_ERRORS = ["email_not_verified", "account_not_linked"];
 
 export default async function SignInPage({ searchParams }: PageProps<"/sign-in">) {
   await redirectSignedIn();
-  // `error` is set when a Google sign-in comes back unsuccessful (cancelled, or refused by the app).
   const { reset, error } = await searchParams;
   const googleEnabled = isGoogleEnabled();
 

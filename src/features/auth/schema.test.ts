@@ -57,7 +57,6 @@ describe("signInSchema remember me", () => {
   const credentials = { email: "ada@example.com", password: "x" };
 
   it("turns a ticked checkbox into true", () => {
-    // A ticked checkbox arrives from FormData as "on".
     expect(signInSchema.parse({ ...credentials, rememberMe: "on" }).rememberMe).toBe(true);
   });
 

@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
-// Sign-in and sign-up: brand panel beside the form on wide screens, form alone on narrow ones.
 export default function SplitAuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">

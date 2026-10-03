@@ -8,9 +8,6 @@ import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = { title: "Verify your email" };
 
-// Also the landing spot of the emailed link: a valid link signs the user in (so they are sent on to
-// the dashboard), an invalid or expired one arrives here with `?error=`, and one that was already
-// used arrives with neither a session nor an error.
 export default async function VerifyEmailPage({ searchParams }: PageProps<"/verify-email">) {
   await redirectSignedIn();
   const { error } = await searchParams;

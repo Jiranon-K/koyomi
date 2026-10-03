@@ -7,12 +7,9 @@ import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = {
   title: "Reset password",
-  // The token is in the URL; keep it out of Referer headers sent to other origins.
   referrer: "no-referrer",
 };
 
-// The emailed link goes through the auth API first, which forwards here with `?token=` when the
-// token is still good and with `?error=` when it is unknown, expired or already used.
 export default async function ResetPasswordPage({ searchParams }: PageProps<"/reset-password">) {
   const { token } = await searchParams;
 

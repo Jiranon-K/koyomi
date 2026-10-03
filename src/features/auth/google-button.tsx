@@ -5,11 +5,10 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, networkError, TOO_MANY_REQUESTS_MESSAGE } from "./client";
+import { authClient, errorMessage, networkError } from "./client";
 import { FormError, LARGE_CONTROL } from "./form-field";
 import { DASHBOARD_PATH, SIGN_IN_PATH } from "./paths";
 
-// The Google mark keeps its brand colours: the one exception to semantic theme classes.
 function GoogleMark() {
   return (
     <svg className="size-4" viewBox="0 0 24 24" aria-hidden="true">
@@ -33,7 +32,6 @@ function GoogleMark() {
   );
 }
 
-/** Rendered only when the server says Google is configured; it also covers sign-up. */
 export function GoogleButton() {
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -43,15 +41,12 @@ export function GoogleButton() {
     setFormError(null);
     setPending(true);
 
-    // On success the browser leaves for Google, so the pending state is left on.
     const { error } = await authClient.signIn
       .social({ provider: "google", callbackURL: DASHBOARD_PATH, errorCallbackURL: SIGN_IN_PATH })
       .catch(networkError);
     if (error) {
       setPending(false);
-      setFormError(
-        error.status === 429 ? TOO_MANY_REQUESTS_MESSAGE : "Something went wrong. Please try again.",
-      );
+      setFormError(errorMessage(error));
     }
   }
 

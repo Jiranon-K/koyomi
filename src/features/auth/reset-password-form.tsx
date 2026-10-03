@@ -1,63 +1,37 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, networkError } from "./client";
-import { focusFirstInvalid, FormError, FormField } from "./form-field";
+import { authClient, errorMessage, networkError } from "./client";
+import { FormError, FormField } from "./form-field";
 import { FORGOT_PASSWORD_PATH, SIGN_IN_PATH } from "./paths";
-import { fieldErrors, resetPasswordSchema, type FieldErrors } from "./schema";
+import { PASSWORD_HINT, resetPasswordSchema } from "./schema";
 import { TextLink } from "./text-link";
+import { useAuthForm } from "./use-auth-form";
 
-const FAILURE_MESSAGES = {
-  linkExpired: (
-    <>
-      This reset link has expired or was already used.{" "}
-      <TextLink href={FORGOT_PASSWORD_PATH}>Request a new link</TextLink>
-    </>
-  ),
-  unknown: "Something went wrong. Please try again.",
-};
-
-type Failure = keyof typeof FAILURE_MESSAGES;
+const LINK_EXPIRED_MESSAGE = (
+  <>
+    This reset link has expired or was already used.{" "}
+    <TextLink href={FORGOT_PASSWORD_PATH}>Request a new link</TextLink>
+  </>
+);
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const router = useRouter();
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [failure, setFailure] = useState<Failure | null>(null);
-  const [pending, setPending] = useState(false);
-
-  async function onSubmit(event: React.SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (pending) return;
-
-    const parsed = resetPasswordSchema.safeParse(
-      Object.fromEntries(new FormData(event.currentTarget)),
-    );
-    setFailure(null);
-    if (!parsed.success) {
-      const invalid = fieldErrors(parsed.error);
-      setErrors(invalid);
-      focusFirstInvalid(event.currentTarget, invalid);
-      return;
-    }
-    setErrors({});
-    setPending(true);
-
-    const { error } = await authClient
-      .resetPassword({ newPassword: parsed.data.password, token })
-      .catch(networkError);
-    if (error) {
-      setPending(false);
-      // The link can expire or be used in another tab between opening this page and submitting.
-      setFailure(error.code === "INVALID_TOKEN" ? "linkExpired" : "unknown");
-      return;
-    }
-    // Replace, so Back does not return to a URL holding the spent token.
-    router.replace(`${SIGN_IN_PATH}?reset=done`);
-  }
+  const { errors, message, pending, onSubmit } = useAuthForm(
+    resetPasswordSchema,
+    async ({ password }) => {
+      const { error } = await authClient
+        .resetPassword({ newPassword: password, token })
+        .catch(networkError);
+      if (error) {
+        return error.code === "INVALID_TOKEN" ? LINK_EXPIRED_MESSAGE : errorMessage(error);
+      }
+      router.replace(`${SIGN_IN_PATH}?reset=done`);
+    },
+  );
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-4">
@@ -67,7 +41,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
         type="password"
         autoComplete="new-password"
         required
-        hint="At least 8 characters."
+        hint={PASSWORD_HINT}
         error={errors.password}
       />
       <FormField
@@ -78,7 +52,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
         required
         error={errors.confirmPassword}
       />
-      <FormError message={failure ? FAILURE_MESSAGES[failure] : null} />
+      <FormError message={message} />
       <Button type="submit" disabled={pending} aria-busy={pending}>
         {pending ? "Saving…" : "Set new password"}
       </Button>

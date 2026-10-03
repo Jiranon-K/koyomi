@@ -7,7 +7,6 @@ import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = { title: "Forgot password" };
 
-// No signed-in redirect here or on the reset page: a signed-in user may still have forgotten the password.
 export default function ForgotPasswordPage() {
   return (
     <Card>

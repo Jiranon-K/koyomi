@@ -12,6 +12,7 @@ import {
   RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS,
 } from "./auth";
 import type { EmailMessage } from "./email";
+import { cookieHeaders } from "./test-helpers";
 
 const SECRET = "test-secret-test-secret-test-secret-1234";
 const BASE_URL = "http://localhost:3000";
@@ -19,28 +20,35 @@ const BASE_URL = "http://localhost:3000";
 let server: MongoMemoryServer;
 let outbox: EmailMessage[];
 
-type NewAuthOptions = Pick<Parameters<typeof createAuth>[0], "adminEmails" | "google">;
+type NewAuthOptions = Partial<
+  Pick<Parameters<typeof createAuth>[0], "adminEmails" | "google" | "sendEmail">
+>;
 
 function newAuth(options: NewAuthOptions = {}) {
   return createAuth({
-    ...options,
     db: mongoose.connection.getClient().db(),
     secret: SECRET,
     baseURL: BASE_URL,
     sendEmail: async (message) => {
       outbox.push(message);
     },
+    ...options,
   });
 }
 
-function tokenFrom(message: EmailMessage): string {
+async function providerDown(): Promise<never> {
+  throw new Error("provider down");
+}
+
+function tokenFrom(message: EmailMessage | undefined): string {
+  if (!message) throw new Error("No email was sent");
   const token = new URL(message.url).searchParams.get("token");
   if (!token) throw new Error(`No token in ${message.url}`);
   return token;
 }
 
-// Reset links carry the token in the path: <baseURL>/api/auth/reset-password/<token>?callbackURL=...
-function resetTokenFrom(message: EmailMessage): string {
+function resetTokenFrom(message: EmailMessage | undefined): string {
+  if (!message) throw new Error("No email was sent");
   const token = new URL(message.url).pathname.split("/").pop();
   if (!token) throw new Error(`No token in ${message.url}`);
   return token;
@@ -60,11 +68,7 @@ async function signInHeaders(
   credentials: { email: string; password: string },
 ): Promise<Headers> {
   const { headers } = await auth.api.signInEmail({ body: credentials, returnHeaders: true });
-  const cookie = headers
-    .getSetCookie()
-    .map((value) => value.split(";")[0])
-    .join("; ");
-  return new Headers({ cookie });
+  return cookieHeaders(headers);
 }
 
 beforeAll(async () => {
@@ -91,20 +95,13 @@ describe("email sign-up", () => {
     });
 
     expect(outbox).toHaveLength(1);
-    expect(outbox[0].to).toBe("ada@example.com");
-    expect(outbox[0].kind).toBe("verify-email");
+    expect(outbox[0]?.to).toBe("ada@example.com");
+    expect(outbox[0]?.kind).toBe("verify-email");
   });
 
   it("still completes sign-up and logs when the email provider fails", async () => {
     const errors = vi.spyOn(console, "error").mockImplementation(() => {});
-    const auth = createAuth({
-      db: mongoose.connection.getClient().db(),
-      secret: SECRET,
-      baseURL: BASE_URL,
-      sendEmail: async () => {
-        throw new Error("provider down");
-      },
-    });
+    const auth = newAuth({ sendEmail: providerDown });
 
     const result = await auth.api.signUpEmail({
       body: { name: "Ada", email: "ada@example.com", password: "correct horse battery" },
@@ -141,12 +138,8 @@ describe("email sign-up", () => {
       query: { token: tokenFrom(outbox[0]) },
       returnHeaders: true,
     });
-    const cookie = headers
-      .getSetCookie()
-      .map((value) => value.split(";")[0])
-      .join("; ");
 
-    const session = await auth.api.getSession({ headers: new Headers({ cookie }) });
+    const session = await auth.api.getSession({ headers: cookieHeaders(headers) });
     expect(session?.user.email).toBe("ada@example.com");
   });
 
@@ -184,8 +177,8 @@ describe("password reset", () => {
     await auth.api.requestPasswordReset({ body: { email: credentials.email } });
 
     expect(outbox).toHaveLength(1);
-    expect(outbox[0].to).toBe(credentials.email);
-    expect(outbox[0].kind).toBe("reset-password");
+    expect(outbox[0]?.to).toBe(credentials.email);
+    expect(outbox[0]?.kind).toBe("reset-password");
   });
 
   it("answers an unknown email like a known one and sends nothing", async () => {
@@ -203,14 +196,7 @@ describe("password reset", () => {
   it("still answers the request and logs when the email provider fails", async () => {
     const errors = vi.spyOn(console, "error").mockImplementation(() => {});
     await signUpVerified(newAuth(), credentials);
-    const auth = createAuth({
-      db: mongoose.connection.getClient().db(),
-      secret: SECRET,
-      baseURL: BASE_URL,
-      sendEmail: async () => {
-        throw new Error("provider down");
-      },
-    });
+    const auth = newAuth({ sendEmail: providerDown });
 
     const result = await auth.api.requestPasswordReset({ body: { email: credentials.email } });
     await vi.waitFor(() => expect(errors).toHaveBeenCalled());
@@ -266,7 +252,6 @@ describe("password reset", () => {
     await auth.api.requestPasswordReset({ body: { email: credentials.email } });
     const token = resetTokenFrom(outbox[0]);
 
-    // Only Date is faked: faking timers would stall the MongoDB driver.
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(Date.now() + (RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS + 60) * 1000);
 
@@ -276,9 +261,8 @@ describe("password reset", () => {
     await expect(auth.api.signInEmail({ body: credentials })).resolves.toBeTruthy();
   });
 
-  // The emailed link itself: the library checks the token, then forwards to the screen named in
-  // `redirectTo` with either the token or an error.
-  async function followResetLink(auth: ReturnType<typeof newAuth>, message: EmailMessage) {
+  async function followResetLink(auth: ReturnType<typeof newAuth>, message: EmailMessage | undefined) {
+    if (!message) throw new Error("No email was sent");
     const response = await auth.handler(new Request(message.url));
     return new URL(response.headers.get("location") ?? "", BASE_URL);
   }
@@ -429,7 +413,6 @@ describe("role changes", () => {
   });
 });
 
-// Rate limits only apply to real HTTP requests, so these go through the request handler.
 describe("rate limiting", () => {
   const credentials = { email: "ada@example.com", password: "correct horse battery" };
 
@@ -507,11 +490,9 @@ describe("rate limiting", () => {
 
     await statuses(max, () => post(auth, "/sign-in/email", credentials));
 
-    // The in-memory store is shared within a process, so only the collection itself can show
-    // where the counters live.
     const rows = await mongoose.connection.getClient().db().collection("rateLimit").find().toArray();
     expect(rows).toHaveLength(1);
-    expect(rows[0].count).toBe(max);
+    expect(rows[0]?.count).toBe(max);
   });
 
   it("gives the rest of the auth API a looser limit than sign-in", async () => {
@@ -534,8 +515,6 @@ describe("Google sign-in", () => {
   const google = { clientId: "test-client-id", clientSecret: "test-client-secret" };
   const password = "correct horse battery";
 
-  // Stands in for Google: accepts any ID token and reports the given profile, so the app's own
-  // handling of a returning Google user runs without the network.
   function authWithGoogleProfile(
     profile: { email: string; emailVerified: boolean },
     options: NewAuthOptions = {},
@@ -563,11 +542,7 @@ describe("Google sign-in", () => {
       body: { provider: "google", idToken: { token: "fake-id-token" } },
       returnHeaders: true,
     });
-    const cookie = headers
-      .getSetCookie()
-      .map((value) => value.split(";")[0])
-      .join("; ");
-    return auth.api.getSession({ headers: new Headers({ cookie }) });
+    return auth.api.getSession({ headers: cookieHeaders(headers) });
   }
 
   it("signs in a new visitor whose Google email is verified as a regular user", async () => {
@@ -599,7 +574,6 @@ describe("Google sign-in", () => {
     const session = await signInWithGoogle(auth).catch(() => null);
 
     expect(session).toBeNull();
-    // The address is asked to prove itself through the normal verification email instead.
     expect(outbox.map((message) => message.to)).toEqual(["owner@example.com"]);
   });
 

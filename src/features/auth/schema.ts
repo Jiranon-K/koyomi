@@ -5,11 +5,14 @@ const email = z.preprocess(
   z.email("Enter a valid email address."),
 );
 
-// Same bounds as the Better Auth defaults, so the forms and the server agree.
+export const PASSWORD_MIN_LENGTH = 8;
+export const PASSWORD_MAX_LENGTH = 128;
+export const PASSWORD_HINT = `At least ${PASSWORD_MIN_LENGTH} characters.`;
+
 const newPassword = z
   .string()
-  .min(8, "Use at least 8 characters.")
-  .max(128, "Use at most 128 characters.");
+  .min(PASSWORD_MIN_LENGTH, `Use at least ${PASSWORD_MIN_LENGTH} characters.`)
+  .max(PASSWORD_MAX_LENGTH, `Use at most ${PASSWORD_MAX_LENGTH} characters.`);
 
 export const signUpSchema = z.object({
   name: z.string().trim().min(1, "Enter your name.").max(100, "Use at most 100 characters."),
@@ -20,7 +23,6 @@ export const signUpSchema = z.object({
 export const signInSchema = z.object({
   email,
   password: z.string().min(1, "Enter your password."),
-  // A checkbox: "on" in the form data when ticked, absent when not.
   rememberMe: z
     .literal("on")
     .optional()
@@ -38,7 +40,6 @@ export const resetPasswordSchema = z
 
 export type FieldErrors = Partial<Record<string, string>>;
 
-/** First message per field, ready to show next to its input. */
 export function fieldErrors(error: z.ZodError): FieldErrors {
   const errors: FieldErrors = {};
   for (const issue of error.issues) {

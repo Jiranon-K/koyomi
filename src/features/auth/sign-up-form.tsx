@@ -2,54 +2,29 @@
 
 import { cn } from "cn";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, networkError, TOO_MANY_REQUESTS_MESSAGE } from "./client";
-import { focusFirstInvalid, FormError, FormField, LARGE_CONTROL } from "./form-field";
+import { authClient, errorMessage, networkError } from "./client";
+import { FormError, FormField, LARGE_CONTROL } from "./form-field";
 import { PasswordField } from "./password-field";
 import { VERIFY_EMAIL_PATH } from "./paths";
 import { rememberPendingEmail } from "./pending-email";
-import { fieldErrors, signUpSchema, type FieldErrors } from "./schema";
+import { PASSWORD_HINT, signUpSchema } from "./schema";
+import { useAuthForm } from "./use-auth-form";
 
 export function SignUpForm() {
   const router = useRouter();
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [formError, setFormError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
-
-  async function onSubmit(event: React.SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (pending) return;
-
-    const parsed = signUpSchema.safeParse(Object.fromEntries(new FormData(event.currentTarget)));
-    setFormError(null);
-    if (!parsed.success) {
-      const invalid = fieldErrors(parsed.error);
-      setErrors(invalid);
-      focusFirstInvalid(event.currentTarget, invalid);
-      return;
-    }
-    setErrors({});
-    setPending(true);
-
-    // The server answers an existing address exactly like a new one, so this never reveals it.
+  const { errors, message, pending, onSubmit } = useAuthForm(signUpSchema, async (data) => {
     const { error } = await authClient.signUp
-      .email({ ...parsed.data, callbackURL: VERIFY_EMAIL_PATH })
+      .email({ ...data, callbackURL: VERIFY_EMAIL_PATH })
       .catch(networkError);
     if (error) {
-      setPending(false);
-      setFormError(
-        error.status === 429
-          ? TOO_MANY_REQUESTS_MESSAGE
-          : "We could not create the account. Check the fields and try again.",
-      );
-      return;
+      return errorMessage(error, "We could not create the account. Check the fields and try again.");
     }
-    rememberPendingEmail(parsed.data.email);
+    rememberPendingEmail(data.email);
     router.push(VERIFY_EMAIL_PATH);
-  }
+  });
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-5">
@@ -76,10 +51,10 @@ export function SignUpForm() {
         autoComplete="new-password"
         required
         large
-        hint="At least 8 characters."
+        hint={PASSWORD_HINT}
         error={errors.password}
       />
-      <FormError message={formError} />
+      <FormError message={message} />
       <Button
         type="submit"
         disabled={pending}

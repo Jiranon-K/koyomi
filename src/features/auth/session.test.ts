@@ -5,9 +5,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 import { getAuth, resetAuthForTests } from "./auth";
 import type { EmailMessage } from "./email";
 import { redirectSignedIn, requireAdmin, requireSession } from "./session";
+import { cookieHeaders } from "./test-helpers";
 
-// The request and navigation APIs only exist inside a Next.js request, so they are replaced here.
-// Everything else is real: the auth instance, its cookies and the database.
 const mocks = vi.hoisted(() => ({
   requestHeaders: new Headers(),
   outbox: [] as EmailMessage[],
@@ -37,21 +36,16 @@ const saved = { ...process.env };
 
 let server: MongoMemoryServer;
 
-// Signs the address up, verifies it, signs in and makes the session cookie the current request's.
 async function signInAs(email: string) {
   const auth = await getAuth();
   await auth.api.signUpEmail({ body: { name: "Ada", email, password } });
-  const token = new URL(mocks.outbox[mocks.outbox.length - 1].url).searchParams.get("token");
+  const token = new URL(mocks.outbox.at(-1)?.url ?? "").searchParams.get("token");
   await auth.api.verifyEmail({ query: { token: token ?? "" } });
   const { headers } = await auth.api.signInEmail({
     body: { email, password },
     returnHeaders: true,
   });
-  const cookie = headers
-    .getSetCookie()
-    .map((value) => value.split(";")[0])
-    .join("; ");
-  mocks.requestHeaders = new Headers({ cookie });
+  mocks.requestHeaders = cookieHeaders(headers);
 }
 
 beforeAll(async () => {
