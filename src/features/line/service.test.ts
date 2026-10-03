@@ -11,6 +11,7 @@ import {
   listReminderRecipients,
   recordLineAccount,
   REMINDER_CAP,
+  reminderPlaces,
   removeLineLink,
   setFriendByLineUserId,
   setReminders,
@@ -311,5 +312,25 @@ describe("findReminderRecipient", () => {
       expect(await areRemindersOn(userId)).toBe(false);
       expect(await findReminderRecipient(userId)).toBeNull();
     }
+  });
+});
+
+describe("reminderPlaces", () => {
+  it("counts the places taken against the cap, and the holders the bot can reach", async () => {
+    await link("ada");
+    await link("bob");
+    await link("not-a-friend", isNotFriend);
+    await link("switched-off");
+    await setReminders("user-switched-off", false);
+
+    expect(await reminderPlaces()).toEqual({ taken: 3, reachable: 2, cap: REMINDER_CAP });
+  });
+
+  it("is zero when nobody has linked LINE, and the cap when every place is taken", async () => {
+    expect(await reminderPlaces()).toEqual({ taken: 0, reachable: 0, cap: REMINDER_CAP });
+
+    await linkMany(REMINDER_CAP + 2);
+
+    expect(await reminderPlaces()).toMatchObject({ taken: REMINDER_CAP });
   });
 });

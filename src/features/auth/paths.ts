@@ -32,3 +32,4 @@ export function signInPathReturningTo(path: string): string {
 }
 
 export const SETTINGS_PATH = "/settings";
+export const ADMIN_PATH = "/admin";

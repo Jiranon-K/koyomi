@@ -2,6 +2,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { createVerifiedAccount } from "./account";
 import { syncSchedule } from "./schedule";
+import { makeAdmin } from "./seed";
 
 // The rest of the suite runs with reduced motion so scans see final-state content; the first describe
 // lets arrival animations play, to prove they always end with the content visible, and the second
@@ -83,6 +84,16 @@ test.describe("with motion", () => {
     for (const text of dashboardText(page, email)) {
       await expectArrived(text);
     }
+  });
+
+  test("the admin title and status rows arrive at full opacity", async ({ page }) => {
+    await makeAdmin(await createVerifiedAccount(page, "e2e-motion-admin"));
+    await page.goto("/admin");
+
+    await expectArrived(page.getByRole("heading", { level: 1, name: "Status" }));
+    await expectArrived(page.getByText("What the background work last did"));
+    await expectArrived(page.getByRole("button", { name: "Sync now" }));
+    await expectArrived(page.getByText("Users with reminders switched on."));
   });
 
   test("the schedule title, day blocks and rows arrive at full opacity", async ({ page }) => {

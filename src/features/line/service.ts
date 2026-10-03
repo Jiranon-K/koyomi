@@ -24,6 +24,14 @@ export type SetRemindersOutcome = { kind: "ok" } | { kind: "not-linked" } | { ki
 
 export type ReminderRecipient = { userId: string; lineUserId: string };
 
+export type ReminderPlaces = {
+  /** Users whose reminder switch is on: each holds one of the places. */
+  taken: number;
+  /** Of those, the ones who are friends of the bot, so reminders are really sent to them. */
+  reachable: number;
+  cap: number;
+};
+
 const DUPLICATE_KEY = 11000;
 
 function isDuplicateKey(error: unknown): boolean {
@@ -194,4 +202,14 @@ export async function findReminderRecipient(userId: string): Promise<ReminderRec
   await ready();
   const link = await LineLink.findOne({ userId, friend: true, reminderSlot: HOLDS_SLOT }).lean();
   return link ? { userId: link.userId, lineUserId: link.lineUserId } : null;
+}
+
+/** How many of the reminder places are taken, for the admin status page. */
+export async function reminderPlaces(): Promise<ReminderPlaces> {
+  await ready();
+  const [taken, reachable] = await Promise.all([
+    LineLink.countDocuments({ reminderSlot: HOLDS_SLOT }),
+    LineLink.countDocuments({ friend: true, reminderSlot: HOLDS_SLOT }),
+  ]);
+  return { taken, reachable, cap: REMINDER_CAP };
 }

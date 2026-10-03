@@ -12,6 +12,7 @@ import {
   lineWebhookEnv,
   qstashEnv,
   qstashSigningEnv,
+  redactSecrets,
   scheduleEnv,
 } from "./env";
 
@@ -325,5 +326,48 @@ describe("appUrl", () => {
       "https://koyomi.example",
     );
     expect(() => appUrl({ BETTER_AUTH_SECRET: SECRET })).toThrow(/BETTER_AUTH_URL is not set/);
+  });
+});
+
+describe("redactSecrets", () => {
+  // Put together here so that no address with credentials is written out in the repository.
+  const address = (scheme: string, credentials: string, rest: string) =>
+    `${scheme}://${credentials}@${rest}`;
+  const source = {
+    BETTER_AUTH_SECRET: SECRET,
+    ANIMESCHEDULE_TOKEN: "animeschedule-token-value",
+    QSTASH_CURRENT_SIGNING_KEY: "sig_current_key_value",
+    MONGODB_URI: address("mongodb", "koyomi:db-password", "db.example:27017/koyomi"),
+    BETTER_AUTH_URL: "https://koyomi.example",
+    ADMIN_EMAILS: "owner@example.com",
+    LINE_MESSAGING_CHANNEL_SECRET: "",
+    SHORT_TOKEN: "abc",
+  };
+
+  it("replaces the value of every secret variable with its name", () => {
+    const text = `Bearer animeschedule-token-value was refused; ${SECRET}; sig_current_key_value; ${source.MONGODB_URI}`;
+
+    expect(redactSecrets(text, source)).toBe(
+      "Bearer [ANIMESCHEDULE_TOKEN] was refused; [BETTER_AUTH_SECRET]; [QSTASH_CURRENT_SIGNING_KEY]; [MONGODB_URI]",
+    );
+  });
+
+  it("leaves text and variables that are not secret alone", () => {
+    const text = "AnimeSchedule answered 500 for owner@example.com at https://koyomi.example";
+
+    expect(redactSecrets(text, source)).toBe(text);
+  });
+
+  it("ignores a secret that is unset or too short to be one", () => {
+    expect(redactSecrets("abc and the rest", source)).toBe("abc and the rest");
+  });
+
+  it("hides the credentials of any address and any bearer token, configured or not", () => {
+    expect(
+      redactSecrets(
+        `${address("mongodb+srv", "user:hunter2", "cluster.example/db")} refused Bearer abc.def-123`,
+        {},
+      ),
+    ).toBe("mongodb+srv://[hidden]@cluster.example/db refused Bearer [hidden]");
   });
 });

@@ -178,3 +178,32 @@ export function qstashSigningEnv(
   }
   return undefined;
 }
+
+const SECRET_NAME = /SECRET|TOKEN|KEY|PASSWORD/;
+/** Shorter values are not secrets worth the name, and would match ordinary words. */
+const SECRET_MIN_LENGTH = 8;
+const URL_CREDENTIALS = /([a-z][a-z0-9+.-]*:\/\/)[^\s/@]+@/gi;
+const BEARER = /\bBearer\s+[\w.~+/=-]+/g;
+
+/**
+ * `text` made safe to show or store: the value of every secret variable that is set (a name with
+ * SECRET, TOKEN, KEY or PASSWORD in it, and `MONGODB_URI`) is replaced by `[NAME]`, and the
+ * credentials of any address and any bearer token by `[hidden]`. For text that did not come from
+ * this app, such as the message of an error a library threw.
+ */
+export function redactSecrets(text: string, source: Source = process.env): string {
+  const secrets = Object.entries(source)
+    .flatMap(([name, value]) =>
+      value &&
+      value.length >= SECRET_MIN_LENGTH &&
+      (SECRET_NAME.test(name) || name === "MONGODB_URI")
+        ? [{ name, value }]
+        : [],
+    )
+    // A secret that contains another one is replaced whole.
+    .sort((a, b) => b.value.length - a.value.length);
+
+  let safe = text;
+  for (const { name, value } of secrets) safe = safe.replaceAll(value, `[${name}]`);
+  return safe.replace(URL_CREDENTIALS, "$1[hidden]@").replace(BEARER, "Bearer [hidden]");
+}

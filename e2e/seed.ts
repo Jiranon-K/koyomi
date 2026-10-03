@@ -107,3 +107,48 @@ export async function clearFillers() {
     await db.collection("linelinks").deleteMany({ userId: /^e2e-filler-/ });
   });
 }
+
+/**
+ * Turn an existing account into an administrator. Roles are normally set once, at sign-up, from
+ * `ADMIN_EMAILS`, which the end-to-end server leaves empty; the session reads the role from the
+ * `user` row on every request, so the open browser session is an admin's from the next page on.
+ */
+export async function makeAdmin(email: string) {
+  await withDb(async (db) => {
+    const { matchedCount } = await db
+      .collection("user")
+      .updateOne({ email }, { $set: { role: "admin" } });
+    if (matchedCount !== 1) throw new Error(`No user with the email ${email}`);
+  });
+}
+
+const SEEDED_SYNC_SOURCE = "e2e-seeded";
+
+/**
+ * Record a schedule sync that failed just now with this reason, as the app would (the
+ * `schedulesyncruns` collection of src/features/schedule/model.ts). The fake source never fails,
+ * so this is how the failed state gets on screen.
+ */
+export async function seedFailedSync(error: string) {
+  await withDb(async (db) => {
+    const now = new Date();
+    await db.collection("schedulesyncruns").insertOne({
+      startedAt: now,
+      finishedAt: now,
+      outcome: "failure",
+      source: SEEDED_SYNC_SOURCE,
+      requests: 0,
+      shows: 0,
+      episodes: 0,
+      skipped: 0,
+      error,
+    });
+  });
+}
+
+/** Remove every sync run `seedFailedSync` recorded. */
+export async function clearSeededSyncs() {
+  await withDb(async (db) => {
+    await db.collection("schedulesyncruns").deleteMany({ source: SEEDED_SYNC_SOURCE });
+  });
+}
