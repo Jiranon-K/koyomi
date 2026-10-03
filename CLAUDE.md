@@ -63,7 +63,6 @@ The brand as a printed magazine: warm paper, ink text, one terracotta voice. Dec
 - **Type**: `font-display` (Instrument Serif, regular or italic, never bold) for page titles and card titles, with at most one italic `text-primary` word in a hero. Body text is Google Sans Flex. Labels and buttons are Google Sans Code through the `label-mono` utility (defined in `globals.css`).
 - **Shape**: square corners; structure is drawn with rules (`border-foreground` for major edges, `border-border` between rows), not rings or shadows. Fields are underlined, cards have a 1px `foreground` outline. Button sizes: `xs` 24, `sm` 32, default 40, `lg` 44 px; use `size="lg"` for a form's main action. There is no `large` input variant.
 - **Layout**: every page opens with `Masthead` (pages pass their actions as children). `HandwritingText` is the single decorative accent, at most one per screen, on the terracotta panel.
-- **Prototypes** of the three directions that were compared are on the branch `prototype/design-system`. Never merge it.
 
 ## Next steps (not built yet)
 
