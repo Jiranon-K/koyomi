@@ -55,11 +55,11 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
 
   await page.getByRole("link", { name: "My week" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
-  const today = page.getByRole("region").first();
-  await expect(today.getByText("Today")).toBeVisible();
-  await expect(today.getByRole("listitem")).toHaveText([
-    /22:30.*Lantern Street Diaries.*Episode 5/,
-  ]);
+  await expect(page.getByRole("heading", { level: 1, name: "My week" })).toBeVisible();
+  const today = page
+    .getByRole("region", { name: "The week" })
+    .getByRole("region", { name: /^Today/ });
+  await expect(today.getByRole("listitem")).toHaveText([/22:30.*Lantern Street Diaries/]);
   await expect(page.getByText("Clockwork Orchard")).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Following" }).getByRole("listitem")).toHaveText([
     new RegExp(lantern),
@@ -73,14 +73,34 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
   await expect(page.locator("html")).toContainClass("light");
   expect(await seriousViolations(page)).toEqual([]);
 
+  await page.getByRole("link", { name: "Settings" }).click();
+  await expect(page.getByRole("button", { name: "Feature" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.getByRole("button", { name: "Index" }).click();
+  await expect(page.getByRole("button", { name: "Index" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("My week is a numbered list of your shows")).toBeVisible();
+
+  await page.getByRole("link", { name: "Dashboard" }).click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole("heading", { level: 1, name: "My week" })).toBeVisible();
+  const rows = page.getByRole("main").getByRole("listitem");
+  await expect(rows).toHaveText([new RegExp(lantern), new RegExp(`${harbor}.*Finished`)]);
+  await expect(page.getByText("Clockwork Orchard")).toHaveCount(0);
+
+  expect(await seriousViolations(page)).toEqual([]);
+  await page.getByRole("button", { name: "Toggle theme" }).click();
+  await expect(page.locator("html")).toContainClass("dark");
+  expect(await seriousViolations(page)).toEqual([]);
+
   await page.goto("/sign-in?next=https://example.com/steal");
   await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/sign-in?next=//example.com");
   await expect(page).toHaveURL(/\/dashboard$/);
 
   await page.getByRole("button", { name: `Unfollow ${lantern}` }).click();
-  await expect(page.getByText("None of your shows air in the next seven days.")).toBeVisible();
-  await expect(page.getByRole("region", { name: "Following" })).toHaveCount(0);
+  await expect(rows).toHaveText([new RegExp(harbor)]);
   await page.getByRole("button", { name: `Unfollow ${harbor}` }).click();
   await expect(page.getByText("You are not following any shows yet.")).toBeVisible();
 

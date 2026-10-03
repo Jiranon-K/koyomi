@@ -11,7 +11,7 @@ import { indexesReady, isDuplicateKey } from "@/lib/db/mongoose";
 
 import { Follow } from "./model";
 
-export type FollowedShow = { route: string; title: string };
+export type FollowedShow = { route: string; title: string; coverUrl: string | null };
 
 export type MyWeek = {
   days: ScheduleDay[];
@@ -82,7 +82,7 @@ export async function myWeek(userId: string, now: Date = new Date()): Promise<My
   const [entries, shows, stillToAir, lastSync] = await Promise.all([
     episodesBetween(start, end, routes),
     Show.find({ route: { $in: routes } })
-      .select({ route: 1, title: 1, status: 1, lastSeenAt: 1 })
+      .select({ route: 1, title: 1, coverUrl: 1, status: 1, lastSeenAt: 1 })
       .lean(),
     Episode.distinct("showRoute", { showRoute: { $in: routes }, airAt: { $gte: start } }),
     lastSyncRun("success"),
@@ -95,7 +95,7 @@ export async function myWeek(userId: string, now: Date = new Date()): Promise<My
     const ended =
       show.status === "finished" || (lastSync !== null && show.lastSeenAt < lastSync.startedAt);
     const list = ended && !upcoming.has(show.route) ? finished : following;
-    list.push({ route: show.route, title: show.title });
+    list.push({ route: show.route, title: show.title, coverUrl: show.coverUrl ?? null });
   }
 
   return { days: scheduleDays(entries, now), following, finished };

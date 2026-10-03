@@ -170,7 +170,11 @@ describe("myWeek", () => {
     const week = await myWeek(ADA, NOW);
 
     expect(week.finished).toEqual([
-      { route: "harbor-of-paper-cranes", title: "Harbor of Paper Cranes" },
+      {
+        route: "harbor-of-paper-cranes",
+        title: "Harbor of Paper Cranes",
+        coverUrl: "/images/fake-covers/harbor-of-paper-cranes.png",
+      },
     ]);
     expect(week.following).toEqual([]);
     expect(week.days.every((day) => day.entries.length === 0)).toBe(true);

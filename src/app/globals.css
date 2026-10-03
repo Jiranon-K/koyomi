@@ -144,6 +144,17 @@
     opacity: 1 !important;
     transform: none !important;
     height: auto !important;
+    clip-path: none !important;
+    animation: none !important;
+  }
+  [data-curtain] {
+    display: none !important;
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
   }
 }
 
