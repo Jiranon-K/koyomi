@@ -94,6 +94,14 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
   await expect(page.locator("html")).toContainClass("dark");
   expect(await seriousViolations(page)).toEqual([]);
 
+  await page.goto("/");
+  const banner = page.getByRole("banner");
+  await expect(banner.getByRole("link", { name: "My week" })).toBeVisible();
+  await expect(banner.getByRole("link", { name: "Sign in" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Create account" })).toHaveCount(0);
+  await page.getByRole("link", { name: "Open my week" }).click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+
   await page.goto("/sign-in?next=https://example.com/steal");
   await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/sign-in?next=//example.com");

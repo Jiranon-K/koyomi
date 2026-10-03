@@ -7,7 +7,8 @@ import { Reveal } from "@/components/motion/reveal";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { HandwritingText } from "@/components/ui/handwriting-text";
-import { SIGN_IN_PATH, SIGN_UP_PATH } from "@/features/auth/paths";
+import { DASHBOARD_PATH, SIGN_IN_PATH, SIGN_UP_PATH } from "@/features/auth/paths";
+import { currentSession } from "@/features/auth/session";
 import { SCHEDULE_PATH } from "@/features/schedule/paths";
 
 function Support() {
@@ -22,12 +23,18 @@ function Support() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const signedIn = (await currentSession()) !== null;
+
   return (
     <div className="flex min-h-screen flex-col">
       <Masthead>
         <Button asChild variant="ghost" size="sm">
-          <Link href={SIGN_IN_PATH}>Sign in</Link>
+          {signedIn ? (
+            <Link href={DASHBOARD_PATH}>My week</Link>
+          ) : (
+            <Link href={SIGN_IN_PATH}>Sign in</Link>
+          )}
         </Button>
         <ThemeToggle />
       </Masthead>
@@ -44,7 +51,11 @@ export default function Home() {
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link href={SIGN_UP_PATH}>Create account</Link>
+                {signedIn ? (
+                  <Link href={DASHBOARD_PATH}>Open my week</Link>
+                ) : (
+                  <Link href={SIGN_UP_PATH}>Create account</Link>
+                )}
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link href={SCHEDULE_PATH}>See this week</Link>
