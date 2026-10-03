@@ -1,5 +1,7 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import { createVerifiedAccount } from "./account";
+
 // The rest of the suite runs with reduced motion so scans see final-state content; the first describe
 // lets arrival animations play, to prove they always end with the content visible, and the second
 // proves that with reduced motion the final state is there at once.
@@ -39,6 +41,13 @@ async function wrongPassword(page: Page) {
   };
 }
 
+const dashboardText = (page: Page, email: string) => [
+  page.getByRole("heading", { level: 1, name: "Dashboard" }),
+  page.getByText("You are signed in."),
+  page.getByText(email),
+  page.locator("dd", { hasText: /^User$/ }),
+];
+
 const AUTH_PAGES = [
   "/sign-in",
   "/sign-up",
@@ -58,6 +67,14 @@ test.describe("with motion", () => {
       await expectArrived(page.locator("main button[type=submit]"));
     });
   }
+
+  test("the dashboard title and rows arrive at full opacity", async ({ page }) => {
+    const email = await createVerifiedAccount(page, "e2e-motion");
+
+    for (const text of dashboardText(page, email)) {
+      await expectArrived(text);
+    }
+  });
 
   test("a sign-in error is announced as an alert and unfolds to full opacity", async ({ page }) => {
     const { alert, text } = await wrongPassword(page);
@@ -89,6 +106,15 @@ test.describe("with motion in a tall window", () => {
 
 test.describe("with reduced motion", () => {
   test.use({ reducedMotion: "reduce" });
+
+  test("the dashboard rows are at full opacity at once", async ({ page }) => {
+    const email = await createVerifiedAccount(page, "e2e-motion");
+
+    for (const text of dashboardText(page, email)) {
+      await expect(text).toBeVisible();
+      expect(await effectiveOpacity(text)).toBe(1);
+    }
+  });
 
   test("a sign-in error is at full opacity at once", async ({ page }) => {
     const { alert, text } = await wrongPassword(page);
