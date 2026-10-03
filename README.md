@@ -14,10 +14,6 @@ in Thai time, and get one LINE message each morning that lists what airs tonight
 [![LINE](https://img.shields.io/badge/LINE-Messaging_API-06C755?logo=line&logoColor=white)](https://developers.line.biz/)
 [![Playwright](https://img.shields.io/badge/E2E-Playwright-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/)
 
-<img src="docs/images/koyomi-demo.gif" alt="A walk through Koyomi: landing page, the week's schedule, My week, settings and the Index view" width="860">
-
-<sub>Recorded from the running app with the real schedule. Cover art belongs to its rights holders and is loaded from the AnimeSchedule.net image host.</sub>
-
 </div>
 
 ## Screenshots
@@ -195,7 +191,7 @@ Run it with `QSTASH_TOKEN` and the deployed `BETTER_AUTH_URL` in the environment
 
 ## Regenerating the pictures
 
-The screenshots and the clip above come from `scripts/media/capture.spec.ts`. It signs up in the
+The screenshots above come from `scripts/media/capture.spec.ts`. It signs up in the
 real app, syncs the real schedule from the admin page, follows shows and walks through the pages. It
 needs a `.env.local` with `MONGODB_URI` and `ANIMESCHEDULE_TOKEN`, and uses a database of its own
 (`koyomi-media`, dropped at the start of each run):
@@ -204,5 +200,4 @@ needs a `.env.local` with `MONGODB_URI` and `ANIMESCHEDULE_TOKEN`, and uses a da
 bun run media
 ```
 
-It writes the stills to `docs/images/` and the raw clip to `test-results/`; the GIF is cut from that
-clip by hand.
+It writes the pictures to `docs/images/`.

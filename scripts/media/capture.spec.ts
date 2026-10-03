@@ -1,20 +1,31 @@
-import { mkdir, rename } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 
 import { expect, test } from "@playwright/test";
 
 import { PASSWORD } from "../../e2e/account";
 import { emailedLink } from "../../e2e/outbox";
 
+// The schedule picture stops after the first row of tiles; later rows hold shows that are not Japanese.
+const SCHEDULE_HEIGHT = 1240;
 const OUT = "docs/images";
 const EMAIL = "demo@example.com";
-const FOLLOW_COUNT = 6;
+// Japanese shows to follow, matched by title when the schedule has them.
+const JAPANESE_SHOWS = [
+  "Kikansha no Mahou wa Tokubetsu desu Season 2",
+  "JoJo no Kimyou na Bouken Part 7",
+  "Chiikawa",
+  "Ghost Meets Gal!",
+  "Crayon Shin-chan",
+  "Shiotaiou no Satou-san",
+  "Kyouran Reijou Nia Liston",
+];
 
 test.use({ colorScheme: "light" });
 
-test("a walk through the real product", async ({ page }, testInfo) => {
+test("a walk through the real product", async ({ page }) => {
   await mkdir(OUT, { recursive: true });
   const pause = (ms: number) => page.waitForTimeout(ms);
-  const still = async (name: string, tall = false) => {
+  const still = async (name: string, height = 0) => {
     await pause(1500);
     // Lazy covers load only when scrolled near, so walk down the part that is captured first.
     for (let y = 0; y <= 1900; y += 450) {
@@ -33,7 +44,7 @@ test("a walk through the real product", async ({ page }, testInfo) => {
     await pause(1500);
     await page.screenshot({
       path: `${OUT}/${name}.png`,
-      ...(tall && { fullPage: true, clip: { x: 0, y: 0, width: 1440, height: 1900 } }),
+      ...(height && { fullPage: true, clip: { x: 0, y: 0, width: 1440, height } }),
     });
   };
 
@@ -41,7 +52,6 @@ test("a walk through the real product", async ({ page }, testInfo) => {
   await still("landing");
 
   await page.goto("/sign-up");
-  await still("sign-up");
   await page.getByLabel("Name").fill("Demo");
   await page.getByLabel("Email address").fill(EMAIL);
   await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
@@ -61,35 +71,28 @@ test("a walk through the real product", async ({ page }, testInfo) => {
   await still("admin");
 
   await page.goto("/schedule");
-  await still("schedule", true);
+  await still("schedule", SCHEDULE_HEIGHT);
   await page.mouse.wheel(0, 900);
   await pause(1500);
   await page.mouse.wheel(0, 900);
   await pause(1500);
 
-  const follow = page.getByRole("listitem").getByRole("button", { name: /^Follow / });
-  const count = await follow.count();
-  const picks = Array.from({ length: FOLLOW_COUNT }, (_, i) =>
-    Math.floor((count * (i + 0.5)) / FOLLOW_COUNT),
-  );
-  for (const index of [...new Set(picks)].reverse()) {
-    await follow.nth(index).click();
-    await pause(700);
+  for (const title of JAPANESE_SHOWS) {
+    const follow = page.getByRole("listitem").getByRole("button", { name: `Follow ${title}` });
+    if (await follow.count()) {
+      await follow.first().click();
+      await pause(700);
+    }
   }
 
   await page.goto("/dashboard");
-  await still("dashboard", true);
+  await still("dashboard", 1900);
   await page.mouse.wheel(0, 900);
   await pause(2000);
 
   await page.goto("/settings");
-  await still("settings");
   await page.getByRole("button", { name: "Index" }).click();
   await pause(1200);
   await page.goto("/dashboard");
-  await still("dashboard-index", true);
-
-  const video = page.video();
-  await page.close();
-  if (video) await rename(await video.path(), testInfo.outputPath("clip.webm"));
+  await still("dashboard-index", 1900);
 });
