@@ -107,6 +107,17 @@ test.describe("with motion", () => {
     });
   }
 
+  test("the sign-in panel lifts its curtain off the poster and its line settles", async ({
+    page,
+  }) => {
+    await page.goto("/sign-in");
+    const line = page.getByText("Never miss tonight's episode.");
+
+    await expectUnveiled(line);
+    await expectArrived(page.getByText("The season's airing schedule in Thai time"));
+    await expect.poll(() => curtainCovers(page)).toBe(false);
+  });
+
   test("the dashboard title and empty state arrive at full opacity", async ({ page }) => {
     const email = await createVerifiedAccount(page, "e2e-motion");
 
