@@ -25,8 +25,8 @@ async function expectArrived(locator: Locator) {
 
 const landingText = (page: Page) => [
   page.getByRole("heading", { level: 1 }),
-  page.getByText("Fig. 1 — the promise"),
-  page.getByText("Next.js, MongoDB and authentication"),
+  page.getByText("Fig. 1 — the reminder"),
+  page.getByText("The season's airing schedule in Thai time"),
 ];
 
 async function wrongPassword(page: Page) {
@@ -138,7 +138,7 @@ test.describe("with motion in a tall window", () => {
   test("text in the last tenth of a page that cannot scroll still arrives", async ({ page }) => {
     await page.goto("/");
 
-    await expectArrived(page.getByText("Next.js, MongoDB and authentication"));
+    await expectArrived(page.getByText("The season's airing schedule in Thai time"));
   });
 });
 

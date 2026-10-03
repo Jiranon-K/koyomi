@@ -22,8 +22,6 @@ const server = spawn(process.execPath, [next, "start", "-p", port], {
     BETTER_AUTH_SECRET: "e2e-only-value-e2e-only-value-e2e-only-value",
     BETTER_AUTH_URL: `http://localhost:${port}`,
     ADMIN_EMAILS: "",
-    GOOGLE_CLIENT_ID: "",
-    GOOGLE_CLIENT_SECRET: "",
   },
   stdio: ["ignore", "pipe", "pipe"],
 });

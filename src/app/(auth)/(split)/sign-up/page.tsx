@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 
 import { TextLink } from "@/components/text-link";
-import { isGoogleEnabled } from "@/features/auth/auth";
-import { GoogleButton } from "@/features/auth/google-button";
 import { SIGN_IN_PATH } from "@/features/auth/paths";
 import { redirectSignedIn } from "@/features/auth/session";
 import { SignUpForm } from "@/features/auth/sign-up-form";
@@ -23,7 +21,6 @@ export default async function SignUpPage() {
           We will email you a link to verify your address.
         </p>
         <SignUpForm />
-        {isGoogleEnabled() ? <GoogleButton /> : null}
       </div>
     </>
   );

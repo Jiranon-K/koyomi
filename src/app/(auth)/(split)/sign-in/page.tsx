@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
 
 import { TextLink } from "@/components/text-link";
-import { isGoogleEnabled } from "@/features/auth/auth";
-import { GoogleButton } from "@/features/auth/google-button";
 import { SIGN_UP_PATH } from "@/features/auth/paths";
 import { redirectSignedIn } from "@/features/auth/session";
 import { SignInForm } from "@/features/auth/sign-in-form";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-const NEEDS_VERIFICATION_ERRORS = ["email_not_verified", "account_not_linked"];
-
 export default async function SignInPage({ searchParams }: PageProps<"/sign-in">) {
   await redirectSignedIn();
-  const { reset, error } = await searchParams;
-  const googleEnabled = isGoogleEnabled();
+  const { reset } = await searchParams;
 
   return (
     <>
@@ -28,15 +23,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
             Your password was updated. Sign in with the new one.
           </p>
         ) : null}
-        {googleEnabled && error ? (
-          <p role="alert" className="text-sm text-destructive">
-            {NEEDS_VERIFICATION_ERRORS.includes(String(error))
-              ? "Google sign-in needs a verified email. Check your inbox for a verification link, then try again."
-              : "Google sign-in did not complete. Please try again."}
-          </p>
-        ) : null}
         <SignInForm />
-        {googleEnabled ? <GoogleButton /> : null}
       </div>
     </>
   );

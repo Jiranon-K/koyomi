@@ -1,8 +1,8 @@
 @AGENTS.md
 
-# nextjs-fullstack
+# Koyomi
 
-Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoDB via Mongoose.
+An anime airing tracker with LINE reminders in Thai time (spec: `docs/specs/koyomi.md`, local-only). Next.js (App Router, TypeScript) with shadcn/ui, Tailwind v4 and MongoDB via Mongoose. The schedule, follows and LINE features are not built yet; the GitHub repository and the working directory may still be named `nextjs-fullstack`.
 
 ## Commands (bun)
 
@@ -38,12 +38,12 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 
 - `src/app` — routes. `/` is the landing page.
 - `src/features/<name>` — one folder per feature (`auth` so far): `model.ts` (Mongoose), `schema.ts` (Zod), `service.ts` (DB logic), `actions.ts` (Server Actions), UI.
-- `src/features/auth` — Better Auth. `auth.ts` builds the instance lazily (`getAuth()`); `session.ts` has the guards. Auth collections belong to the library, not Mongoose. Forms and buttons call the intent functions in `client.ts` (`signIn`, `signUp`, ...), which never reject and return a tagged outcome; Better Auth error codes, statuses and callback paths are named only there. Route paths live in `paths.ts`. Google sign-in is registered only when both `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set.
+- `src/features/auth` — Better Auth. `auth.ts` builds the instance lazily (`getAuth()`); `session.ts` has the guards. Auth collections belong to the library, not Mongoose. Forms and buttons call the intent functions in `client.ts` (`signIn`, `signUp`, ...), which never reject and return a tagged outcome; Better Auth error codes, statuses and callback paths are named only there. Route paths live in `paths.ts`. Sign-in is email and password only; no social provider is registered.
 - `src/app/(auth)` — two route groups with their own layouts: `(split)` (sign-in, sign-up: brand panel beside the form) and `(card)` (verify-email, forgot-password, reset-password: centred card). `src/app/dashboard` is the protected area. `src/proxy.ts` only checks that a session cookie exists.
 - `src/lib/db/mongoose.ts` — cached connection (`connectDb`). Call it inside services, not at module top level.
 - `e2e/` — `server.mjs` builds, starts MongoDB in memory and runs `next start`, writing the server log to `.e2e/server.log`. `outbox.ts` reads emailed links from that log through `linkInEmailLog` in `src/features/auth/email.ts`, which also owns the format the stub prints (`emailLog`); change the two together. Keep a log transport for tests when a real provider lands. Sign-in is rate-limited to 5 per minute per IP, so keep sign-in attempts per run under that.
-- `src/lib/env.ts` — the only place that reads `process.env` (lint-enforced; tests are exempt). `dbEnv()` and `authEnv()` validate with Zod on each call and throw an error that names the variable, never its value. `googleEnv()` never throws: it returns the credentials only when both variables are set, and when exactly one is set it logs a warning naming the missing one, at most once per loaded copy of the module (so it can repeat across server bundles or dev reloads). Add a new variable to its schema here and to `.env.example`.
-- `src/components` — shared components that are not shadcn: `masthead.tsx` (the top strip of every page), `brand.ts` (shared brand copy), `text-link.tsx`, `theme-toggle.tsx`, and `motion/` (see Motion below).
+- `src/lib/env.ts` — the only place that reads `process.env` (lint-enforced; tests are exempt). `dbEnv()` and `authEnv()` validate with Zod on each call and throw an error that names the variable, never its value. Add a new variable to its schema here and to `.env.example`.
+- `src/components` — shared components that are not shadcn: `masthead.tsx` (the top strip of every page), `brand.ts` (the product name and shared brand copy; the root layout builds page titles from it as `<page> · Koyomi`), `text-link.tsx`, `theme-toggle.tsx`, and `motion/` (see Motion below).
 - `src/components/ui` — shadcn components. Add more with `bunx --bun shadcn@latest add <name>`.
 
 ## Conventions

@@ -3,6 +3,7 @@ import { Google_Sans_Code, Google_Sans_Flex, Instrument_Serif } from "next/font/
 
 import { ThemeProvider } from "next-themes";
 
+import { BRAND } from "@/components/brand";
 import { MotionProvider } from "@/components/motion/motion-provider";
 import "./globals.css";
 
@@ -24,8 +25,8 @@ const display = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js Full-Stack Template",
-  description: "Next.js, shadcn/ui and MongoDB starter template.",
+  title: { default: BRAND.name, template: `%s · ${BRAND.name}` },
+  description: BRAND.support,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

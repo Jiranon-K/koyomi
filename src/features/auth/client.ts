@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/client";
 
-import { DASHBOARD_PATH, RESET_PASSWORD_PATH, SIGN_IN_PATH, VERIFY_EMAIL_PATH } from "./paths";
+import { RESET_PASSWORD_PATH, VERIFY_EMAIL_PATH } from "./paths";
 import { rememberPendingEmail } from "./pending-email";
 
 type Failure = { status: number; code?: string | undefined };
@@ -9,11 +9,6 @@ type Reply = { error: Failure | null };
 export type AuthTransport = {
   signIn: {
     email: (input: { email: string; password: string; rememberMe: boolean }) => Promise<Reply>;
-    social: (input: {
-      provider: "google";
-      callbackURL: string;
-      errorCallbackURL: string;
-    }) => Promise<Reply>;
   };
   signUp: {
     email: (input: {
@@ -86,17 +81,6 @@ export function createAuthActions(client: AuthTransport) {
       return OK;
     },
 
-    async signInWithGoogle(): Promise<Succeeded | Failed> {
-      const failure = await attempt(() =>
-        client.signIn.social({
-          provider: "google",
-          callbackURL: DASHBOARD_PATH,
-          errorCallbackURL: SIGN_IN_PATH,
-        }),
-      );
-      return failure ? failed(failure) : OK;
-    },
-
     async signOut(): Promise<Succeeded | Failed> {
       const failure = await attempt(() => client.signOut());
       return failure ? { kind: "error", message: "Could not sign out. Please try again." } : OK;
@@ -129,12 +113,5 @@ export function createAuthActions(client: AuthTransport) {
   };
 }
 
-export const {
-  signIn,
-  signUp,
-  signInWithGoogle,
-  signOut,
-  requestPasswordReset,
-  resendVerification,
-  resetPassword,
-} = createAuthActions(createAuthClient());
+export const { signIn, signUp, signOut, requestPasswordReset, resendVerification, resetPassword } =
+  createAuthActions(createAuthClient());

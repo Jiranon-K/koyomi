@@ -20,7 +20,7 @@ function actionsReplying(reply: Reply | Error) {
       return reply;
     });
   const client = {
-    signIn: { email: method(), social: method() },
+    signIn: { email: method() },
     signUp: { email: method() },
     signOut: method(),
     requestPasswordReset: method(),
@@ -45,7 +45,6 @@ type Run = (actions: Actions) => Promise<{ kind: string; message?: string }>;
 const intents: [name: string, run: Run, rateLimited: string, fallback: string][] = [
   ["signIn", (actions) => actions.signIn(signInInput), TOO_MANY, GENERIC],
   ["signUp", (actions) => actions.signUp(signUpInput), TOO_MANY, NOT_CREATED],
-  ["signInWithGoogle", (actions) => actions.signInWithGoogle(), TOO_MANY, GENERIC],
   ["signOut", (actions) => actions.signOut(), NOT_SIGNED_OUT, NOT_SIGNED_OUT],
   [
     "requestPasswordReset",
@@ -155,20 +154,6 @@ describe("signUp", () => {
       message: "We could not create the account. Check the fields and try again.",
     });
     expect(readPendingEmail()).toBe("");
-  });
-});
-
-describe("signInWithGoogle", () => {
-  it("returns to the dashboard on success and to sign-in on a provider error", async () => {
-    const { actions, client } = actionsReplying(succeeded);
-
-    await actions.signInWithGoogle();
-
-    expect(client.signIn.social).toHaveBeenCalledWith({
-      provider: "google",
-      callbackURL: "/dashboard",
-      errorCallbackURL: "/sign-in",
-    });
   });
 });
 

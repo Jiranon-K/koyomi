@@ -1,4 +1,6 @@
 export const BRAND = {
-  line: "A calm place to start your next full-stack project.",
-  support: "Next.js, MongoDB and authentication, already wired together.",
+  name: "Koyomi",
+  line: "Never miss tonight's episode.",
+  support:
+    "The season's airing schedule in Thai time, and a LINE reminder on the days your shows air.",
 } as const;
