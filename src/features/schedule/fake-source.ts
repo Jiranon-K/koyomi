@@ -13,7 +13,10 @@ type Slot = {
   day: number;
   at: `${number}:${number}`;
   delayedText?: string;
+  noCover?: true;
 };
+
+const COVER_FOLDER = "/images/fake-covers";
 
 const SLOTS: Slot[] = [
   {
@@ -61,6 +64,7 @@ const SLOTS: Slot[] = [
     episodeNumber: 1,
     day: 6,
     at: "05:00",
+    noCover: true,
   },
   {
     route: "harbor-of-paper-cranes",
@@ -104,6 +108,7 @@ export function createFakeSource(scenario: FakeScenario = "base"): ScheduleSourc
             title: slot.title,
             status: newlyDelayed ? "delayed" : slot.status,
             totalEpisodes: slot.totalEpisodes,
+            coverUrl: slot.noCover ? null : `${COVER_FOLDER}/${slot.route}.png`,
           },
           episodeNumber: slot.episodeNumber,
           firstEpisodeNumber: null,

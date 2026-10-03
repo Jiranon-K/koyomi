@@ -10,6 +10,8 @@ import {
 } from "./source";
 
 const BASE_URL = "https://animeschedule.net/api/v3";
+const COVER_BASE_URL = "https://img.animeschedule.net/production/assets/public/img/";
+const COVER_PATH = /^[a-z0-9_-]+(\/[a-z0-9_-][a-z0-9_.-]*)*\.(avif|jpe?g|png|webp)$/i;
 const REQUEST_TIMEOUT_MS = 15_000;
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -39,7 +41,12 @@ const timetableEntry = z.object({
   delayedFrom: datetime,
   delayedUntil: datetime,
   airingStatus: z.string().optional().default(""),
+  imageVersionRoute: z.string().catch(""),
 });
+
+function coverUrlOf(path: string): string | null {
+  return COVER_PATH.test(path) ? `${COVER_BASE_URL}${path}` : null;
+}
 
 function showStatus(status: string): ShowStatus {
   const known = SHOW_STATUSES.find((candidate) => candidate === status.toLowerCase());
@@ -60,6 +67,7 @@ function toEpisode(entry: z.output<typeof timetableEntry>): SourceEpisode | null
       title: entry.title,
       status: showStatus(entry.status),
       totalEpisodes: entry.episodes,
+      coverUrl: coverUrlOf(entry.imageVersionRoute),
     },
     episodeNumber: entry.episodeNumber,
     firstEpisodeNumber:

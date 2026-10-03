@@ -11,6 +11,7 @@ export type ShowDoc = {
   title: string;
   status: ShowStatus;
   totalEpisodes: number;
+  coverUrl: string | null;
   lastSeenAt: Date;
 };
 
@@ -43,6 +44,7 @@ const showSchema = new Schema<ShowDoc>({
   title: { type: String, required: true },
   status: { type: String, required: true, enum: SHOW_STATUSES },
   totalEpisodes: { type: Number, required: true },
+  coverUrl: { type: String, default: null },
   lastSeenAt: { type: Date, required: true },
 });
 
