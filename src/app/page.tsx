@@ -24,7 +24,7 @@ export default function Home() {
           </h1>
         </section>
         <aside className="flex flex-col justify-between gap-16 bg-primary p-8 text-primary-foreground lg:col-span-4 lg:border-l lg:border-foreground">
-          <p className="font-mono text-xs tracking-widest uppercase">Fig. 1 — the promise</p>
+          <p className="label-mono">Fig. 1 — the promise</p>
           <div>
             <HandwritingText
               words={["fast.", "full-stack.", "your way."]}

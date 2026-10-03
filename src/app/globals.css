@@ -129,3 +129,12 @@
     @apply font-sans;
   }
 }
+
+/* The mono label voice: masthead, buttons, captions and row headings. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--tw-leading, var(--text-xs--line-height));
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}

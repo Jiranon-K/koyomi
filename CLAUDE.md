@@ -9,7 +9,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `bun dev` — dev server. Needs MongoDB at `MONGODB_URI` (copy `.env.example` to `.env.local`).
 - `./verify.sh` (`bun run verify`) — the baseline gate: format check, lint, typecheck, tests, build. Run it before claiming work is done.
 - `bun run test` — Vitest. DB tests use `mongodb-memory-server`, so no local mongod is needed.
-- `bun run e2e` — Playwright (Chromium) against a production build on port 3100 with an in-memory MongoDB; no local mongod or `.env.local` needed. First time on a machine: `bunx playwright install --only-shell chromium`. Tests live in `e2e/`, including an axe accessibility scan in both themes of `/`, `/sign-in`, `/sign-up`, `/forgot-password` and `/verify-email`, and of `/dashboard` inside the journey test. It is the contrast guard: add a new page to that list.
+- `bun run e2e` — Playwright (Chromium) against a production build on port 3100 with an in-memory MongoDB; no local mongod or `.env.local` needed. First time on a machine: `bunx playwright install --only-shell chromium`. Tests live in `e2e/`, including an axe accessibility scan in both themes of `/`, `/sign-in`, `/sign-up`, `/forgot-password`, `/verify-email` and `/reset-password` (with and without a token), and of `/dashboard` inside the journey test. It is the contrast guard: add a new page to that list.
 - `bun run audit` — dependency vulnerability scan (needs network, so it is not part of `verify.sh`; CI runs it). Run it before adding or upgrading a dependency. It ignores one advisory, `GHSA-vfj7-8cjw-p6xm` (`braces@3.0.3`): no patched release exists and it is reachable only through build tooling (`shadcn`, `eslint-config-next`). Remove the `--ignore` when a fix ships.
 
 ## Gates (mechanical, do not bypass)
@@ -60,7 +60,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 The brand as a printed magazine: warm paper, ink text, one terracotta voice. Decision and token table: `docs/specs/linen-editorial-design-system.md` (local-only).
 
 - **Tokens** (oklch, light and `.dark`) live in `src/app/globals.css`; `--radius` is `0px`. Primary is terracotta in light, clay in dark; the label on it is `primary-foreground`. Do not put opacity on text (`text-primary-foreground/70` failed contrast); pick a token.
-- **Type**: `font-display` (Instrument Serif, regular or italic, never bold) for page titles and card titles, with at most one italic `text-primary` word in a hero. Body text is Google Sans Flex. Labels and buttons are Google Sans Code: `font-mono text-xs tracking-widest uppercase`.
+- **Type**: `font-display` (Instrument Serif, regular or italic, never bold) for page titles and card titles, with at most one italic `text-primary` word in a hero. Body text is Google Sans Flex. Labels and buttons are Google Sans Code through the `label-mono` utility (defined in `globals.css`).
 - **Shape**: square corners; structure is drawn with rules (`border-foreground` for major edges, `border-border` between rows), not rings or shadows. Fields are underlined, cards have a 1px `foreground` outline. Button sizes: `xs` 24, `sm` 32, default 40, `lg` 44 px; use `size="lg"` for a form's main action. There is no `large` input variant.
 - **Layout**: every page opens with `Masthead` (pages pass their actions as children). `HandwritingText` is the single decorative accent, at most one per screen, on the terracotta panel.
 - **Prototypes** of the three directions that were compared are on the branch `prototype/design-system`. Never merge it.

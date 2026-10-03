@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Dashboard" };
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="grid grid-cols-[6rem_1fr] gap-4 border-b border-border py-4">
-      <dt className="font-mono text-xs tracking-widest text-muted-foreground uppercase">{label}</dt>
+      <dt className="label-mono text-muted-foreground">{label}</dt>
       <dd>{children}</dd>
     </div>
   );
