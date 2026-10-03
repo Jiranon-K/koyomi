@@ -15,6 +15,7 @@ export function PresenceMessage({ children }: { children?: React.ReactNode }) {
       {children ? (
         <m.div
           key="message"
+          data-arrive
           style={{ overflow: "hidden" }}
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}

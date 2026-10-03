@@ -21,7 +21,7 @@ export function Stagger({ children, className }: StaggerProps) {
 /** Only meaningful inside a `Stagger`: on its own it would stay hidden. */
 export function StaggerItem({ children, className }: StaggerProps) {
   return (
-    <m.div className={className} variants={item}>
+    <m.div data-arrive className={className} variants={item}>
       {children}
     </m.div>
   );

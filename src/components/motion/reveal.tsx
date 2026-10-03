@@ -16,6 +16,7 @@ type RevealProps = {
 export function Reveal({ children, className, slideOnly = false, inView = false }: RevealProps) {
   return (
     <m.div
+      data-arrive
       className={className}
       initial={slideOnly ? { ...HIDDEN, opacity: 1 } : HIDDEN}
       {...(inView ? { whileInView: SHOWN, viewport: IN_VIEW } : { animate: SHOWN })}
