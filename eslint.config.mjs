@@ -40,6 +40,20 @@ const eslintConfig = defineConfig([
     },
   },
   {
+    files: ["src/**"],
+    ignores: ["src/lib/env.ts", "src/**/*.test.ts"],
+    rules: {
+      "no-restricted-properties": [
+        "error",
+        {
+          object: "process",
+          property: "env",
+          message: "Read environment variables through src/lib/env.ts.",
+        },
+      ],
+    },
+  },
+  {
     files: ["src/components/ui/handwriting-text.tsx"],
     rules: {
       "react-hooks/set-state-in-effect": "off",

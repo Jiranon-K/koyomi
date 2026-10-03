@@ -5,6 +5,7 @@ import type { GoogleOptions } from "better-auth/social-providers";
 import type { Db } from "mongodb";
 
 import { connectDb } from "@/lib/db/mongoose";
+import { authEnv, googleEnv } from "@/lib/env";
 
 import { sendEmail, type EmailMessage, type SendEmail } from "./email";
 import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "./schema";
@@ -20,16 +21,8 @@ export type AuthOptions = {
 
 export type Role = "user" | "admin";
 
-type GoogleCredentials = NonNullable<AuthOptions["google"]>;
-
-function googleCredentialsFromEnv(): GoogleCredentials | undefined {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  return clientId && clientSecret ? { clientId, clientSecret } : undefined;
-}
-
 export function isGoogleEnabled(): boolean {
-  return googleCredentialsFromEnv() !== undefined;
+  return googleEnv() !== undefined;
 }
 
 export const RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS = 60 * 60;
@@ -125,14 +118,6 @@ export function createAuth({
   });
 }
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} is not set. See .env.example.`);
-  }
-  return value;
-}
-
 type Auth = ReturnType<typeof createAuth>;
 
 let cached: Promise<Auth> | null = null;
@@ -140,16 +125,15 @@ let cached: Promise<Auth> | null = null;
 export function getAuth(): Promise<Auth> {
   if (cached) return cached;
   const building = (async () => {
-    const secret = requireEnv("BETTER_AUTH_SECRET");
-    const baseURL = requireEnv("BETTER_AUTH_URL");
+    const env = authEnv();
     const mongoose = await connectDb();
     return createAuth({
       db: mongoose.connection.getClient().db(),
-      secret,
-      baseURL,
+      secret: env.BETTER_AUTH_SECRET,
+      baseURL: env.BETTER_AUTH_URL,
       sendEmail,
-      adminEmails: process.env.ADMIN_EMAILS,
-      google: googleCredentialsFromEnv(),
+      adminEmails: env.ADMIN_EMAILS,
+      google: googleEnv(),
     });
   })();
   cached = building;
