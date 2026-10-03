@@ -107,6 +107,22 @@ test.describe("with motion", () => {
     });
   }
 
+  for (const [path, poster] of [
+    ["/sign-in", "sign-in-poster"],
+    ["/sign-up", "sign-up-poster"],
+  ] as const) {
+    test(`the ${path} panel lifts its curtain off its own poster and its line settles`, async ({
+      page,
+    }) => {
+      await page.goto(path);
+
+      await expectUnveiled(page.getByText("Never miss tonight's episode."));
+      await expectArrived(page.getByText("The season's airing schedule in Thai time"));
+      await expect.poll(() => curtainCovers(page)).toBe(false);
+      await expect(page.locator("aside img")).toHaveAttribute("src", new RegExp(poster));
+    });
+  }
+
   test("the dashboard title and empty state arrive at full opacity", async ({ page }) => {
     const email = await createVerifiedAccount(page, "e2e-motion");
 
