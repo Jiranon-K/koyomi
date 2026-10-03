@@ -1,15 +1,137 @@
+<div align="center">
+
 # Koyomi
 
-An anime airing tracker with LINE reminders. Koyomi shows the airing schedule of the current anime
-season in Thai time, lets a signed-in viewer follow shows, and sends one LINE message on each day a
-followed show airs.
+**Every airing anime, on Thai time, with a LINE message on the days your shows air.**
 
-Built with Next.js (App Router, TypeScript), shadcn/ui, Tailwind v4, MongoDB via Mongoose and
-authentication with Better Auth.
+An airing tracker for the current anime season. Follow the shows you watch, see the week laid out
+in Thai time, and get one LINE message each morning that lists what airs tonight.
 
-Status: the schedule, follows, LINE Login and the daily LINE digest are built; the digest has not
-yet been run against a real QStash account and LINE channel. The bot's replies and the admin page
-are not built yet.
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white)](https://mongoosejs.com/)
+[![LINE](https://img.shields.io/badge/LINE-Messaging_API-06C755?logo=line&logoColor=white)](https://developers.line.biz/)
+[![Playwright](https://img.shields.io/badge/E2E-Playwright-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/)
+
+<img src="docs/images/koyomi-demo.gif" alt="A walk through Koyomi: landing page, the week's schedule, My week, settings and the Index view" width="860">
+
+<sub>Recorded from the running app. The shows, covers and times are invented demo data from the app's fake schedule source.</sub>
+
+</div>
+
+## Screenshots
+
+Every page ships in a light and a dark theme.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/landing-light.png" alt="Landing page, light"></td>
+    <td width="50%"><img src="docs/images/landing-dark.png" alt="Landing page, dark"></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><sub><b>Landing</b>: a blurred poster behind the pitch, with LINE's green only where it stays readable.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/schedule-light.png" alt="Public schedule, light"></td>
+    <td width="50%"><img src="docs/images/schedule-dark.png" alt="Public schedule, dark"></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><sub><b>Schedule</b> (public): the next episode up top, seven day links, then a poster wall per day. A day runs 05:00 to 05:00 so a late-night episode stays with the evening it belongs to.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/dashboard-light.png" alt="My week, Feature view, light"></td>
+    <td width="50%"><img src="docs/images/dashboard-dark.png" alt="My week, Feature view, dark"></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><sub><b>My week, Feature view</b>: the next episode of the shows you follow, the rest of today, then the week in seven columns.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/dashboard-index-light.png" alt="My week, Index view, light"></td>
+    <td width="50%"><img src="docs/images/dashboard-index-dark.png" alt="My week, Index view, dark"></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><sub><b>My week, Index view</b>: a numbered list, soonest first, with a pinned cover that follows the pointer and keyboard focus. Chosen in settings.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/settings-light.png" alt="Settings, light"></td>
+    <td width="50%"><img src="docs/images/admin-light.png" alt="Admin status page, light"></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><sub><b>Settings</b> (LINE, reminders, dashboard view) and the administrators-only <b>Admin</b> status page (last sync, last digest run, push quota).</sub></td>
+  </tr>
+</table>
+
+## What Koyomi does
+
+- **Schedule in Thai time**: the season's airing schedule from AnimeSchedule.net, converted from
+  Japanese broadcast times, public and server-rendered.
+- **Follow shows**: one click from the schedule; a signed-out visitor is sent to sign in and back.
+- **My week**: two views of what your shows air, chosen per user; finished and delayed shows are
+  marked, and every one can be unfollowed.
+- **Daily LINE digest**: one message at 09:00 Bangkok time on each day a followed show airs, at
+  most once per user and day however often a job is retried.
+- **LINE bot**: send `today` or `week` to the bot and it answers with your followed episodes.
+- **LINE Login or email**: email and password with verified email, password reset and rate limits,
+  plus LINE sign-in when configured.
+- **Admin status page**: last schedule sync, last digest run with its delivery counts, pushes this
+  month, reminder places taken.
+
+## Engineering highlights
+
+- **Seams with fakes, so the whole product runs offline.** The schedule source, the job queue and
+  the LINE messenger are interfaces with a real implementation and a fake one chosen by
+  `USE_FAKES`. The end-to-end tests, and the pictures above, run the real app against the fakes.
+- **Idempotent daily digest.** One unique `(day, user)` row is claimed with a lease before pushing,
+  and the LINE retry key is derived from the same pair, so a job that dies mid-send is repeated
+  without a second message.
+- **A quota guard no push can bypass.** LINE's free tier allows 300 pushes a month; a single
+  conditional update takes a place under 290, so the 291st push is refused without a counter to
+  race on. Replies are free and skip it.
+- **Signed job endpoints.** Every `/api/jobs/*` route verifies the QStash signature over the raw
+  body, including the subject URL, before it parses anything, and answers 503 while the signing
+  keys are unset.
+- **LINE Login hardened, each rule pinned by a test.** LINE never reports an email as verified, so
+  there is no session until the emailed link is used, and a LINE sign-in never attaches itself to
+  an existing account by email.
+- **Time handled in one place.** A schedule day is 05:00 to 05:00 in `Asia/Bangkok`, and only
+  `day-window.ts` knows it.
+- **Quality gates in git, not in memory.** Git hooks block secrets, check formatting, lint (zero
+  warnings, typed rules) and typecheck on commit, and run the full suite on push. Layering is
+  lint-enforced: shared code never imports features.
+- **Tested in a real browser.** Vitest with an in-memory MongoDB, plus Playwright journeys that
+  include an axe accessibility scan of every page in both themes.
+- **A design system, not defaults.** "Linen Editorial": warm paper, ink text and one terracotta
+  accent, with quiet ease-out motion that switches off under `prefers-reduced-motion`.
+
+```mermaid
+flowchart LR
+  AS[AnimeSchedule.net] -->|sync every 6 h| Sync[sync-schedule job]
+  QS[Upstash QStash] -->|signed calls| Sync
+  QS -->|09:00 Bangkok| Fan[digest-fanout job]
+  Fan -->|one job per recipient| Send[digest-send job]
+  Send --> Quota{quota guard}
+  Quota -->|under 290| LINE[LINE Messaging API]
+  Sync --> DB[(MongoDB)]
+  Fan --> DB
+  Send --> DB
+  LINE -->|webhook: today / week| Bot[bot reply]
+  Bot --> DB
+  Web[Next.js app] --> DB
+```
+
+## Stack
+
+Next.js 16 (App Router) and TypeScript, shadcn/ui on Tailwind CSS 4, the `motion` package, MongoDB
+with Mongoose, Better Auth, Upstash QStash for scheduled jobs, the LINE Login and Messaging APIs,
+Zod at every boundary, Vitest and Playwright. Bun is the package manager.
+
+## Status
+
+Built: the schedule sync and public schedule, follows, My week, LINE Login and settings, the
+scheduled jobs with the daily digest, the bot's `today` and `week` replies and the admin page.
+Delivery through a real QStash account and a real LINE channel is not yet verified; no accounts
+existed when it was built. The owner steps are in `.env.example`.
 
 ## Getting started
 
@@ -23,7 +145,7 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Before calling work done, run the baseline gate (lint, typecheck, tests, production build):
+Before calling work done, run the baseline gate (format check, lint, typecheck, tests, production build):
 
 ```bash
 ./verify.sh
@@ -82,3 +204,15 @@ Run it with `QSTASH_TOKEN` and the deployed `BETTER_AUTH_URL` in the environment
 - Auth endpoints are rate limited per client IP. The IP is read from `x-forwarded-for` as Vercel
   sends it; on other hosting configure `advanced.ipAddress` in `src/features/auth/auth.ts` first.
 - An email listed in `ADMIN_EMAILS` becomes an admin when its account is first created.
+
+## Regenerating the pictures
+
+The screenshots and the clip above come from `scripts/media/capture.spec.ts`, which drives the real
+app against the fake sources:
+
+```bash
+bun run media
+```
+
+It writes the stills to `docs/images/` and the raw clip to `test-results/`; the GIF is cut from that
+clip by hand.
