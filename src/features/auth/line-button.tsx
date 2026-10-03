@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { signInWithLine } from "./client";
 import { FormError } from "./form-field";
 
-export function LineButton() {
+export function LineButton({ returnTo }: { returnTo?: string }) {
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -16,7 +16,7 @@ export function LineButton() {
     setFormError(null);
     setPending(true);
 
-    const outcome = await signInWithLine();
+    const outcome = await signInWithLine(returnTo);
     if (outcome.kind === "error") {
       setPending(false);
       setFormError(outcome.message);

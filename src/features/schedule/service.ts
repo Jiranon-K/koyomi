@@ -76,8 +76,10 @@ async function store(episodes: readonly SourceEpisode[], now: Date): Promise<num
               airAt: episode.airAt,
               delayed: episode.delayed,
               delayedText: episode.delayedText,
-              syncedAt: now,
             },
+            // Never lowered: an older run that overlaps a newer one must not make the newer run's
+            // clean-up below mistake these rows for ones it did not write.
+            $max: { syncedAt: now },
           },
           upsert: true,
         },

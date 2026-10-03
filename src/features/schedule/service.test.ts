@@ -106,6 +106,18 @@ describe("syncSchedule", () => {
     expect(numbers).toEqual([4, 5, 7]);
   });
 
+  it("never moves an episode's sync mark backwards when an older run finishes last", async () => {
+    // Two runs can overlap (Sync now beside a scheduled run). If the older one could lower the
+    // mark, the newer run's clean-up would delete every row as "not written by this run".
+    const later = new Date(NOW.getTime() + 60_000);
+    await syncSchedule(sourceOf([episode()]), later);
+    await syncSchedule(sourceOf([episode()]), NOW);
+
+    const stored = await Episode.find().lean();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]?.syncedAt).toEqual(later);
+  });
+
   it("records a failed run and keeps the data when the source is rate-limited", async () => {
     await syncSchedule(sourceOf([episode()]), NOW);
     const limited: ScheduleSource = {

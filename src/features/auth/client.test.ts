@@ -171,6 +171,16 @@ describe("signInWithLine", () => {
       additionalParams: { bot_prompt: "normal" },
     });
   });
+
+  it("returns to the page the visitor came from when one is given", async () => {
+    const { actions, client } = actionsReplying(succeeded);
+
+    await actions.signInWithLine("/schedule");
+
+    expect(client.signIn.social).toHaveBeenCalledWith(
+      expect.objectContaining({ callbackURL: "/schedule" }),
+    );
+  });
 });
 
 describe("requestPasswordReset", () => {

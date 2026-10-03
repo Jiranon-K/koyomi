@@ -91,11 +91,11 @@ export function createAuthActions(client: AuthTransport) {
      * Sends the browser to LINE. On the way, LINE offers to add the bot as a friend
      * (`bot_prompt`), which is what lets reminders reach the user.
      */
-    async signInWithLine(): Promise<Succeeded | Failed> {
+    async signInWithLine(returnTo: string = DASHBOARD_PATH): Promise<Succeeded | Failed> {
       const failure = await attempt(() =>
         client.signIn.social({
           provider: "line",
-          callbackURL: DASHBOARD_PATH,
+          callbackURL: returnTo,
           errorCallbackURL: SIGN_IN_PATH,
           additionalParams: { bot_prompt: "normal" },
         }),

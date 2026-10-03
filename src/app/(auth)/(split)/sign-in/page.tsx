@@ -35,7 +35,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
           </p>
         ) : null}
         <SignInForm returnTo={returnTo} />
-        {lineEnabled ? <LineButton /> : null}
+        {lineEnabled ? <LineButton returnTo={returnTo} /> : null}
       </div>
     </>
   );
