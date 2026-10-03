@@ -47,3 +47,29 @@ export function dbEnv(source: Source = process.env) {
 export function authEnv(source: Source = process.env) {
   return parse(authSchema, source);
 }
+
+const fakesSchema = z.object({
+  USE_FAKES: z.preprocess(
+    blankAsUnset,
+    z.enum(["true", "false"], { error: "USE_FAKES must be true or false." }).default("false"),
+  ),
+});
+
+const scheduleSchema = z.object({
+  ANIMESCHEDULE_TOKEN: z.preprocess(blankAsUnset, text("ANIMESCHEDULE_TOKEN")),
+});
+
+/** True when the external services (the schedule source so far) are replaced by their fakes. */
+export function fakesEnabled(source: Source = process.env): boolean {
+  return parse(fakesSchema, source).USE_FAKES === "true";
+}
+
+/** What the real schedule source needs. Not read when the fakes are on. */
+export function scheduleEnv(source: Source = process.env) {
+  return parse(scheduleSchema, source);
+}
+
+/** Whether the unauthenticated `/api/dev` routes answer: only with the fakes, or under `next dev`. */
+export function devRoutesEnabled(source: Source = process.env): boolean {
+  return fakesEnabled(source) || source.NODE_ENV === "development";
+}

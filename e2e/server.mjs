@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from "node:child_process";
-import { createWriteStream, mkdirSync } from "node:fs";
+import { createWriteStream, mkdirSync, writeFileSync } from "node:fs";
 
 import { MongoMemoryServer } from "mongodb-memory-server";
 
@@ -14,6 +14,8 @@ if (!process.env.E2E_SKIP_BUILD) {
 const mongo = await MongoMemoryServer.create();
 mkdirSync(".e2e", { recursive: true });
 const log = createWriteStream(".e2e/server.log");
+// Tests that must change data behind the server's back (to prove a cache) connect with this.
+writeFileSync(".e2e/mongo-uri", mongo.getUri("e2e"));
 
 const server = spawn(process.execPath, [next, "start", "-p", port], {
   env: {
@@ -22,6 +24,7 @@ const server = spawn(process.execPath, [next, "start", "-p", port], {
     BETTER_AUTH_SECRET: "e2e-only-value-e2e-only-value-e2e-only-value",
     BETTER_AUTH_URL: `http://localhost:${port}`,
     ADMIN_EMAILS: "",
+    USE_FAKES: "true",
   },
   stdio: ["ignore", "pipe", "pipe"],
 });

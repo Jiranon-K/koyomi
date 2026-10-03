@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { HandwritingText } from "@/components/ui/handwriting-text";
 import { SIGN_IN_PATH, SIGN_UP_PATH } from "@/features/auth/paths";
+import { SCHEDULE_PATH } from "@/features/schedule/paths";
 
 export default function Home() {
   return (
@@ -28,9 +29,12 @@ export default function Home() {
               Koyomi is an airing tracker for the current anime season. Follow the shows you watch
               and it converts each Japanese broadcast to Thai time for you.
             </p>
-            <div className="mt-10">
+            <div className="mt-10 flex flex-wrap gap-3">
               <Button asChild size="lg">
                 <Link href={SIGN_UP_PATH}>Create account</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href={SCHEDULE_PATH}>See this week</Link>
               </Button>
             </div>
           </Reveal>

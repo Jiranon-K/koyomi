@@ -2,6 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 import { createVerifiedAccount, PASSWORD as password } from "./account";
+import { syncSchedule } from "./schedule";
 
 // Buttons animate colour changes, so scanning right after a theme switch would read mid-transition colours.
 const NO_TRANSITIONS = "*, *::before, *::after { transition: none !important; }";
@@ -66,6 +67,7 @@ for (const theme of ["light", "dark"]) {
     "/verify-email",
     "/reset-password",
     "/reset-password?token=e2e",
+    "/schedule",
   ]) {
     test(`${path} has no serious accessibility violations in the ${theme} theme`, async ({
       page,
@@ -73,6 +75,8 @@ for (const theme of ["light", "dark"]) {
       await page.addInitScript((stored) => {
         window.localStorage.setItem("theme", stored);
       }, theme);
+      // Scan the schedule with episodes on it, a delayed one included.
+      if (path === "/schedule") await syncSchedule(page.request, "base");
       await page.goto(path);
       await expect(page.locator("html")).toContainClass(theme);
 

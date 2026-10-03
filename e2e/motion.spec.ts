@@ -1,6 +1,7 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { createVerifiedAccount } from "./account";
+import { syncSchedule } from "./schedule";
 
 // The rest of the suite runs with reduced motion so scans see final-state content; the first describe
 // lets arrival animations play, to prove they always end with the content visible, and the second
@@ -82,6 +83,15 @@ test.describe("with motion", () => {
     for (const text of dashboardText(page, email)) {
       await expectArrived(text);
     }
+  });
+
+  test("the schedule title, day blocks and rows arrive at full opacity", async ({ page }) => {
+    await syncSchedule(page.request, "base");
+    await page.goto("/schedule");
+
+    await expectArrived(page.getByRole("heading", { level: 1, name: "This week" }));
+    await expectArrived(page.getByText("Lantern Street Diaries"));
+    await expectArrived(page.getByRole("heading", { level: 2 }).last());
   });
 
   for (const theme of ["light", "dark"]) {

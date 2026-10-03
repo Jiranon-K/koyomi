@@ -1,6 +1,43 @@
 import { describe, expect, it } from "vitest";
 
-import { authEnv, dbEnv } from "./env";
+import { authEnv, dbEnv, devRoutesEnabled, fakesEnabled, scheduleEnv } from "./env";
+
+describe("fakesEnabled", () => {
+  it("is off unless USE_FAKES is true", () => {
+    expect(fakesEnabled({})).toBe(false);
+    expect(fakesEnabled({ USE_FAKES: "" })).toBe(false);
+    expect(fakesEnabled({ USE_FAKES: "false" })).toBe(false);
+    expect(fakesEnabled({ USE_FAKES: "true" })).toBe(true);
+  });
+
+  it("rejects any other value by name", () => {
+    expect(() => fakesEnabled({ USE_FAKES: "yes" })).toThrow(/USE_FAKES must be true or false/);
+  });
+});
+
+describe("scheduleEnv", () => {
+  it("returns the token for the real source", () => {
+    expect(scheduleEnv({ ANIMESCHEDULE_TOKEN: "token-value" })).toEqual({
+      ANIMESCHEDULE_TOKEN: "token-value",
+    });
+  });
+
+  it("names the token when it is missing or empty", () => {
+    expect(() => scheduleEnv({})).toThrow(/ANIMESCHEDULE_TOKEN is not set/);
+    expect(() => scheduleEnv({ ANIMESCHEDULE_TOKEN: "" })).toThrow(
+      /ANIMESCHEDULE_TOKEN is not set/,
+    );
+  });
+});
+
+describe("devRoutesEnabled", () => {
+  it("is on with the fakes or under next dev, and off in a real production build", () => {
+    expect(devRoutesEnabled({ USE_FAKES: "true", NODE_ENV: "production" })).toBe(true);
+    expect(devRoutesEnabled({ NODE_ENV: "development" })).toBe(true);
+    expect(devRoutesEnabled({ NODE_ENV: "production" })).toBe(false);
+    expect(devRoutesEnabled({})).toBe(false);
+  });
+});
 
 const SECRET = "test-secret-test-secret-test-secret-1234";
 const valid = {
