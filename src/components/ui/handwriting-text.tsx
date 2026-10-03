@@ -2,37 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/**
- * Text that writes itself, then inks in. No dependencies.
- *
- * Three things make this behave like handwriting rather than like a fade:
- *
- * 1. The font is parsed from its raw TTF and the glyphs converted to paths. A web font
- *    renders as filled shapes with no outline, so there is nothing to stroke and nothing
- *    to animate — the conversion is what makes a pen stroke possible at all.
- *
- * 2. Every contour is its own <path>. An SVG dash pattern RESTARTS at each subpath, so a
- *    single path holding the whole word cannot be drawn progressively: one long dash just
- *    makes each letter fully present or fully absent. Splitting them and staggering the
- *    delays is what produces a pen crossing the word left to right.
- *
- * 3. The weight comes from one filled copy of the entire word underneath, faded in as the
- *    stroke finishes. The fill must be a single path: a counter — the hole in an `e` or
- *    an `a` — is a separate contour, and it only reads as a hole when the fill rule sees
- *    it together with the outer contour. Fill the split paths individually and every
- *    letter becomes a blob.
- *
- * The glyph parsing is done by opentype.js, loaded from a CDN as a plain <script> at
- * first use rather than imported as a package. That keeps the component installable
- * anywhere with no dependency to add, and a <script> tag sidesteps the ESM/CJS interop
- * that a bundled import of this particular library tends to trip over. It is fetched once
- * per page and cached by the browser.
- *
- * If either the library or the font fails to load, the component renders the text as an
- * ordinary <span> — it degrades to plain text rather than to nothing.
- *
- * Colour comes from `currentColor`, so `className="text-emerald-600"` styles it.
- */
 
 const OPENTYPE_CDN = "https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js";
 
@@ -40,30 +9,25 @@ const DEFAULT_FONT_URL =
   "https://cdn.21st.dev/assets/mirror/13/1347863151acdc00fa281daaba1a3543dbce5870b55f9cf7479a15bb84007681.ttf";
 
 export interface HandwritingTextProps {
-  /** A single phrase to write. Ignored when `words` is given. */
   text?: string;
-  /** Cycle through these, rewriting on each change. */
   words?: string[];
-  /** Milliseconds each word is held before the next one starts. */
   interval?: number;
-  /** URL of a .ttf or .otf. Must be CORS-readable; self-host for production. */
   fontUrl?: string;
-  /** Seconds for the pen to cross the whole word. */
   duration?: number;
-  /** Seconds before the pen starts. */
   delay?: number;
-  /** Stroke weight, in units of a 100px em. */
   strokeWidth?: number;
-  /** Ink the letters in once drawn. Set false to leave them as outlines. */
   fill?: boolean;
-  /** CSS height of the rendered word; width follows the glyphs. */
   height?: string;
   className?: string;
+  accent?: string;
+  accentClassName?: string;
 }
 
 type Geometry = {
   full: string;
   contours: string[];
+  accented: boolean[];
+  fills: { d: string; accented: boolean }[];
   x: number;
   y: number;
   w: number;
@@ -72,7 +36,6 @@ type Geometry = {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// The library, loaded once per page.
 let libPromise: Promise<any> | null = null;
 
 function loadOpentype(): Promise<any> {
@@ -96,7 +59,6 @@ function loadOpentype(): Promise<any> {
   return libPromise;
 }
 
-// One fetch and one parse per font URL, shared by every instance on the page.
 const fontCache = new Map<string, Promise<any>>();
 
 function loadFont(url: string): Promise<any> {
@@ -114,7 +76,7 @@ function loadFont(url: string): Promise<any> {
   return pending;
 }
 
-const EM = 100; // arbitrary: the viewBox normalises whatever we pick
+const EM = 100;
 
 export function HandwritingText({
   text,
@@ -127,6 +89,8 @@ export function HandwritingText({
   fill = true,
   height = "1.15em",
   className,
+  accent,
+  accentClassName,
 }: HandwritingTextProps) {
   const cycle = Boolean(words && words.length > 0);
   const [index, setIndex] = useState(0);
@@ -148,7 +112,7 @@ export function HandwritingText({
     let cancelled = false;
     loadFont(fontUrl)
       .then((f) => { if (!cancelled) setFont(f); })
-      .catch(() => { /* falls back to plain text below */ });
+      .catch(() => { });
     return () => { cancelled = true; };
   }, [fontUrl]);
 
@@ -156,12 +120,38 @@ export function HandwritingText({
     if (!font || !current) return;
     const path = font.getPath(current, 0, EM, EM);
     const box = path.getBoundingBox();
-    const pad = EM * 0.12; // room for the stroke and any descenders
+    const pad = EM * 0.12;
     const full = path.toPathData(2);
+    const split = (d: string): string[] =>
+      d.split(/(?=M)/).filter((part: string) => part.trim().length > 1);
+    const contours = split(full);
+
+    const accented: boolean[] = [];
+    const fills: { d: string; accented: boolean }[] = [];
+    const from = accent ? current.indexOf(accent) : -1;
+    if (accent && from >= 0) {
+      const glyphs: any[] = font.getPaths(current, 0, EM, EM);
+      if (glyphs.length === current.length) {
+        glyphs.forEach((glyph, i) => {
+          const d: string = glyph.toPathData(2);
+          const on = i >= from && i < from + accent.length;
+          split(d).forEach(() => accented.push(on));
+          const last = fills[fills.length - 1];
+          if (last && last.accented === on) last.d += d;
+          else fills.push({ d, accented: on });
+        });
+      }
+      if (accented.length !== contours.length) {
+        accented.length = 0;
+        fills.length = 0;
+      }
+    }
+
     setGeom({
       full,
-      // Split on the moveto that opens each contour, keeping the M with its segment.
-      contours: full.split(/(?=M)/).filter((d: string) => d.trim().length > 1),
+      contours,
+      accented,
+      fills,
       x: box.x1 - pad,
       y: box.y1 - pad,
       w: box.x2 - box.x1 + pad * 2,
@@ -169,7 +159,7 @@ export function HandwritingText({
     });
     setDrawn(false);
     setLengths([]);
-  }, [font, current]);
+  }, [font, current, accent]);
 
   useEffect(() => {
     if (!geom) return undefined;
@@ -178,15 +168,12 @@ export function HandwritingText({
         .slice(0, geom.contours.length)
         .map((el) => (el ? el.getTotalLength() : 0)),
     );
-    // Two frames: the first commits the full-length offsets with no transition, the
-    // second enables it and moves to zero. Both in one commit leaves nothing to animate.
     const id = requestAnimationFrame(() =>
       requestAnimationFrame(() => setDrawn(true)),
     );
     return () => cancelAnimationFrame(id);
   }, [geom]);
 
-  // Before the font resolves — and if it never does — the text is still readable.
   if (!geom) {
     return <span className={className}>{current}</span>;
   }
@@ -206,23 +193,26 @@ export function HandwritingText({
         overflow: "visible",
       }}
     >
-      {fill && (
-        <path
-          d={geom.full}
-          fill="currentColor"
-          stroke="none"
-          style={{
-            opacity: drawn ? 1 : 0,
-            transition: drawn
-              ? `opacity 0.45s ease-out ${(delay + duration * 0.72).toFixed(3)}s`
-              : "none",
-          }}
-        />
-      )}
+      {fill &&
+        (geom.fills.length > 0 ? geom.fills : [{ d: geom.full, accented: false }]).map(
+          (run, i) => (
+            <path
+              key={`fill-${i}`}
+              d={run.d}
+              fill="currentColor"
+              stroke="none"
+              className={run.accented ? accentClassName : undefined}
+              style={{
+                opacity: drawn ? 1 : 0,
+                transition: drawn
+                  ? `opacity 0.45s ease-out ${(delay + duration * 0.72).toFixed(3)}s`
+                  : "none",
+              }}
+            />
+          ),
+        )}
       {geom.contours.map((d, i) => {
         const length = lengths[i] || 0;
-        // Contours overlap slightly so the stroke reads as one continuous movement
-        // rather than as letters switching on in turn.
         const each = (duration / count) * 2.4;
         const start = delay + (i / count) * duration;
         return (
@@ -232,6 +222,7 @@ export function HandwritingText({
             d={d}
             fill="none"
             stroke="currentColor"
+            className={geom.accented[i] ? accentClassName : undefined}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"

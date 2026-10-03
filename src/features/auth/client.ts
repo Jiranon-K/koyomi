@@ -10,9 +10,10 @@ export type AuthTransport = {
   signIn: {
     email: (input: { email: string; password: string; rememberMe: boolean }) => Promise<Reply>;
     social: (input: {
-      provider: "google";
+      provider: "line";
       callbackURL: string;
       errorCallbackURL: string;
+      additionalParams: { bot_prompt: "normal" | "aggressive" };
     }) => Promise<Reply>;
   };
   signUp: {
@@ -86,12 +87,13 @@ export function createAuthActions(client: AuthTransport) {
       return OK;
     },
 
-    async signInWithGoogle(): Promise<Succeeded | Failed> {
+    async signInWithLine(returnTo: string = DASHBOARD_PATH): Promise<Succeeded | Failed> {
       const failure = await attempt(() =>
         client.signIn.social({
-          provider: "google",
-          callbackURL: DASHBOARD_PATH,
+          provider: "line",
+          callbackURL: returnTo,
           errorCallbackURL: SIGN_IN_PATH,
+          additionalParams: { bot_prompt: "normal" },
         }),
       );
       return failure ? failed(failure) : OK;
@@ -132,7 +134,7 @@ export function createAuthActions(client: AuthTransport) {
 export const {
   signIn,
   signUp,
-  signInWithGoogle,
+  signInWithLine,
   signOut,
   requestPasswordReset,
   resendVerification,

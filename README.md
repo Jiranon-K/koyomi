@@ -1,7 +1,15 @@
-# nextjs-fullstack
+# Koyomi
 
-Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4, MongoDB via Mongoose and
+An anime airing tracker with LINE reminders. Koyomi shows the airing schedule of the current anime
+season in Thai time, lets a signed-in viewer follow shows, and sends one LINE message on each day a
+followed show airs.
+
+Built with Next.js (App Router, TypeScript), shadcn/ui, Tailwind v4, MongoDB via Mongoose and
 authentication with Better Auth.
+
+Status: the schedule, follows, LINE Login and the daily LINE digest are built; the digest has not
+yet been run against a real QStash account and LINE channel. The bot's replies and the admin page
+are not built yet.
 
 ## Getting started
 
@@ -31,10 +39,38 @@ Tests use an in-memory MongoDB, so they need no local database and no secrets.
 | `BETTER_AUTH_SECRET` | yes | Signing secret, at least 32 random characters. |
 | `BETTER_AUTH_URL` | yes | Public origin of the app, no trailing slash. |
 | `ADMIN_EMAILS` | no | Comma-separated emails that become admins when their account is created. |
-| `GOOGLE_CLIENT_ID` | no | Google OAuth client id. |
-| `GOOGLE_CLIENT_SECRET` | no | Google OAuth client secret. |
+| `LINE_MESSAGING_CHANNEL_ACCESS_TOKEN` | for reminders | Messaging API channel access token the daily digest is pushed with. |
+| `QSTASH_TOKEN` | for scheduled jobs | Upstash QStash token the app publishes jobs with. |
+| `QSTASH_URL` | no | QStash API address when the account is not in the default region. |
+| `QSTASH_CURRENT_SIGNING_KEY`, `QSTASH_NEXT_SIGNING_KEY` | for scheduled jobs | Keys QStash signs its calls with; without both, every job endpoint refuses every call. |
+
+The schedule source and LINE Login variables, and the console steps for each service, are in
+`.env.example`.
 
 Never commit `.env.local`.
+
+## Scheduled jobs and the daily digest
+
+Background work runs through [Upstash QStash](https://upstash.com/docs/qstash), which calls
+signature-checked endpoints under `/api/jobs/`:
+
+- `sync-schedule`: every six hours, and at 08:45 Bangkok time.
+- `digest-fanout`: at 09:00 Bangkok time. It enqueues one `digest-send` job for each user with
+  reminders on who follows an episode airing that day; each of those pushes one LINE message.
+
+A digest is sent at most once per user and day however often a job is retried, is skipped when the
+last successful sync is more than 24 hours old, and stops at 290 pushes per month.
+
+Creating the Upstash QStash account is a manual step. After deploying with the QStash variables set,
+create the three schedules once (safe to repeat; it overwrites them by id):
+
+```bash
+bun scripts/create-qstash-schedules.ts --dry-run   # print what would be created
+bun scripts/create-qstash-schedules.ts
+```
+
+Run it with `QSTASH_TOKEN` and the deployed `BETTER_AUTH_URL` in the environment; QStash cannot call
+`localhost`.
 
 ## Authentication
 
@@ -45,37 +81,4 @@ Never commit `.env.local`.
   in production.
 - Auth endpoints are rate limited per client IP. The IP is read from `x-forwarded-for` as Vercel
   sends it; on other hosting configure `advanced.ipAddress` in `src/features/auth/auth.ts` first.
-
-### Google sign-in (optional)
-
-Google sign-in is off until **both** `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set. While
-it is off the "Continue with Google" button is hidden, and the app, the build and the tests work
-without any Google configuration. If only one of the two is set, Google sign-in stays off and the
-server log gets a warning naming the missing variable.
-
-To turn it on:
-
-1. Open the [Google Cloud Console](https://console.cloud.google.com/) and create or pick a project.
-2. Under **APIs & Services > OAuth consent screen**, configure the consent screen (app name,
-   support email). The default scopes (email, profile, openid) are enough.
-3. Under **APIs & Services > Credentials**, choose **Create credentials > OAuth client ID** with
-   application type **Web application**.
-4. Add an **Authorized redirect URI** for every environment, following this pattern:
-
-   ```
-   <BETTER_AUTH_URL>/api/auth/callback/google
-   ```
-
-   For local development that is `http://localhost:3000/api/auth/callback/google`. The URI must
-   match exactly, including scheme and port.
-5. Copy the client id and client secret into `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in
-   `.env.local` (or your host's environment settings) and restart the server.
-
-How Google accounts map to app accounts:
-
-- Google sign-in only succeeds when Google reports the email as verified.
-- If an account with that email already exists and is verified, Google signs in to that account.
-- If an account with that email exists but was never verified, Google sign-in is refused until the
-  address is verified through the emailed link.
-- An email listed in `ADMIN_EMAILS` becomes an admin when its account is first created, whichever
-  sign-in method created it.
+- An email listed in `ADMIN_EMAILS` becomes an admin when its account is first created.

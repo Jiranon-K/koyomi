@@ -9,7 +9,6 @@ type StaggerProps = { children: React.ReactNode; className?: string };
 const container = { hidden: {}, shown: { transition: { staggerChildren: STAGGER } } };
 const item = { hidden: HIDDEN, shown: { ...SHOWN, transition: ARRIVE } };
 
-/** Children wrapped in `StaggerItem` arrive one after another when this block mounts. */
 export function Stagger({ children, className }: StaggerProps) {
   return (
     <m.div className={className} variants={container} initial="hidden" animate="shown">
@@ -18,7 +17,6 @@ export function Stagger({ children, className }: StaggerProps) {
   );
 }
 
-/** Only meaningful inside a `Stagger`: on its own it would stay hidden. */
 export function StaggerItem({ children, className }: StaggerProps) {
   return (
     <m.div data-arrive className={className} variants={item}>
