@@ -5,9 +5,8 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, errorMessage, networkError } from "./client";
+import { signInWithGoogle } from "./client";
 import { FormError, LARGE_CONTROL } from "./form-field";
-import { DASHBOARD_PATH, SIGN_IN_PATH } from "./paths";
 
 function GoogleMark() {
   return (
@@ -36,17 +35,15 @@ export function GoogleButton() {
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function signIn() {
+  async function onClick() {
     if (pending) return;
     setFormError(null);
     setPending(true);
 
-    const { error } = await authClient.signIn
-      .social({ provider: "google", callbackURL: DASHBOARD_PATH, errorCallbackURL: SIGN_IN_PATH })
-      .catch(networkError);
-    if (error) {
+    const outcome = await signInWithGoogle();
+    if (outcome.kind === "error") {
       setPending(false);
-      setFormError(errorMessage(error));
+      setFormError(outcome.message);
     }
   }
 
@@ -61,7 +58,7 @@ export function GoogleButton() {
       <Button
         type="button"
         variant="outline"
-        onClick={signIn}
+        onClick={onClick}
         disabled={pending}
         aria-busy={pending}
         className={cn(LARGE_CONTROL, "gap-2")}

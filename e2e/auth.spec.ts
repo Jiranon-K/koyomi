@@ -42,6 +42,17 @@ test("sign up, verify the email, sign out and sign back in", async ({ page }) =>
   await signOut(page);
 });
 
+test("a wrong password shows a generic error and leaves the form usable", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByLabel("Email address").fill(`e2e-nobody-${Date.now()}@example.com`);
+  await page.getByLabel("Password", { exact: true }).fill("not-the-password");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+
+  await expect(page.getByText("Invalid email or password.")).toBeVisible();
+  await expect(page).toHaveURL(/\/sign-in$/);
+  await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
+});
+
 for (const path of ["/sign-in", "/sign-up"]) {
   test(`${path} has no serious accessibility violations`, async ({ page }) => {
     await page.goto(path);

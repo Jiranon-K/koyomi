@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
+import { TextLink } from "@/components/text-link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ForgotPasswordForm } from "@/features/auth/forgot-password-form";
 import { SIGN_IN_PATH } from "@/features/auth/paths";
-import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = { title: "Forgot password" };
 

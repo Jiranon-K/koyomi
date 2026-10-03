@@ -4,9 +4,8 @@ import { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, errorMessage, networkError } from "./client";
+import { resendVerification } from "./client";
 import { FormField, FormNotice } from "./form-field";
-import { VERIFY_EMAIL_PATH } from "./paths";
 import { readPendingEmail } from "./pending-email";
 import { emailSchema } from "./schema";
 import { useAuthForm } from "./use-auth-form";
@@ -14,11 +13,9 @@ import { useAuthForm } from "./use-auth-form";
 export function ResendVerificationForm() {
   const form = useRef<HTMLFormElement>(null);
   const { errors, message, pending, onSubmit } = useAuthForm(emailSchema, async ({ email }) => {
-    const { error } = await authClient
-      .sendVerificationEmail({ email, callbackURL: VERIFY_EMAIL_PATH })
-      .catch(networkError);
-    return error
-      ? errorMessage(error)
+    const outcome = await resendVerification(email);
+    return outcome.kind === "error"
+      ? outcome.message
       : "If that address has an account waiting for verification, a new link is on its way.";
   });
 

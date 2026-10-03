@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
+import { TextLink } from "@/components/text-link";
 import { isGoogleEnabled } from "@/features/auth/auth";
 import { GoogleButton } from "@/features/auth/google-button";
 import { SIGN_UP_PATH } from "@/features/auth/paths";
 import { redirectSignedIn } from "@/features/auth/session";
 import { SignInForm } from "@/features/auth/sign-in-form";
-import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = { title: "Sign in" };
 

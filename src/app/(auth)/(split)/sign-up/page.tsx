@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
+import { TextLink } from "@/components/text-link";
 import { isGoogleEnabled } from "@/features/auth/auth";
 import { GoogleButton } from "@/features/auth/google-button";
 import { SIGN_IN_PATH } from "@/features/auth/paths";
 import { redirectSignedIn } from "@/features/auth/session";
 import { SignUpForm } from "@/features/auth/sign-up-form";
-import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = { title: "Create account" };
 

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
+import { TextLink } from "@/components/text-link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FORGOT_PASSWORD_PATH } from "@/features/auth/paths";
 import { ResetPasswordForm } from "@/features/auth/reset-password-form";
-import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = {
   title: "Reset password",

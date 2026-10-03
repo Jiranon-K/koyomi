@@ -48,10 +48,25 @@ export function authEnv(source: Source = process.env) {
   return parse(authSchema, source);
 }
 
+const warned = new Set<string>();
+
+function warnOnce(message: string): void {
+  if (warned.has(message)) return;
+  warned.add(message);
+  console.warn(message);
+}
+
 export function googleEnv(
   source: Source = process.env,
 ): { clientId: string; clientSecret: string } | undefined {
   const clientId = source.GOOGLE_CLIENT_ID;
   const clientSecret = source.GOOGLE_CLIENT_SECRET;
-  return clientId && clientSecret ? { clientId, clientSecret } : undefined;
+  if (clientId && clientSecret) return { clientId, clientSecret };
+  if (clientId || clientSecret) {
+    const missing = clientId ? "GOOGLE_CLIENT_SECRET" : "GOOGLE_CLIENT_ID";
+    warnOnce(
+      `${missing} is not set, so Google sign-in is off. Set both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET, or leave both empty. See .env.example.`,
+    );
+  }
+  return undefined;
 }
