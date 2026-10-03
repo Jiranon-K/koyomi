@@ -1,10 +1,22 @@
+"use client";
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
+import { useReducedMotion } from "motion/react";
+import * as m from "motion/react-m";
 import { Slot } from "radix-ui";
 
+import { MICRO, PRESS_SCALE } from "@/components/motion/tokens";
+
+// Local edits to the shadcn output (re-adding the component with --overwrite would drop them): the
+// press feedback below (scale from the motion tokens, replacing `active:translate-y-px`), and
+// `transition-all` narrowed to colour-like properties so a CSS transition does not smooth motion's
+// inline transform a second time.
+const MotionSlot = m.create(Slot.Root);
+
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding label-mono font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding label-mono font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,opacity] outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -47,11 +59,18 @@ function Button({
   size = "default",
   asChild = false,
   ...props
-}: React.ComponentProps<"button"> &
+}: Omit<
+  // motion types these four handlers differently from React, so they cannot be passed through
+  React.ComponentProps<"button">,
+  "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"
+> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
   }) {
-  const Comp = asChild ? Slot.Root : "button";
+  const Comp = asChild ? MotionSlot : m.button;
+  // motion applies transforms instantly under reduced motion instead of skipping them, so a press
+  // would still shrink the button; drop the gesture for visitors who asked for less movement.
+  const reduceMotion = useReducedMotion();
 
   return (
     <Comp
@@ -59,6 +78,8 @@ function Button({
       data-variant={variant}
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
+      whileTap={reduceMotion ? undefined : { scale: PRESS_SCALE }}
+      transition={MICRO}
       {...props}
     />
   );

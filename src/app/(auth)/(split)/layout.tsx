@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { BRAND } from "@/components/brand";
 import { Masthead } from "@/components/masthead";
+import { Reveal } from "@/components/motion/reveal";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function SplitAuthLayout({ children }: { children: React.ReactNode }) {
@@ -18,10 +19,10 @@ export default function SplitAuthLayout({ children }: { children: React.ReactNod
             <ArrowLeft className="size-5" />
           </Link>
         </div>
-        <div className="max-w-md">
+        <Reveal className="max-w-md">
           <p className="font-display text-6xl leading-none text-balance">{BRAND.line}</p>
           <p className="mt-6 text-lg">{BRAND.support}</p>
-        </div>
+        </Reveal>
       </aside>
 
       <div className="flex flex-col">
@@ -29,7 +30,7 @@ export default function SplitAuthLayout({ children }: { children: React.ReactNod
           <ThemeToggle />
         </Masthead>
         <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-16">
-          {children}
+          <Reveal>{children}</Reveal>
         </main>
       </div>
     </div>

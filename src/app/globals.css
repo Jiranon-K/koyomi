@@ -130,6 +130,19 @@
   }
 }
 
+/*
+ * Reduced motion: arrivals show their final state at once. motion only drops transforms for this
+ * setting and keeps fading opacity, so the final state is forced here, which also holds before
+ * the page hydrates.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-arrive] {
+    opacity: 1 !important;
+    transform: none !important;
+    height: auto !important;
+  }
+}
+
 /* The mono label voice: masthead, buttons, captions and row headings. */
 @utility label-mono {
   font-family: var(--font-mono);
