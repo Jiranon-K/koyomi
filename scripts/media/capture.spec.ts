@@ -2,95 +2,94 @@ import { mkdir, rename } from "node:fs/promises";
 
 import { expect, test } from "@playwright/test";
 
-import { createVerifiedAccount } from "../../e2e/account";
-import { followBehindTheServer, syncSchedule } from "../../e2e/schedule";
-import { chooseDashboardView, linkLine, makeAdmin } from "../../e2e/seed";
+import { PASSWORD } from "../../e2e/account";
+import { emailedLink } from "../../e2e/outbox";
 
 const OUT = "docs/images";
-const VIEWPORT = { width: 1440, height: 900 };
-const FOLLOWED = [
-  "lantern-street-diaries",
-  "clockwork-orchard",
-  "salt-and-starlight",
-  "the-ninth-platform",
-  "moss-and-thunder",
-];
+const EMAIL = "demo@example.com";
+const FOLLOW_COUNT = 6;
 
-test.use({ viewport: VIEWPORT, reducedMotion: "reduce" });
+test.use({ colorScheme: "light" });
 
-test("stills of every page in both themes", async ({ page }) => {
+test("a walk through the real product", async ({ page }, testInfo) => {
   await mkdir(OUT, { recursive: true });
-  await syncSchedule(page.request, "base");
-
-  const shot = async (name: string, theme: "light" | "dark", path: string, tall = false) => {
-    await page.goto(path);
-    await page.evaluate((value) => localStorage.setItem("theme", value), theme);
-    await page.reload();
-    await page.waitForLoadState("networkidle");
-    await expect(page.locator("html")).toHaveClass(new RegExp(theme));
+  const pause = (ms: number) => page.waitForTimeout(ms);
+  const still = async (name: string, tall = false) => {
+    await pause(1500);
+    // Lazy covers load only when scrolled near, so walk down the part that is captured first.
+    for (let y = 0; y <= 1900; y += 450) {
+      await page.evaluate((top) => window.scrollTo(0, top), y);
+      await pause(250);
+    }
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForFunction(
+      () =>
+        [...document.images]
+          .filter((image) => image.getBoundingClientRect().top + window.scrollY < 1900)
+          .every((image) => image.complete),
+      null,
+      { timeout: 30_000 },
+    );
+    await pause(1500);
     await page.screenshot({
-      path: `${OUT}/${name}-${theme}.png`,
+      path: `${OUT}/${name}.png`,
       ...(tall && { fullPage: true, clip: { x: 0, y: 0, width: 1440, height: 1900 } }),
     });
   };
 
-  for (const theme of ["light", "dark"] as const) {
-    await shot("landing", theme, "/");
-    await shot("schedule", theme, "/schedule", true);
-    await shot("sign-in", theme, "/sign-in");
+  await page.goto("/");
+  await still("landing");
+
+  await page.goto("/sign-up");
+  await still("sign-up");
+  await page.getByLabel("Name").fill("Demo");
+  await page.getByLabel("Email address").fill(EMAIL);
+  await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
+  await expect(async () => {
+    if (!/\/verify-email$/.test(page.url())) {
+      await page.getByRole("button", { name: "Create account" }).click({ timeout: 1000 });
+    }
+    await expect(page).toHaveURL(/\/verify-email$/, { timeout: 3000 });
+  }).toPass({ timeout: 25_000 });
+  await pause(1200);
+  await page.goto(await emailedLink(EMAIL, "Verify your email"));
+  await expect(page).toHaveURL(/\/dashboard$/);
+
+  await page.goto("/admin");
+  await page.getByRole("button", { name: /sync/i }).click();
+  await expect(page.getByText("Succeeded")).toBeVisible({ timeout: 120_000 });
+  await still("admin");
+
+  await page.goto("/schedule");
+  await still("schedule", true);
+  await page.mouse.wheel(0, 900);
+  await pause(1500);
+  await page.mouse.wheel(0, 900);
+  await pause(1500);
+
+  const follow = page.getByRole("listitem").getByRole("button", { name: /^Follow / });
+  const count = await follow.count();
+  const picks = Array.from({ length: FOLLOW_COUNT }, (_, i) =>
+    Math.floor((count * (i + 0.5)) / FOLLOW_COUNT),
+  );
+  for (const index of [...new Set(picks)].reverse()) {
+    await follow.nth(index).click();
+    await pause(700);
   }
 
-  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
-  const email = await createVerifiedAccount(page, "media");
-  for (const route of FOLLOWED) await followBehindTheServer(email, route);
-  await makeAdmin(email);
-  await linkLine(email, { reminderSlot: 1 });
+  await page.goto("/dashboard");
+  await still("dashboard", true);
+  await page.mouse.wheel(0, 900);
+  await pause(2000);
 
-  for (const theme of ["light", "dark"] as const) {
-    await shot("dashboard", theme, "/dashboard", true);
-    await shot("settings", theme, "/settings");
-    await shot("admin", theme, "/admin");
-  }
+  await page.goto("/settings");
+  await still("settings");
+  await page.getByRole("button", { name: "Index" }).click();
+  await pause(1200);
+  await page.goto("/dashboard");
+  await still("dashboard-index", true);
 
-  await chooseDashboardView(email, "index");
-  for (const theme of ["light", "dark"] as const) {
-    await shot("dashboard-index", theme, "/dashboard", true);
-  }
-});
-
-test.describe("clip", () => {
-  test.use({ reducedMotion: "no-preference" });
-
-  test("a walk through the product", async ({ page }, testInfo) => {
-    await syncSchedule(page.request, "base");
-    const pause = (ms: number) => page.waitForTimeout(ms);
-
-    await page.goto("/");
-    await pause(3500);
-    await page.goto("/schedule");
-    await pause(2500);
-    await page.mouse.wheel(0, 700);
-    await pause(1500);
-    await page.mouse.wheel(0, 700);
-    await pause(1500);
-
-    const email = await createVerifiedAccount(page, "clip");
-    for (const route of FOLLOWED) await followBehindTheServer(email, route);
-    await linkLine(email, { reminderSlot: 2 });
-    await page.goto("/dashboard");
-    await pause(4500);
-    await page.mouse.wheel(0, 800);
-    await pause(2000);
-    await page.goto("/settings");
-    await pause(2500);
-    await page.getByRole("button", { name: "Index" }).click();
-    await pause(1200);
-    await page.goto("/dashboard");
-    await pause(3500);
-    await expect(page.getByRole("heading", { level: 1, name: "My week" })).toBeVisible();
-
-    const video = page.video();
-    await page.close();
-    if (video) await rename(await video.path(), testInfo.outputPath("clip.webm"));
-  });
+  const video = page.video();
+  await page.close();
+  if (video) await rename(await video.path(), testInfo.outputPath("clip.webm"));
 });

@@ -16,51 +16,38 @@ in Thai time, and get one LINE message each morning that lists what airs tonight
 
 <img src="docs/images/koyomi-demo.gif" alt="A walk through Koyomi: landing page, the week's schedule, My week, settings and the Index view" width="860">
 
-<sub>Recorded from the running app. The shows, covers and times are invented demo data from the app's fake schedule source.</sub>
+<sub>Recorded from the running app with the real schedule. Cover art belongs to its rights holders and is loaded from the AnimeSchedule.net image host.</sub>
 
 </div>
 
 ## Screenshots
 
-Every page ships in a light and a dark theme.
+Taken from the running app with the real schedule from AnimeSchedule.net. There is also a dark theme.
 
-<table>
-  <tr>
-    <td width="50%"><img src="docs/images/landing-light.png" alt="Landing page, light"></td>
-    <td width="50%"><img src="docs/images/landing-dark.png" alt="Landing page, dark"></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><sub><b>Landing</b>: a blurred poster behind the pitch, with LINE's green only where it stays readable.</sub></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="docs/images/schedule-light.png" alt="Public schedule, light"></td>
-    <td width="50%"><img src="docs/images/schedule-dark.png" alt="Public schedule, dark"></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><sub><b>Schedule</b> (public): the next episode up top, seven day links, then a poster wall per day. A day runs 05:00 to 05:00 so a late-night episode stays with the evening it belongs to.</sub></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="docs/images/dashboard-light.png" alt="My week, Feature view, light"></td>
-    <td width="50%"><img src="docs/images/dashboard-dark.png" alt="My week, Feature view, dark"></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><sub><b>My week, Feature view</b>: the next episode of the shows you follow, the rest of today, then the week in seven columns.</sub></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="docs/images/dashboard-index-light.png" alt="My week, Index view, light"></td>
-    <td width="50%"><img src="docs/images/dashboard-index-dark.png" alt="My week, Index view, dark"></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><sub><b>My week, Index view</b>: a numbered list, soonest first, with a pinned cover that follows the pointer and keyboard focus. Chosen in settings.</sub></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="docs/images/settings-light.png" alt="Settings, light"></td>
-    <td width="50%"><img src="docs/images/admin-light.png" alt="Admin status page, light"></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><sub><b>Settings</b> (LINE, reminders, dashboard view) and the administrators-only <b>Admin</b> status page (last sync, last digest run, push quota).</sub></td>
-  </tr>
-</table>
+<p align="center">
+  <img src="docs/images/landing.png" alt="Koyomi landing page" width="880">
+  <br><sub><b>Landing</b>: a blurred poster behind the pitch, with LINE's green only where it stays readable.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/images/schedule.png" alt="The public schedule: the next episode, seven day links and a poster wall" width="880">
+  <br><sub><b>Schedule</b> (public): the next episode up top, seven day links, then a poster wall per day. A day runs 05:00 to 05:00 so a late-night episode stays with the evening it belongs to. Aired episodes are greyed out.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/images/dashboard.png" alt="My week, Feature view" width="880">
+  <br><sub><b>My week, Feature view</b>: the next episode of the shows you follow, the rest of today, then the week in seven columns.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/images/dashboard-index.png" alt="My week, Index view" width="880">
+  <br><sub><b>My week, Index view</b>: a numbered list, soonest first, with a pinned cover that follows the pointer and keyboard focus. Chosen in settings.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/images/admin.png" alt="The administrators-only status page" width="880">
+  <br><sub><b>Status</b> (administrators only): the last schedule sync, the last digest run, pushes this month and reminder places taken.</sub>
+</p>
 
 ## What Koyomi does
 
@@ -81,7 +68,8 @@ Every page ships in a light and a dark theme.
 
 - **Seams with fakes, so the whole product runs offline.** The schedule source, the job queue and
   the LINE messenger are interfaces with a real implementation and a fake one chosen by
-  `USE_FAKES`. The end-to-end tests, and the pictures above, run the real app against the fakes.
+  `USE_FAKES`. The end-to-end tests run the real app against the fakes; the pictures above use the
+  real schedule.
 - **Idempotent daily digest.** One unique `(day, user)` row is claimed with a lease before pushing,
   and the LINE retry key is derived from the same pair, so a job that dies mid-send is repeated
   without a second message.
@@ -207,8 +195,10 @@ Run it with `QSTASH_TOKEN` and the deployed `BETTER_AUTH_URL` in the environment
 
 ## Regenerating the pictures
 
-The screenshots and the clip above come from `scripts/media/capture.spec.ts`, which drives the real
-app against the fake sources:
+The screenshots and the clip above come from `scripts/media/capture.spec.ts`. It signs up in the
+real app, syncs the real schedule from the admin page, follows shows and walks through the pages. It
+needs a `.env.local` with `MONGODB_URI` and `ANIMESCHEDULE_TOKEN`, and uses a database of its own
+(`koyomi-media`, dropped at the start of each run):
 
 ```bash
 bun run media
