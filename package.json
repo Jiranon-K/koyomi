@@ -6,10 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "verify": "bash ./verify.sh"
+    "e2e": "playwright test",
+    "verify": "bash ./verify.sh",
+    "audit": "bun audit --ignore GHSA-vfj7-8cjw-p6xm",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "better-auth": "^1.7.7",
@@ -29,6 +34,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -36,6 +43,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "mongodb-memory-server": "^11.3.0",
+    "prettier": "3.9.9",
+    "prettier-plugin-tailwindcss": "0.8.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.0.3"

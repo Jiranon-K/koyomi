@@ -16,7 +16,7 @@ export default function Home() {
       </header>
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center gap-8 px-6 pb-24 text-center">
-        <h1 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
+        <h1 className="max-w-2xl text-4xl leading-tight font-bold tracking-tight sm:text-6xl">
           Start your next idea
           <br />
           <HandwritingText
