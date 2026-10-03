@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, errorMessage, networkError } from "./client";
+import { resetPassword } from "./client";
 import { FormError, FormField } from "./form-field";
 import { FORGOT_PASSWORD_PATH, SIGN_IN_PATH } from "./paths";
 import { PASSWORD_HINT, resetPasswordSchema } from "./schema";
@@ -23,12 +23,9 @@ export function ResetPasswordForm({ token }: { token: string }) {
   const { errors, message, pending, onSubmit } = useAuthForm(
     resetPasswordSchema,
     async ({ password }) => {
-      const { error } = await authClient
-        .resetPassword({ newPassword: password, token })
-        .catch(networkError);
-      if (error) {
-        return error.code === "INVALID_TOKEN" ? LINK_EXPIRED_MESSAGE : errorMessage(error);
-      }
+      const outcome = await resetPassword({ password, token });
+      if (outcome.kind === "expired-link") return LINK_EXPIRED_MESSAGE;
+      if (outcome.kind === "error") return outcome.message;
       router.replace(`${SIGN_IN_PATH}?reset=done`);
     },
   );

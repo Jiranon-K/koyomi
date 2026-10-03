@@ -2,19 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, errorMessage, networkError } from "./client";
+import { requestPasswordReset } from "./client";
 import { FormField, FormNotice } from "./form-field";
-import { RESET_PASSWORD_PATH } from "./paths";
 import { emailSchema } from "./schema";
 import { useAuthForm } from "./use-auth-form";
 
 export function ForgotPasswordForm() {
   const { errors, message, pending, onSubmit } = useAuthForm(emailSchema, async ({ email }) => {
-    const { error } = await authClient
-      .requestPasswordReset({ email, redirectTo: RESET_PASSWORD_PATH })
-      .catch(networkError);
-    return error
-      ? errorMessage(error)
+    const outcome = await requestPasswordReset(email);
+    return outcome.kind === "error"
+      ? outcome.message
       : "If that address has an account, a reset link is on its way. It works once and expires in 1 hour.";
   });
 

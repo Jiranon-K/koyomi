@@ -6,20 +6,20 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, networkError } from "./client";
+import { signOut } from "./client";
 import { SIGN_IN_PATH } from "./paths";
 
 export function SignOutButton() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
-  async function signOut() {
+  async function onClick() {
     if (pending) return;
     setPending(true);
-    const { error } = await authClient.signOut().catch(networkError);
-    if (error) {
+    const outcome = await signOut();
+    if (outcome.kind === "error") {
       setPending(false);
-      toast.error("Could not sign out. Please try again.");
+      toast.error(outcome.message);
       return;
     }
     router.push(SIGN_IN_PATH);
@@ -27,7 +27,7 @@ export function SignOutButton() {
   }
 
   return (
-    <Button variant="outline" onClick={signOut} disabled={pending} aria-busy={pending}>
+    <Button variant="outline" onClick={onClick} disabled={pending} aria-busy={pending}>
       {pending ? "Signing out…" : "Sign out"}
     </Button>
   );

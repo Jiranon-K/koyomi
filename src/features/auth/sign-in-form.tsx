@@ -7,11 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-import { authClient, errorMessage, networkError } from "./client";
+import { signIn } from "./client";
 import { FormError, FormField, LARGE_CONTROL } from "./form-field";
 import { PasswordField } from "./password-field";
 import { DASHBOARD_PATH, FORGOT_PASSWORD_PATH, VERIFY_EMAIL_PATH } from "./paths";
-import { rememberPendingEmail } from "./pending-email";
 import { signInSchema } from "./schema";
 import { TextLink } from "./text-link";
 import { useAuthForm } from "./use-auth-form";
@@ -19,18 +18,14 @@ import { useAuthForm } from "./use-auth-form";
 export function SignInForm() {
   const router = useRouter();
   const { errors, message, pending, onSubmit } = useAuthForm(signInSchema, async (data) => {
-    const { error } = await authClient.signIn.email(data).catch(networkError);
-    if (!error) {
-      router.push(DASHBOARD_PATH);
-      router.refresh();
-      return;
-    }
-    if (error.code === "EMAIL_NOT_VERIFIED") {
-      rememberPendingEmail(data.email);
+    const outcome = await signIn(data);
+    if (outcome.kind === "error") return outcome.message;
+    if (outcome.kind === "unverified") {
       router.push(VERIFY_EMAIL_PATH);
       return;
     }
-    return error.status === 401 ? "Invalid email or password." : errorMessage(error);
+    router.push(DASHBOARD_PATH);
+    router.refresh();
   });
 
   return (

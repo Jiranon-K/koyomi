@@ -5,27 +5,18 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-import { authClient, errorMessage, networkError } from "./client";
+import { signUp } from "./client";
 import { FormError, FormField, LARGE_CONTROL } from "./form-field";
 import { PasswordField } from "./password-field";
 import { VERIFY_EMAIL_PATH } from "./paths";
-import { rememberPendingEmail } from "./pending-email";
 import { PASSWORD_HINT, signUpSchema } from "./schema";
 import { useAuthForm } from "./use-auth-form";
 
 export function SignUpForm() {
   const router = useRouter();
   const { errors, message, pending, onSubmit } = useAuthForm(signUpSchema, async (data) => {
-    const { error } = await authClient.signUp
-      .email({ ...data, callbackURL: VERIFY_EMAIL_PATH })
-      .catch(networkError);
-    if (error) {
-      return errorMessage(
-        error,
-        "We could not create the account. Check the fields and try again.",
-      );
-    }
-    rememberPendingEmail(data.email);
+    const outcome = await signUp(data);
+    if (outcome.kind === "error") return outcome.message;
     router.push(VERIFY_EMAIL_PATH);
   });
 
