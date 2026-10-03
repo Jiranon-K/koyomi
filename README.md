@@ -50,7 +50,8 @@ Never commit `.env.local`.
 
 Google sign-in is off until **both** `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set. While
 it is off the "Continue with Google" button is hidden, and the app, the build and the tests work
-without any Google configuration.
+without any Google configuration. If only one of the two is set, Google sign-in stays off and the
+server log gets a warning naming the missing variable.
 
 To turn it on:
 

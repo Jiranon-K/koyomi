@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
+import { TextLink } from "@/components/text-link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SIGN_IN_PATH } from "@/features/auth/paths";
 import { ResendVerificationForm } from "@/features/auth/resend-verification-form";
 import { redirectSignedIn } from "@/features/auth/session";
-import { TextLink } from "@/features/auth/text-link";
 
 export const metadata: Metadata = { title: "Verify your email" };
 
