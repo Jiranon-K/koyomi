@@ -27,8 +27,44 @@ const landingText = (page: Page) => [
   page.getByText("Next.js, MongoDB and authentication"),
 ];
 
+async function wrongPassword(page: Page) {
+  await page.goto("/sign-in");
+  await page.getByLabel("Email address").fill(`e2e-motion-${Date.now()}@example.com`);
+  await page.getByLabel("Password", { exact: true }).fill("not-the-password");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  // The alert is a persistent live region; the fading element is inside it, so measure the text.
+  return {
+    alert: page.getByRole("alert").filter({ hasText: "Invalid email or password." }),
+    text: page.getByText("Invalid email or password."),
+  };
+}
+
+const AUTH_PAGES = [
+  "/sign-in",
+  "/sign-up",
+  "/forgot-password",
+  "/verify-email",
+  "/reset-password?token=e2e",
+];
+
 test.describe("with motion", () => {
   test.use({ reducedMotion: "no-preference" });
+
+  for (const path of AUTH_PAGES) {
+    test(`${path} arrives with its title and form at full opacity`, async ({ page }) => {
+      await page.goto(path);
+
+      await expectArrived(page.getByRole("heading", { level: 1 }));
+      await expectArrived(page.locator("main button[type=submit]"));
+    });
+  }
+
+  test("a sign-in error is announced as an alert and unfolds to full opacity", async ({ page }) => {
+    const { alert, text } = await wrongPassword(page);
+
+    await expect(alert).toBeVisible();
+    await expectArrived(text);
+  });
 
   test("the landing text is visible at full opacity once the arrival has played", async ({
     page,
@@ -53,6 +89,13 @@ test.describe("with motion in a tall window", () => {
 
 test.describe("with reduced motion", () => {
   test.use({ reducedMotion: "reduce" });
+
+  test("a sign-in error is at full opacity at once", async ({ page }) => {
+    const { alert, text } = await wrongPassword(page);
+
+    await expect(alert).toBeVisible();
+    expect(await effectiveOpacity(text)).toBe(1);
+  });
 
   test("the landing text is at full opacity at once, without waiting for an arrival", async ({
     page,
