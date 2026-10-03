@@ -10,11 +10,11 @@ import { Label } from "@/components/ui/label";
 import { signIn } from "./client";
 import { FormError, FormField } from "./form-field";
 import { PasswordField } from "./password-field";
-import { DASHBOARD_PATH, FORGOT_PASSWORD_PATH, VERIFY_EMAIL_PATH } from "./paths";
+import { FORGOT_PASSWORD_PATH, VERIFY_EMAIL_PATH } from "./paths";
 import { signInSchema } from "./schema";
 import { useAuthForm } from "./use-auth-form";
 
-export function SignInForm() {
+export function SignInForm({ returnTo }: { returnTo: string }) {
   const router = useRouter();
   const { errors, message, pending, onSubmit } = useAuthForm(signInSchema, async (data) => {
     const outcome = await signIn(data);
@@ -23,7 +23,7 @@ export function SignInForm() {
       router.push(VERIFY_EMAIL_PATH);
       return;
     }
-    router.push(DASHBOARD_PATH);
+    router.push(returnTo);
     router.refresh();
   });
 

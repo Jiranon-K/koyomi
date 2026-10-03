@@ -64,6 +64,10 @@ const eslintConfig = defineConfig([
     files: ["src/features/auth/email.ts"],
     rules: { "no-console": "off" },
   },
+  {
+    files: ["src/features/line/fake-messenger.ts"],
+    rules: { "no-console": "off" },
+  },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ]);
 

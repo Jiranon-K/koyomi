@@ -1,4 +1,3 @@
-import type { GoogleProfile } from "better-auth/social-providers";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -6,12 +5,13 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import {
   createAuth,
   getAuth,
-  isGoogleEnabled,
+  isLineLoginEnabled,
   RATE_LIMITS,
   resetAuthForTests,
   RESET_PASSWORD_TOKEN_EXPIRES_IN_SECONDS,
 } from "./auth";
 import type { EmailMessage } from "./email";
+import { disconnectLine, lineConnectUrl } from "./line-account";
 import { cookieHeaders } from "./test-helpers";
 
 const SECRET = "test-secret-test-secret-test-secret-1234";
@@ -21,7 +21,10 @@ let server: MongoMemoryServer;
 let outbox: EmailMessage[];
 
 type NewAuthOptions = Partial<
-  Pick<Parameters<typeof createAuth>[0], "adminEmails" | "google" | "sendEmail">
+  Pick<
+    Parameters<typeof createAuth>[0],
+    "adminEmails" | "line" | "onLineAccount" | "onLineAccountRemoved" | "sendEmail"
+  >
 >;
 
 function newAuth(options: NewAuthOptions = {}) {
@@ -519,109 +522,414 @@ describe("rate limiting", () => {
   });
 });
 
-describe("Google sign-in", () => {
-  const google = { clientId: "test-client-id", clientSecret: "test-client-secret" };
+describe("LINE sign-in", () => {
+  const line = { clientId: "test-channel-id", clientSecret: "test-channel-secret" };
   const password = "correct horse battery";
+  const TOKEN_ENDPOINT = "https://api.line.me/oauth2/v2.1/token";
 
-  function authWithGoogleProfile(
-    profile: { email: string; emailVerified: boolean },
-    options: NewAuthOptions = {},
-  ) {
-    return newAuth({
-      ...options,
-      google: {
-        ...google,
-        verifyIdToken: async () => true,
-        getUserInfo: async () => ({
-          user: { name: "Ada", ...profile },
-          data: {
-            sub: `google-${profile.email}`,
-            name: "Ada",
-            email: profile.email,
-            email_verified: profile.emailVerified,
-          } as GoogleProfile,
-        }),
+  type LineIdentity = { sub: string; email?: string };
+  type LineAccountEvent = Parameters<NonNullable<NewAuthOptions["onLineAccount"]>>[0];
+
+  function lineAnswersAs(identity: LineIdentity) {
+    const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString("base64url");
+    const idToken = [
+      encode({ alg: "HS256", typ: "JWT" }),
+      encode({ iss: "https://access.line.me", aud: line.clientId, name: "Ada", ...identity }),
+      "signature",
+    ].join(".");
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL) => {
+      const url = input instanceof Request ? input.url : String(input);
+      if (url !== TOKEN_ENDPOINT) throw new Error(`Unexpected request to ${url}`);
+      return Response.json({
+        access_token: `access-token-of-${identity.sub}`,
+        token_type: "Bearer",
+        expires_in: 3600,
+        scope: "openid profile",
+        id_token: idToken,
+      });
+    });
+  }
+
+  function post(auth: ReturnType<typeof newAuth>, path: string, body: unknown, cookies?: Headers) {
+    return auth.handler(
+      new Request(`${BASE_URL}/api/auth${path}`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: BASE_URL,
+          cookie: cookies?.get("cookie") ?? "",
+        },
+        body: JSON.stringify(body),
+      }),
+    );
+  }
+
+  async function returnFromLine(auth: ReturnType<typeof newAuth>, started: Response, cookies = "") {
+    const { url } = (await started.json()) as { url: string };
+    const state = new URL(url).searchParams.get("state") ?? "";
+    const cookie = [cookies, cookieHeaders(started.headers).get("cookie")]
+      .filter(Boolean)
+      .join("; ");
+    const finished = await auth.handler(
+      new Request(`${BASE_URL}/api/auth/callback/line?code=fake-code&state=${state}`, {
+        headers: { cookie },
+      }),
+    );
+    const signedIn = cookieHeaders(finished.headers);
+    return {
+      target: new URL(finished.headers.get("location") ?? "", BASE_URL),
+      cookies: signedIn,
+      session: await auth.api.getSession({ headers: signedIn }),
+    };
+  }
+
+  async function signInWithLine(auth: ReturnType<typeof newAuth>) {
+    const started = await post(auth, "/sign-in/social", {
+      provider: "line",
+      callbackURL: "/dashboard",
+      errorCallbackURL: "/sign-in",
+    });
+    return returnFromLine(auth, started);
+  }
+
+  async function connectLine(auth: ReturnType<typeof newAuth>, session: Headers) {
+    const started = await post(
+      auth,
+      "/link-social",
+      { provider: "line", callbackURL: "/settings", errorCallbackURL: "/settings" },
+      session,
+    );
+    return returnFromLine(auth, started, session.get("cookie") ?? "");
+  }
+
+  async function signedInEmailUser(auth: ReturnType<typeof newAuth>, email: string) {
+    await signUpVerified(auth, { email, password });
+    const headers = await signInHeaders(auth, { email, password });
+    const session = await auth.api.getSession({ headers });
+    if (!session) throw new Error("No session after sign-in");
+    return { headers, userId: session.user.id };
+  }
+
+  function users() {
+    return mongoose.connection.getClient().db().collection("user").find().toArray();
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("gives no session for a LINE-supplied email until that address is verified", async () => {
+    const auth = newAuth({ line });
+    lineAnswersAs({ sub: "U-ada", email: "ada@example.com" });
+
+    const first = await signInWithLine(auth);
+
+    expect(first.session).toBeNull();
+    expect(first.target.pathname).toBe("/sign-in");
+    expect(first.target.searchParams.get("error")).toBe("email_not_verified");
+    expect(outbox.map((message) => [message.to, message.kind])).toEqual([
+      ["ada@example.com", "verify-email"],
+    ]);
+
+    await auth.api.verifyEmail({ query: { token: tokenFrom(outbox[0]) } });
+    const second = await signInWithLine(auth);
+
+    expect(second.target.pathname).toBe("/dashboard");
+    expect(second.session?.user.email).toBe("ada@example.com");
+    expect(second.session?.user.role).toBe("user");
+  });
+
+  it("reports a LINE sign-up to the app only once its email is verified", async () => {
+    const linked: LineAccountEvent[] = [];
+    const auth = newAuth({
+      line,
+      onLineAccount: async (event) => {
+        linked.push(event);
       },
     });
-  }
+    lineAnswersAs({ sub: "U-ada", email: "ada@example.com" });
 
-  async function signInWithGoogle(auth: ReturnType<typeof newAuth>) {
-    const { headers } = await auth.api.signInSocial({
-      body: { provider: "google", idToken: { token: "fake-id-token" } },
-      returnHeaders: true,
-    });
-    return auth.api.getSession({ headers: cookieHeaders(headers) });
-  }
+    await signInWithLine(auth);
+    await signInWithLine(auth);
 
-  it("signs in a new visitor whose Google email is verified as a regular user", async () => {
-    const auth = authWithGoogleProfile({ email: "ada@example.com", emailVerified: true });
+    expect(linked).toEqual([]);
 
-    const session = await signInWithGoogle(auth);
+    await auth.api.verifyEmail({ query: { token: tokenFrom(outbox[0]) } });
 
-    expect(session?.user.email).toBe("ada@example.com");
-    expect(session?.user.role).toBe("user");
+    const [user] = await users();
+    expect(linked).toEqual([
+      { userId: String(user?._id), lineUserId: "U-ada", accessToken: "access-token-of-U-ada" },
+    ]);
   });
 
-  it("makes an allow-listed Google email an admin", async () => {
-    const auth = authWithGoogleProfile(
-      { email: "owner@example.com", emailVerified: true },
-      { adminEmails: "owner@example.com" },
-    );
+  it("gives no session for an allow-listed LINE email that was never verified", async () => {
+    const auth = newAuth({ line, adminEmails: "owner@example.com" });
+    lineAnswersAs({ sub: "U-mallory", email: "owner@example.com" });
 
-    const session = await signInWithGoogle(auth);
-
-    expect(session?.user.role).toBe("admin");
-  });
-
-  it("gives no session when Google reports the email as unverified, even if allow-listed", async () => {
-    const auth = authWithGoogleProfile(
-      { email: "owner@example.com", emailVerified: false },
-      { adminEmails: "owner@example.com" },
-    );
-
-    const session = await signInWithGoogle(auth).catch(() => null);
+    const { session, target } = await signInWithLine(auth);
+    const again = await signInWithLine(auth);
 
     expect(session).toBeNull();
-    expect(outbox.map((message) => message.to)).toEqual(["owner@example.com"]);
+    expect(again.session).toBeNull();
+    expect(target.searchParams.get("error")).toBe("email_not_verified");
+    expect((await users()).map((user) => user.emailVerified)).toEqual([false]);
   });
 
-  it("signs in to the existing account when its email is already verified", async () => {
-    const auth = authWithGoogleProfile({ email: "ada@example.com", emailVerified: true });
-    await signUpVerified(auth, { email: "ada@example.com", password });
-    const existing = await auth.api.signInEmail({ body: { email: "ada@example.com", password } });
+  it("does not sign in to, or link to, an existing verified account with the same email", async () => {
+    const auth = newAuth({ line, adminEmails: "owner@example.com" });
+    const owner = await signedInEmailUser(auth, "owner@example.com");
+    lineAnswersAs({ sub: "U-mallory", email: "owner@example.com" });
 
-    const session = await signInWithGoogle(auth);
+    const { session, target } = await signInWithLine(auth);
 
-    expect(session?.user.id).toBe(existing.user.id);
+    expect(session).toBeNull();
+    expect(target.searchParams.get("error")).toBe("account_not_linked");
+    const accounts = await auth.api.listUserAccounts({ headers: owner.headers });
+    expect(accounts.map((account) => account.providerId)).toEqual(["credential"]);
   });
 
-  it("refuses Google sign-in for an address someone registered but never verified", async () => {
-    const auth = authWithGoogleProfile({ email: "ada@example.com", emailVerified: true });
+  it("does not sign in to an address someone registered but never verified", async () => {
+    const auth = newAuth({ line });
     await auth.api.signUpEmail({ body: { name: "Mallory", email: "ada@example.com", password } });
+    lineAnswersAs({ sub: "U-ada", email: "ada@example.com" });
 
-    const session = await signInWithGoogle(auth).catch(() => null);
+    const { session, target } = await signInWithLine(auth);
 
     expect(session).toBeNull();
+    expect(target.searchParams.get("error")).toBe("account_not_linked");
   });
 
-  it("is refused when no Google credentials are configured", async () => {
+  it("creates no account and no session when LINE shares no email", async () => {
+    const auth = newAuth({ line });
+    lineAnswersAs({ sub: "U-ada" });
+
+    const { session, target } = await signInWithLine(auth);
+
+    expect(session).toBeNull();
+    expect(target.pathname).toBe("/sign-in");
+    expect(target.searchParams.get("error")).toBe("email_not_found");
+    expect(await users()).toEqual([]);
+  });
+
+  it("refuses an ID token handed over by the browser", async () => {
+    const auth = newAuth({ line });
+    lineAnswersAs({ sub: "U-ada", email: "ada@example.com" });
+
+    await expect(
+      auth.api.signInSocial({ body: { provider: "line", idToken: { token: "forged" } } }),
+    ).rejects.toMatchObject({ status: "NOT_FOUND" });
+    expect(await users()).toEqual([]);
+  });
+
+  it("is refused when no LINE credentials are configured", async () => {
     const auth = newAuth();
 
-    await expect(auth.api.signInSocial({ body: { provider: "google" } })).rejects.toMatchObject({
+    await expect(auth.api.signInSocial({ body: { provider: "line" } })).rejects.toMatchObject({
       status: "NOT_FOUND",
     });
   });
 
-  it("sends the visitor to Google with the app's callback when credentials are configured", async () => {
-    const auth = newAuth({ google });
+  it("sends the visitor to LINE with the app's callback and the add-friend prompt", async () => {
+    const auth = newAuth({ line });
 
-    const result = await auth.api.signInSocial({ body: { provider: "google" } });
+    const result = await auth.api.signInSocial({
+      body: { provider: "line", additionalParams: { bot_prompt: "normal" } },
+    });
 
     const target = new URL(result.url ?? "");
-    expect(target.hostname).toBe("accounts.google.com");
-    expect(target.searchParams.get("client_id")).toBe(google.clientId);
-    expect(target.searchParams.get("redirect_uri")).toBe(`${BASE_URL}/api/auth/callback/google`);
-    expect(target.href).not.toContain(google.clientSecret);
+    expect(target.hostname).toBe("access.line.me");
+    expect(target.searchParams.get("client_id")).toBe(line.clientId);
+    expect(target.searchParams.get("redirect_uri")).toBe(`${BASE_URL}/api/auth/callback/line`);
+    expect(target.searchParams.get("bot_prompt")).toBe("normal");
+    expect(target.href).not.toContain(line.clientSecret);
+  });
+
+  describe("connecting LINE to a signed-in account", () => {
+    it("links the LINE account whatever email LINE reports, and reports the link", async () => {
+      const linked: LineAccountEvent[] = [];
+      const auth = newAuth({
+        line,
+        onLineAccount: async (event) => {
+          linked.push(event);
+        },
+      });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-ada", email: "someone-else@example.com" });
+
+      const { target } = await connectLine(auth, ada.headers);
+
+      expect(target.pathname).toBe("/settings");
+      expect(target.searchParams.get("error")).toBeNull();
+      expect(linked).toEqual([
+        { userId: ada.userId, lineUserId: "U-ada", accessToken: "access-token-of-U-ada" },
+      ]);
+      const session = await auth.api.getSession({ headers: ada.headers });
+      expect(session?.user.email).toBe("ada@example.com");
+    });
+
+    it("links a LINE account that shares no email", async () => {
+      const auth = newAuth({ line });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-ada" });
+
+      const { target } = await connectLine(auth, ada.headers);
+
+      expect(target.searchParams.get("error")).toBeNull();
+      const accounts = await auth.api.listUserAccounts({ headers: ada.headers });
+      expect(accounts.map((account) => account.providerId).sort()).toEqual(["credential", "line"]);
+    });
+
+    it("then signs that user in with LINE, and reports the account again", async () => {
+      const linked: LineAccountEvent[] = [];
+      const auth = newAuth({
+        line,
+        onLineAccount: async (event) => {
+          linked.push(event);
+        },
+      });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-ada" });
+      await connectLine(auth, ada.headers);
+
+      const { session } = await signInWithLine(auth);
+
+      expect(session?.user.id).toBe(ada.userId);
+      expect(linked).toHaveLength(2);
+      expect(linked[1]).toMatchObject({ userId: ada.userId, lineUserId: "U-ada" });
+    });
+
+    it("keeps the link when the link listener fails", async () => {
+      const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+      const auth = newAuth({ line, onLineAccount: providerDown });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-ada" });
+
+      const { target } = await connectLine(auth, ada.headers);
+
+      expect(target.searchParams.get("error")).toBeNull();
+      expect(errors).toHaveBeenCalled();
+      errors.mockRestore();
+    });
+
+    it("refuses a LINE account that already belongs to another user", async () => {
+      const auth = newAuth({ line });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-shared" });
+      await connectLine(auth, ada.headers);
+      outbox = [];
+      const bob = await signedInEmailUser(auth, "bob@example.com");
+
+      const { target } = await connectLine(auth, bob.headers);
+
+      expect(target.pathname).toBe("/settings");
+      expect(target.searchParams.get("error")).toBe("account_already_linked_to_different_user");
+      const accounts = await auth.api.listUserAccounts({ headers: bob.headers });
+      expect(accounts.map((account) => account.providerId)).toEqual(["credential"]);
+    });
+
+    it("refuses to connect without a session", async () => {
+      const auth = newAuth({ line });
+
+      const response = await post(auth, "/link-social", { provider: "line" });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("builds the connect address with the app's callback and the add-friend screen", async () => {
+      const auth = newAuth({ line });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+
+      const target = new URL(await lineConnectUrl(auth, ada.headers));
+
+      expect(target.hostname).toBe("access.line.me");
+      expect(target.searchParams.get("bot_prompt")).toBe("aggressive");
+      expect(target.searchParams.get("redirect_uri")).toBe(`${BASE_URL}/api/auth/callback/line`);
+      expect(target.href).not.toContain(line.clientSecret);
+    });
+
+    it("stops signing the user in with LINE once it is disconnected", async () => {
+      const auth = newAuth({ line });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-ada" });
+      await connectLine(auth, ada.headers);
+
+      expect(await disconnectLine(auth, ada.headers)).toEqual({ kind: "ok" });
+      const { session, target } = await signInWithLine(auth);
+
+      expect(session).toBeNull();
+      expect(target.searchParams.get("error")).toBe("email_not_found");
+      const accounts = await auth.api.listUserAccounts({ headers: ada.headers });
+      expect(accounts.map((account) => account.providerId)).toEqual(["credential"]);
+    });
+
+    it("reports the LINE account it removed", async () => {
+      const removed: { userId: string; lineUserId: string }[] = [];
+      const auth = newAuth({
+        line,
+        onLineAccountRemoved: async (account) => {
+          removed.push(account);
+        },
+      });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-ada" });
+      await connectLine(auth, ada.headers);
+
+      expect(await disconnectLine(auth, ada.headers)).toEqual({ kind: "ok" });
+
+      expect(removed).toEqual([{ userId: expect.any(String), lineUserId: "U-ada" }]);
+    });
+
+    it("treats disconnecting when nothing is connected as done", async () => {
+      const auth = newAuth({ line });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+
+      expect(await disconnectLine(auth, ada.headers)).toEqual({ kind: "ok" });
+    });
+
+    it("refuses to disconnect LINE when it is the only way to sign in", async () => {
+      const auth = newAuth({ line });
+      lineAnswersAs({ sub: "U-ada", email: "ada@example.com" });
+      await signInWithLine(auth);
+      await auth.api.verifyEmail({ query: { token: tokenFrom(outbox[0]) } });
+      const { session, cookies } = await signInWithLine(auth);
+
+      expect(session?.user.email).toBe("ada@example.com");
+      expect(await disconnectLine(auth, cookies)).toEqual({ kind: "only-sign-in-method" });
+      expect((await signInWithLine(auth)).session).not.toBeNull();
+    });
+
+    it("refuses to disconnect LINE from a session that is more than a day old", async () => {
+      const auth = newAuth({ line });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-ada" });
+      await connectLine(auth, ada.headers);
+
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(Date.now() + 25 * 60 * 60 * 1000);
+      const outcome = await disconnectLine(auth, ada.headers);
+      vi.useRealTimers();
+
+      expect(outcome).toEqual({ kind: "stale-session" });
+    });
+
+    it("refuses to disconnect without a session", async () => {
+      const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+      const auth = newAuth({ line });
+
+      expect(await disconnectLine(auth, new Headers())).toEqual({ kind: "error" });
+      errors.mockRestore();
+    });
+  });
+
+  it("never creates an account for the stand-in address of a LINE user without email", async () => {
+    const auth = newAuth({ line });
+
+    await expect(
+      auth.api.signUpEmail({
+        body: { name: "Mallory", email: "line-user-u-ada@no-email.invalid", password },
+      }),
+    ).rejects.toBeTruthy();
+    expect(await users()).toEqual([]);
   });
 });
 
@@ -657,38 +965,40 @@ describe("getAuth", () => {
     await expect(getAuth()).resolves.toBeDefined();
   });
 
-  describe("Google credentials from the environment", () => {
+  describe("LINE credentials from the environment", () => {
     beforeEach(() => {
-      delete process.env.GOOGLE_CLIENT_ID;
-      delete process.env.GOOGLE_CLIENT_SECRET;
+      delete process.env.LINE_LOGIN_CHANNEL_ID;
+      delete process.env.LINE_LOGIN_CHANNEL_SECRET;
     });
 
-    async function googleOffered() {
+    async function lineOffered() {
       const auth = await getAuth();
-      return auth.api.signInSocial({ body: { provider: "google" } }).then(
+      return auth.api.signInSocial({ body: { provider: "line" } }).then(
         () => true,
         () => false,
       );
     }
 
-    it("leaves Google off when neither variable is set", async () => {
-      expect(isGoogleEnabled()).toBe(false);
-      expect(await googleOffered()).toBe(false);
+    it("leaves LINE off when neither variable is set", async () => {
+      expect(isLineLoginEnabled()).toBe(false);
+      expect(await lineOffered()).toBe(false);
     });
 
-    it("leaves Google off when only one of the two variables is set", async () => {
-      process.env.GOOGLE_CLIENT_ID = "test-client-id";
+    it("leaves LINE off when only one of the two variables is set", async () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      process.env.LINE_LOGIN_CHANNEL_ID = "test-channel-id";
 
-      expect(isGoogleEnabled()).toBe(false);
-      expect(await googleOffered()).toBe(false);
+      expect(isLineLoginEnabled()).toBe(false);
+      expect(await lineOffered()).toBe(false);
+      warn.mockRestore();
     });
 
-    it("turns Google on when both variables are set", async () => {
-      process.env.GOOGLE_CLIENT_ID = "test-client-id";
-      process.env.GOOGLE_CLIENT_SECRET = "test-client-secret";
+    it("turns LINE on when both variables are set", async () => {
+      process.env.LINE_LOGIN_CHANNEL_ID = "test-channel-id";
+      process.env.LINE_LOGIN_CHANNEL_SECRET = "test-channel-secret";
 
-      expect(isGoogleEnabled()).toBe(true);
-      expect(await googleOffered()).toBe(true);
+      expect(isLineLoginEnabled()).toBe(true);
+      expect(await lineOffered()).toBe(true);
     });
   });
 

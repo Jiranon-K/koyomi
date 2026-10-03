@@ -45,7 +45,7 @@ type Run = (actions: Actions) => Promise<{ kind: string; message?: string }>;
 const intents: [name: string, run: Run, rateLimited: string, fallback: string][] = [
   ["signIn", (actions) => actions.signIn(signInInput), TOO_MANY, GENERIC],
   ["signUp", (actions) => actions.signUp(signUpInput), TOO_MANY, NOT_CREATED],
-  ["signInWithGoogle", (actions) => actions.signInWithGoogle(), TOO_MANY, GENERIC],
+  ["signInWithLine", (actions) => actions.signInWithLine(), TOO_MANY, GENERIC],
   ["signOut", (actions) => actions.signOut(), NOT_SIGNED_OUT, NOT_SIGNED_OUT],
   [
     "requestPasswordReset",
@@ -158,17 +158,28 @@ describe("signUp", () => {
   });
 });
 
-describe("signInWithGoogle", () => {
+describe("signInWithLine", () => {
   it("returns to the dashboard on success and to sign-in on a provider error", async () => {
     const { actions, client } = actionsReplying(succeeded);
 
-    await actions.signInWithGoogle();
+    await actions.signInWithLine();
 
     expect(client.signIn.social).toHaveBeenCalledWith({
-      provider: "google",
+      provider: "line",
       callbackURL: "/dashboard",
       errorCallbackURL: "/sign-in",
+      additionalParams: { bot_prompt: "normal" },
     });
+  });
+
+  it("returns to the page the visitor came from when one is given", async () => {
+    const { actions, client } = actionsReplying(succeeded);
+
+    await actions.signInWithLine("/schedule");
+
+    expect(client.signIn.social).toHaveBeenCalledWith(
+      expect.objectContaining({ callbackURL: "/schedule" }),
+    );
   });
 });
 

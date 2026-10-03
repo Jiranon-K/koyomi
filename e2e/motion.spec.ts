@@ -1,13 +1,9 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { createVerifiedAccount } from "./account";
+import { syncSchedule } from "./schedule";
+import { makeAdmin } from "./seed";
 
-// The rest of the suite runs with reduced motion so scans see final-state content; the first describe
-// lets arrival animations play, to prove they always end with the content visible, and the second
-// proves that with reduced motion the final state is there at once.
-
-// CSS opacity is not inherited but it does compound, so a wrapper that is stuck half-faded dims
-// everything inside it. Multiply up the tree to get what the visitor actually sees.
 function effectiveOpacity(locator: Locator) {
   return locator.evaluate((el) => {
     let opacity = 1;
@@ -25,8 +21,8 @@ async function expectArrived(locator: Locator) {
 
 const landingText = (page: Page) => [
   page.getByRole("heading", { level: 1 }),
-  page.getByText("Fig. 1 — the promise"),
-  page.getByText("Next.js, MongoDB and authentication"),
+  page.getByText("Fig. 1 — the reminder"),
+  page.getByText("The season's airing schedule in Thai time"),
 ];
 
 async function wrongPassword(page: Page) {
@@ -34,14 +30,12 @@ async function wrongPassword(page: Page) {
   await page.getByLabel("Email address").fill(`e2e-motion-${Date.now()}@example.com`);
   await page.getByLabel("Password", { exact: true }).fill("not-the-password");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  // The alert is a persistent live region; the fading element is inside it, so measure the text.
   return {
     alert: page.getByRole("alert").filter({ hasText: "Invalid email or password." }),
     text: page.getByText("Invalid email or password."),
   };
 }
 
-// The horizontal scale of an element's transform: 1 when it has none.
 function scaleOf(locator: Locator) {
   return locator.evaluate((el) => {
     const { transform } = getComputedStyle(el);
@@ -50,10 +44,10 @@ function scaleOf(locator: Locator) {
 }
 
 const dashboardText = (page: Page, email: string) => [
-  page.getByRole("heading", { level: 1, name: "Dashboard" }),
-  page.getByText("You are signed in."),
+  page.getByRole("heading", { level: 1, name: "My week" }),
   page.getByText(email),
-  page.locator("dd", { hasText: /^User$/ }),
+  page.getByText("You are not following any shows yet."),
+  page.getByRole("link", { name: "Browse the schedule" }),
 ];
 
 const AUTH_PAGES = [
@@ -76,12 +70,31 @@ test.describe("with motion", () => {
     });
   }
 
-  test("the dashboard title and rows arrive at full opacity", async ({ page }) => {
+  test("the dashboard title and empty state arrive at full opacity", async ({ page }) => {
     const email = await createVerifiedAccount(page, "e2e-motion");
 
     for (const text of dashboardText(page, email)) {
       await expectArrived(text);
     }
+  });
+
+  test("the admin title and status rows arrive at full opacity", async ({ page }) => {
+    await makeAdmin(await createVerifiedAccount(page, "e2e-motion-admin"));
+    await page.goto("/admin");
+
+    await expectArrived(page.getByRole("heading", { level: 1, name: "Status" }));
+    await expectArrived(page.getByText("What the background work last did"));
+    await expectArrived(page.getByRole("button", { name: "Sync now" }));
+    await expectArrived(page.getByText("Users with reminders switched on."));
+  });
+
+  test("the schedule title, day blocks and rows arrive at full opacity", async ({ page }) => {
+    await syncSchedule(page.request, "base");
+    await page.goto("/schedule");
+
+    await expectArrived(page.getByRole("heading", { level: 1, name: "This week" }));
+    await expectArrived(page.getByText("Lantern Street Diaries"));
+    await expectArrived(page.getByRole("heading", { level: 2 }).last());
   });
 
   for (const theme of ["light", "dark"]) {
@@ -138,14 +151,14 @@ test.describe("with motion in a tall window", () => {
   test("text in the last tenth of a page that cannot scroll still arrives", async ({ page }) => {
     await page.goto("/");
 
-    await expectArrived(page.getByText("Next.js, MongoDB and authentication"));
+    await expectArrived(page.getByText("The season's airing schedule in Thai time"));
   });
 });
 
 test.describe("with reduced motion", () => {
   test.use({ reducedMotion: "reduce" });
 
-  test("the dashboard rows are at full opacity at once", async ({ page }) => {
+  test("the dashboard title and empty state are at full opacity at once", async ({ page }) => {
     const email = await createVerifiedAccount(page, "e2e-motion");
 
     for (const text of dashboardText(page, email)) {

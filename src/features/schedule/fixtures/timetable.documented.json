@@ -1,0 +1,73 @@
+[
+  {
+    "title": "Lantern Street Diaries",
+    "route": "lantern-street-diaries",
+    "romaji": "Chouchin Doori Nikki",
+    "english": "Lantern Street Diaries",
+    "native": "提灯通り日記",
+    "delayedText": "",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T15:30:00Z",
+    "episodeNumber": 5,
+    "subtractedEpisodeNumber": 0,
+    "episodes": 12,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [{ "name": "TV", "route": "tv" }],
+    "imageVersionRoute": "anime/jpg/default/lantern-street-diaries-1a2b3c.jpg",
+    "streams": {
+      "platform": "crunchyroll",
+      "url": "crunchyroll.com/series/example",
+      "name": "Crunchyroll"
+    },
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Clockwork Orchard",
+    "route": "clockwork-orchard",
+    "romaji": "Zenmai no Kajuen",
+    "delayedText": "Delayed until further notice",
+    "delayedFrom": "2026-10-01T00:00:00Z",
+    "delayedUntil": "2026-10-15T00:00:00Z",
+    "status": "Delayed",
+    "episodeDate": "2026-10-04T16:00:00Z",
+    "episodeNumber": 3,
+    "episodes": 0,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "imageVersionRoute": "anime/jpg/default/clockwork-orchard-4d5e6f.jpg",
+    "airingStatus": "delayed-air"
+  },
+  {
+    "title": "Harbor of Paper Cranes",
+    "route": "harbor-of-paper-cranes",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-10-05T14:00:00+01:00",
+    "episodeNumber": 13,
+    "subtractedEpisodeNumber": 12,
+    "episodes": 13,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Missing its episode date",
+    "route": "missing-its-episode-date",
+    "episodeDate": "0001-01-01T00:00:00Z",
+    "episodeNumber": 1,
+    "status": "Upcoming",
+    "airType": "raw"
+  },
+  {
+    "title": "Missing its route",
+    "episodeDate": "2026-10-06T15:00:00Z",
+    "episodeNumber": 2
+  }
+]
