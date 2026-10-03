@@ -6,14 +6,51 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    // Third-party component kept verbatim from 21st.dev. Its animation needs setState in effects
-    // (measure the SVG, then enable the CSS transition on a later frame).
-    files: ["src/components/ui/handwriting-text.tsx"],
-    rules: { "react-hooks/set-state-in-effect": "off" },
+    files: ["**/*.{ts,tsx,mts}"],
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+    },
+    rules: {
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        { checksVoidReturn: { attributes: false } },
+      ],
+      "@typescript-eslint/await-thenable": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-non-null-assertion": "error",
+      "@typescript-eslint/ban-ts-comment": "error",
+      "no-console": ["error", { allow: ["warn", "error"] }],
+    },
   },
-  // Override default ignores of eslint-config-next.
+  {
+    files: ["src/components/**", "src/lib/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/features/*", "@/app/*"],
+              message: "Shared code must not depend on features or routes.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/components/ui/handwriting-text.tsx"],
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
+    },
+  },
+  {
+    files: ["src/features/auth/email.ts"],
+    rules: { "no-console": "off" },
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",

@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint --max-warnings 0",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "verify": "bash ./verify.sh"
+    "verify": "bash ./verify.sh",
+    "audit": "bun audit",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "better-auth": "^1.7.7",

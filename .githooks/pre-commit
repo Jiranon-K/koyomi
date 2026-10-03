@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$staged" ] && exit 0
+
+if echo "$staged" | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$'; then
+  echo "pre-commit: refusing to commit an env file (listed above)." >&2
+  exit 1
+fi
+
+secrets='-----BEGIN [A-Z ]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{36}|sk-[A-Za-z0-9_-]{32,}|mongodb(\+srv)?://[^:/@ ]+:[^@ ]+@'
+if git diff --cached -U0 --diff-filter=ACMR | grep -E '^\+[^+]' | grep -nE -e "$secrets"; then
+  echo "pre-commit: staged change looks like it contains a secret (listed above)." >&2
+  exit 1
+fi
+
+code=$(echo "$staged" | grep -E '\.(ts|tsx|mts|mjs)$' || true)
+if [ -n "$code" ]; then
+  echo "$code" | xargs bunx eslint --max-warnings 0 --no-warn-ignored
+  bun run typecheck
+fi
