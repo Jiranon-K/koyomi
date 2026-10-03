@@ -7,13 +7,11 @@ import type { LineMessenger, SendResult } from "@/features/line/messenger";
 import { PushQuota } from "./model";
 import { PUSH_LIMIT, pushesThisMonth, pushWithinQuota, quotaMonth } from "./quota";
 
-// Saturday 3 October 2026, 09:00 in Bangkok.
 const NOW = new Date("2026-10-03T02:00:00Z");
 const saved = { ...process.env };
 
 let server: MongoMemoryServer;
 
-/** A sender that records what it was asked to push and answers as told. */
 function recorder(answer: () => SendResult | Promise<SendResult> = () => ({ ok: true })) {
   const pushed: { lineUserId: string; text: string; retryKey: string }[] = [];
   const messenger: LineMessenger = {
@@ -51,14 +49,14 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await pushesThisMonth(NOW); // connects
+  await pushesThisMonth(NOW);
   await PushQuota.deleteMany({});
 });
 
 describe("quotaMonth", () => {
   it("is the Bangkok calendar month, not the UTC one", () => {
-    expect(quotaMonth(new Date("2026-10-31T16:59:59Z"))).toBe("2026-10"); // 23:59 on 31 Oct
-    expect(quotaMonth(new Date("2026-10-31T17:00:00Z"))).toBe("2026-11"); // 00:00 on 1 Nov
+    expect(quotaMonth(new Date("2026-10-31T16:59:59Z"))).toBe("2026-10");
+    expect(quotaMonth(new Date("2026-10-31T17:00:00Z"))).toBe("2026-11");
     expect(quotaMonth(new Date("2026-12-31T17:00:00Z"))).toBe("2027-01");
   });
 });
@@ -158,7 +156,6 @@ describe("pushWithinQuota", () => {
     await pushWithinQuota(messenger, push(1), NOW);
     expect(await pushWithinQuota(messenger, push(1), NOW)).toEqual({ kind: "sent" });
 
-    // The sender is asked again (LINE drops the repeat by its retry key); the counter is not.
     expect(pushed).toHaveLength(2);
     expect((await pushesThisMonth(NOW)).count).toBe(1);
   });
@@ -171,13 +168,12 @@ describe("pushWithinQuota", () => {
 
     expect((await pushWithinQuota(messenger, push(1), NOW)).kind).toBe("failed");
 
-    // The first attempt reached LINE, so it stays counted.
     expect((await pushesThisMonth(NOW)).count).toBe(1);
   });
 
   it("starts from zero in the next Bangkok month", async () => {
     await fill(290);
-    const nextMonth = new Date("2026-10-31T17:00:00Z"); // 00:00 on 1 November in Bangkok
+    const nextMonth = new Date("2026-10-31T17:00:00Z");
     const { messenger } = recorder();
 
     expect((await pushWithinQuota(messenger, push(1), NOW)).kind).toBe("refused-quota");

@@ -59,17 +59,14 @@ const scheduleSchema = z.object({
   ANIMESCHEDULE_TOKEN: z.preprocess(blankAsUnset, text("ANIMESCHEDULE_TOKEN")),
 });
 
-/** True when the external services (schedule source, LINE sender, job queue) are replaced by fakes. */
 export function fakesEnabled(source: Source = process.env): boolean {
   return parse(fakesSchema, source).USE_FAKES === "true";
 }
 
-/** What the real schedule source needs. Not read when the fakes are on. */
 export function scheduleEnv(source: Source = process.env) {
   return parse(scheduleSchema, source);
 }
 
-/** Whether the unauthenticated `/api/dev` routes answer: only with the fakes, or under `next dev`. */
 export function devRoutesEnabled(source: Source = process.env): boolean {
   return fakesEnabled(source) || source.NODE_ENV === "development";
 }
@@ -82,10 +79,6 @@ function warnOnce(message: string): void {
   console.warn(message);
 }
 
-/**
- * LINE Login credentials, or `undefined` when LINE Login is off. Never throws: the app must run
- * without LINE. A half-configured pair is reported once, by variable name only.
- */
 export function lineLoginEnv(
   source: Source = process.env,
 ): { clientId: string; clientSecret: string } | undefined {
@@ -101,10 +94,6 @@ export function lineLoginEnv(
   return undefined;
 }
 
-/**
- * The Messaging API channel secret that signs webhook calls, or `undefined` when it is not set.
- * A caller must then refuse the request; it must never skip the signature check.
- */
 export function lineWebhookEnv(
   source: Source = process.env,
 ): { channelSecret: string } | undefined {
@@ -114,7 +103,6 @@ export function lineWebhookEnv(
 
 const BOT_BASIC_ID = /^@[\w.-]+$/;
 
-/** The bot's add-friend link, built from its basic ID, or `undefined` when that is not set. */
 export function lineBotEnv(source: Source = process.env): { addFriendUrl: string } | undefined {
   const basicId = source.LINE_BOT_BASIC_ID;
   if (!basicId) return undefined;
@@ -127,15 +115,10 @@ export function lineBotEnv(source: Source = process.env): { addFriendUrl: string
   return { addFriendUrl: `https://line.me/R/ti/p/${encodeURIComponent(basicId)}` };
 }
 
-/** The public origin of this app (no trailing slash): what links in messages and job URLs use. */
 export function appUrl(source: Source = process.env): string {
   return authEnv(source).BETTER_AUTH_URL;
 }
 
-/**
- * The Messaging API channel access token that pushes are sent with, or `undefined` when it is not
- * set. A caller must then report the push as failed, by variable name.
- */
 export function lineMessagingEnv(
   source: Source = process.env,
 ): { channelAccessToken: string } | undefined {
@@ -154,16 +137,11 @@ const qstashSchema = z.object({
   ),
 });
 
-/** What publishing to QStash needs. Not read when the fakes are on. */
 export function qstashEnv(source: Source = process.env): { token: string; url: string } {
   const { QSTASH_TOKEN, QSTASH_URL } = parse(qstashSchema, source);
   return { token: QSTASH_TOKEN, url: QSTASH_URL.replace(/\/+$/, "") };
 }
 
-/**
- * The two keys QStash signs job calls with, or `undefined` unless both are set. A job endpoint
- * must then refuse the call; it must never skip the signature check.
- */
 export function qstashSigningEnv(
   source: Source = process.env,
 ): { currentSigningKey: string; nextSigningKey: string } | undefined {
@@ -180,17 +158,10 @@ export function qstashSigningEnv(
 }
 
 const SECRET_NAME = /SECRET|TOKEN|KEY|PASSWORD/;
-/** Shorter values are not secrets worth the name, and would match ordinary words. */
 const SECRET_MIN_LENGTH = 8;
 const URL_CREDENTIALS = /([a-z][a-z0-9+.-]*:\/\/)[^\s/@]+@/gi;
 const BEARER = /\bBearer\s+[\w.~+/=-]+/g;
 
-/**
- * `text` made safe to show or store: the value of every secret variable that is set (a name with
- * SECRET, TOKEN, KEY or PASSWORD in it, and `MONGODB_URI`) is replaced by `[NAME]`, and the
- * credentials of any address and any bearer token by `[hidden]`. For text that did not come from
- * this app, such as the message of an error a library threw.
- */
 export function redactSecrets(text: string, source: Source = process.env): string {
   const secrets = Object.entries(source)
     .flatMap(([name, value]) =>
@@ -200,7 +171,6 @@ export function redactSecrets(text: string, source: Source = process.env): strin
         ? [{ name, value }]
         : [],
     )
-    // A secret that contains another one is replaced whole.
     .sort((a, b) => b.value.length - a.value.length);
 
   let safe = text;

@@ -1,40 +1,13 @@
 import type { Metadata } from "next";
 
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
+import { StatusNote as Note, StatusRow as Row } from "@/components/status-row";
 import { adminStatus, type DigestStatus, type SyncStatus } from "@/features/admin/status";
 import { SyncNowButton } from "@/features/admin/sync-now-button";
 import { requireAdmin } from "@/features/auth/session";
 import { formatDateTime, formatDayDate } from "@/features/schedule/day-window";
 
 export const metadata: Metadata = { title: "Status" };
-
-function Row({
-  label,
-  state,
-  failed = false,
-  children,
-}: {
-  label: string;
-  state: string;
-  failed?: boolean;
-  children?: React.ReactNode;
-}) {
-  return (
-    <StaggerItem className="grid gap-x-4 gap-y-3 border-b border-border py-5 sm:grid-cols-[7rem_1fr]">
-      <dt className="pt-1.5 label-mono text-muted-foreground">{label}</dt>
-      <dd className="grid gap-3">
-        <p className={failed ? "text-lg leading-snug text-destructive" : "text-lg leading-snug"}>
-          {state}
-        </p>
-        {children}
-      </dd>
-    </StaggerItem>
-  );
-}
-
-function Note({ children }: { children: React.ReactNode }) {
-  return <p className="text-sm text-muted-foreground">{children}</p>;
-}
 
 function Reason({ children }: { children: string | null }) {
   return children ? <p className="text-sm break-words">Reason: {children}</p> : null;

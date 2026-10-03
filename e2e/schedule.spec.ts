@@ -13,7 +13,6 @@ test("a visitor sees the week in Thai time, grouped by schedule day", async ({ p
   await expect(page.getByRole("heading", { level: 1, name: "This week" })).toBeVisible();
   await expect(page.getByRole("heading", { level: 2 })).toHaveCount(7);
 
-  // The first block is today. Its 00:30 broadcast is after midnight, yet belongs to tonight.
   const today = page.getByRole("region").first();
   await expect(today.getByText("Today")).toBeVisible();
   await expect(today.getByRole("listitem")).toHaveText([
@@ -41,13 +40,11 @@ test("the page is served from the cache until a sync succeeds", async ({ page, r
   await expect(row).toBeVisible();
   await expect(row.getByText("Delayed", { exact: true })).toHaveCount(0);
 
-  // A change the server was not told about stays invisible: the page reads the data cache.
   await renameShowBehindTheServer("the-ninth-platform", "Renamed Behind The Cache");
   await page.reload();
   await expect(row).toBeVisible();
   await expect(page.getByText("Renamed Behind The Cache")).toHaveCount(0);
 
-  // A successful sync expires the cache: the next load shows the delay the source announced.
   await syncSchedule(request, "revised");
   await page.reload();
   await expect(row.getByText("Delayed", { exact: true })).toBeVisible();

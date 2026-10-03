@@ -9,22 +9,12 @@ import {
   type SourceTimetable,
 } from "./source";
 
-// AnimeSchedule.net API v3. Built from https://animeschedule.net/api/v3/documentation (read on
-// 2026-10-03) without a token, so three things are assumptions until checked against a real
-// response (see `scripts/record-animeschedule-sample.ts`):
-//   1. `week` is the ISO 8601 week number and `year` its ISO week-year;
-//   2. a delayed episode has `airingStatus: "delayed-air"`, or an `episodeDate` inside
-//      `delayedFrom`..`delayedUntil`;
-//   3. an unset datetime is the documented null value `0001-01-01T00:00:00Z`.
-
 const BASE_URL = "https://animeschedule.net/api/v3";
 const REQUEST_TIMEOUT_MS = 15_000;
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
-/** The documented limit is 120 requests a minute; one every 600 ms is 100. */
 export const MIN_REQUEST_INTERVAL_MS = 600;
 
-/** This week and the next: enough to cover seven schedule days from any moment. */
 const WEEKS_AHEAD = [0, 1] as const;
 
 const datetime = z
@@ -32,7 +22,6 @@ const datetime = z
   .optional()
   .transform((value) => {
     const time = value ? Date.parse(value) : Number.NaN;
-    // The API writes "no date" as year 1.
     return Number.isNaN(time) || time <= 0 ? null : new Date(time);
   });
 
@@ -83,7 +72,6 @@ function toEpisode(entry: z.output<typeof timetableEntry>): SourceEpisode | null
   };
 }
 
-/** Reads the body of `GET /timetables`. Unreadable entries are skipped and counted. */
 export function parseTimetable(body: unknown): Pick<SourceTimetable, "episodes" | "skipped"> {
   if (!Array.isArray(body)) {
     throw new ScheduleSourceError("invalid", "AnimeSchedule returned a timetable that is no list.");
@@ -97,12 +85,10 @@ export function parseTimetable(body: unknown): Pick<SourceTimetable, "episodes" 
   return { episodes, skipped: body.length - episodes.length };
 }
 
-/** The ISO 8601 week that contains `instant` (UTC), and the year that week belongs to. */
 export function isoWeekOf(instant: Date): { year: number; week: number } {
   const day = new Date(
     Date.UTC(instant.getUTCFullYear(), instant.getUTCMonth(), instant.getUTCDate()),
   );
-  // The week belongs to the year of its Thursday.
   day.setUTCDate(day.getUTCDate() + 4 - (day.getUTCDay() || 7));
   const year = day.getUTCFullYear();
   const week = Math.ceil(((day.getTime() - Date.UTC(year, 0, 1)) / 86_400_000 + 1) / 7);

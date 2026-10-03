@@ -9,10 +9,6 @@ import { Slot } from "radix-ui";
 
 import { MICRO, PRESS_SCALE } from "@/components/motion/tokens";
 
-// Local edits to the shadcn output (re-adding the component with --overwrite would drop them): the
-// press feedback below (scale from the motion tokens, replacing `active:translate-y-px`), and
-// `transition-all` narrowed to colour-like properties so a CSS transition does not smooth motion's
-// inline transform a second time.
 const MotionSlot = m.create(Slot.Root);
 
 const buttonVariants = cva(
@@ -60,7 +56,6 @@ function Button({
   asChild = false,
   ...props
 }: Omit<
-  // motion types these four handlers differently from React, so they cannot be passed through
   React.ComponentProps<"button">,
   "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"
 > &
@@ -68,8 +63,6 @@ function Button({
     asChild?: boolean;
   }) {
   const Comp = asChild ? MotionSlot : m.button;
-  // motion applies transforms instantly under reduced motion instead of skipping them, so a press
-  // would still shrink the button; drop the gesture for visitors who asked for less movement.
   const reduceMotion = useReducedMotion();
 
   return (

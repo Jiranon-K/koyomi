@@ -85,8 +85,6 @@
   --sidebar-border: oklch(0.75 0.02 80);
   --sidebar-ring: oklch(0.52 0.14 40);
   --radius: 0px;
-  /* The same in both themes: ink laid over a photograph, the paper text on it, and LINE's brand
-     green, which only passes contrast on the scrim. */
   --scrim: oklch(0.16 0.005 60);
   --scrim-foreground: oklch(0.97 0.01 88);
   --line: oklch(0.74 0.21 149);
@@ -138,11 +136,6 @@
   }
 }
 
-/*
- * Reduced motion: arrivals show their final state at once. motion only drops transforms for this
- * setting and keeps fading opacity, so the final state is forced here, which also holds before
- * the page hydrates.
- */
 @media (prefers-reduced-motion: reduce) {
   [data-arrive] {
     opacity: 1 !important;
@@ -151,7 +144,6 @@
   }
 }
 
-/* The mono label voice: masthead, buttons, captions and row headings. */
 @utility label-mono {
   font-family: var(--font-mono);
   font-size: var(--text-xs);

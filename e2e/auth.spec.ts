@@ -1,19 +1,8 @@
-import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 import { createVerifiedAccount, PASSWORD as password } from "./account";
+import { seriousViolations } from "./axe";
 import { followBehindTheServer, syncSchedule } from "./schedule";
-
-// Buttons animate colour changes, so scanning right after a theme switch would read mid-transition colours.
-const NO_TRANSITIONS = "*, *::before, *::after { transition: none !important; }";
-
-async function seriousViolations(page: Page) {
-  await page.addStyleTag({ content: NO_TRANSITIONS });
-  const { violations } = await new AxeBuilder({ page }).analyze();
-  return violations
-    .filter(({ impact }) => impact === "serious" || impact === "critical")
-    .map(({ id, help }) => `${id}: ${help}`);
-}
 
 async function signOut(page: Page) {
   await page.getByRole("button", { name: "Sign out" }).click();
@@ -25,8 +14,6 @@ test("a signed-out visitor to the dashboard is sent to sign-in", async ({ page }
   await expect(page).toHaveURL(/\/sign-in$/);
 });
 
-// One journey with one real sign-in: sign-in is rate-limited to 5 a minute per IP and the other
-// tests of a run already spend three attempts.
 test("sign up, verify, follow a show from the schedule, see my week and unfollow", async ({
   page,
 }) => {
@@ -47,7 +34,6 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/sign-in$/);
 
-  // Signed out, Follow leads to sign-in and from there back to the schedule.
   await page.goto("/schedule");
   await page.getByRole("link", { name: `Follow ${lantern}` }).click();
   await expect(page).toHaveURL(/\/sign-in\?next=%2Fschedule$/);
@@ -58,7 +44,6 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
 
   await page.getByRole("button", { name: `Follow ${lantern}` }).click();
   await expect(page.getByRole("button", { name: `Unfollow ${lantern}` })).toBeVisible();
-  // A finished show is no longer on the schedule to press Follow on: it was followed while it aired.
   await followBehindTheServer(email, "harbor-of-paper-cranes");
 
   await page.getByRole("link", { name: "My week" }).click();
@@ -81,8 +66,6 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
   await expect(page.locator("html")).toContainClass("light");
   expect(await seriousViolations(page)).toEqual([]);
 
-  // A return path that names another site is ignored; a signed-in visitor shows it without a
-  // second sign-in, because the sign-in page forwards them straight to where it would return.
   await page.goto("/sign-in?next=https://example.com/steal");
   await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/sign-in?next=//example.com");
@@ -130,7 +113,6 @@ for (const theme of ["light", "dark"]) {
       await page.addInitScript((stored) => {
         window.localStorage.setItem("theme", stored);
       }, theme);
-      // Scan the schedule with episodes on it, a delayed one included.
       if (path === "/schedule") await syncSchedule(page.request, "base");
       await page.goto(path);
       await expect(page.locator("html")).toContainClass(theme);

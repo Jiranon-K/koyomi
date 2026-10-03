@@ -1,8 +1,5 @@
 import type { DisconnectLineOutcome } from "./line-account";
 
-// Better Auth sends the browser back with `?error=<code>` when a LINE flow does not complete.
-// The codes are named only here.
-
 const SIGN_IN_ERRORS: Record<string, string> = {
   email_not_verified:
     "LINE sign-in needs a verified email. We sent a link to the address LINE shared; open it, then continue with LINE again.",
@@ -21,12 +18,10 @@ function lookUp(messages: Record<string, string>, code: string): string | undefi
   return Object.hasOwn(messages, code) ? messages[code] : undefined;
 }
 
-/** The message for `/sign-in?error=<code>` after "Continue with LINE". */
 export function lineSignInErrorMessage(code: string): string {
   return lookUp(SIGN_IN_ERRORS, code) ?? "LINE sign-in did not complete. Please try again.";
 }
 
-/** The message for `/settings?error=<code>` after "Connect LINE". */
 export function lineConnectErrorMessage(code: string): string {
   return lookUp(CONNECT_ERRORS, code) ?? "LINE could not be connected. Please try again.";
 }

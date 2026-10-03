@@ -14,7 +14,6 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
   const { reset, error, [RETURN_PARAM]: next } = await searchParams;
   const returnTo = safeReturnPath(next);
   await redirectSignedIn(returnTo);
-  // Only this boolean crosses to the browser; the channel id and secret stay on the server.
   const lineEnabled = isLineLoginEnabled();
 
   return (

@@ -15,7 +15,6 @@ import { REMINDER_CAP, removeLineLink, setReminders } from "./service";
 
 const DONE: SettingsActionState = { error: null };
 
-/** Send the signed-in user to LINE to connect their LINE account; they come back to settings. */
 export async function connectLineAction(): Promise<SettingsActionState> {
   await requireSession();
   if (!isLineLoginEnabled()) return { error: "LINE is not set up on this server." };
@@ -30,7 +29,6 @@ export async function connectLineAction(): Promise<SettingsActionState> {
   redirect(url);
 }
 
-/** Remove the LINE account from the signed-in user, and with it the reminder place they held. */
 export async function disconnectLineAction(): Promise<SettingsActionState> {
   const { user } = await requireSession();
 
@@ -42,7 +40,6 @@ export async function disconnectLineAction(): Promise<SettingsActionState> {
   return DONE;
 }
 
-/** Flip the signed-in user's reminder switch. */
 export async function setRemindersAction(
   _previous: SettingsActionState,
   formData: FormData,

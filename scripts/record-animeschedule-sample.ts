@@ -1,10 +1,3 @@
-// Records one real timetable response as the sample the source-mapping test should read, and
-// prints what ticket 02 still needs: the shape of the delay fields and the rate-limit headers.
-//
-//   bun scripts/record-animeschedule-sample.ts
-//
-// Needs ANIMESCHEDULE_TOKEN (bun reads .env.local). It makes ONE request. The file it writes is
-// public schedule data and holds no token.
 import { writeFile } from "node:fs/promises";
 
 import { isoWeekOf, parseTimetable } from "../src/features/schedule/animeschedule";

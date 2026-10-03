@@ -1,16 +1,16 @@
-import mongoose, { Schema, type Model } from "mongoose";
+import { Schema } from "mongoose";
+
+import { defineModel } from "@/lib/db/mongoose";
 
 import { SHOW_STATUSES, type ScheduleSourceName, type ShowStatus } from "./source";
 
-/** Episodes are kept this long after they air, then MongoDB's TTL monitor removes them. */
-export const EPISODE_RETENTION_SECONDS = 30 * 24 * 60 * 60;
+const EPISODE_RETENTION_SECONDS = 30 * 24 * 60 * 60;
 
 export type ShowDoc = {
   route: string;
   title: string;
   status: ShowStatus;
   totalEpisodes: number;
-  /** The start of the last successful sync that listed this show. */
   lastSeenAt: Date;
 };
 
@@ -18,11 +18,9 @@ export type EpisodeDoc = {
   showRoute: string;
   episodeNumber: number;
   firstEpisodeNumber: number | null;
-  /** The Japanese broadcast instant, in UTC like every stored date. */
   airAt: Date;
   delayed: boolean;
   delayedText: string | null;
-  /** The start of the sync that last wrote this row. */
   syncedAt: Date;
 };
 
@@ -58,7 +56,6 @@ const episodeSchema = new Schema<EpisodeDoc>({
   syncedAt: { type: Date, required: true },
 });
 episodeSchema.index({ showRoute: 1, episodeNumber: 1 }, { unique: true });
-// Also serves the "episodes in a window" range query.
 episodeSchema.index({ airAt: 1 }, { expireAfterSeconds: EPISODE_RETENTION_SECONDS });
 
 const syncRunSchema = new Schema<SyncRunDoc>({
@@ -74,12 +71,6 @@ const syncRunSchema = new Schema<SyncRunDoc>({
 });
 syncRunSchema.index({ startedAt: -1 });
 
-// Next.js reloads modules in development; reuse a model that is already compiled.
-function model<Doc>(name: string, schema: Schema<Doc>): Model<Doc> {
-  const existing = mongoose.models[name] as Model<Doc> | undefined;
-  return existing ?? mongoose.model<Doc>(name, schema);
-}
-
-export const Show = model("Show", showSchema);
-export const Episode = model("Episode", episodeSchema);
-export const SyncRun = model("ScheduleSyncRun", syncRunSchema);
+export const Show = defineModel("Show", showSchema);
+export const Episode = defineModel("Episode", episodeSchema);
+export const SyncRun = defineModel("ScheduleSyncRun", syncRunSchema);

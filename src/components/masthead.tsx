@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { BRAND } from "./brand";
 
-// The top strip of every page: the wordmark on the left, page actions on the right.
 export function Masthead({ children }: { children?: React.ReactNode }) {
   return (
     <header className="flex items-center justify-between border-b border-foreground px-6 py-3 label-mono sm:px-10">

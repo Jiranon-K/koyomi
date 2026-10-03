@@ -9,10 +9,6 @@ import { runScheduleSync } from "@/features/schedule/sync";
 
 import type { SyncNowState } from "./schema";
 
-/**
- * Runs the schedule sync now, for an administrator. The run is recorded like a scheduled one, so
- * the status page shows it (and, when it failed, its reason) once it is refreshed.
- */
 export async function syncNowAction(): Promise<SyncNowState> {
   await requireAdmin();
 
@@ -20,7 +16,6 @@ export async function syncNowAction(): Promise<SyncNowState> {
   try {
     run = await runScheduleSync();
   } catch (error) {
-    // The sync records its own failures; this is a run that could not even be recorded.
     console.error("[admin] the sync could not run", error);
     return { error: "The sync could not run. Please try again.", notice: null };
   }

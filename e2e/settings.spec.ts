@@ -1,29 +1,8 @@
-import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 import { createVerifiedAccount } from "./account";
+import { scanBothThemes, seriousViolations } from "./axe";
 import { clearFillers, fillReminderSlots, linkLine } from "./seed";
-
-// Same scan as e2e/auth.spec.ts: settings is a private page, so it is scanned inside a journey.
-const NO_TRANSITIONS = "*, *::before, *::after { transition: none !important; }";
-
-async function seriousViolations(page: Page) {
-  await page.addStyleTag({ content: NO_TRANSITIONS });
-  const { violations } = await new AxeBuilder({ page }).analyze();
-  return violations
-    .filter(({ impact }) => impact === "serious" || impact === "critical")
-    .map(({ id, help }) => `${id}: ${help}`);
-}
-
-async function scanBothThemes(page: Page) {
-  const start = (await page.locator("html").getAttribute("class"))?.includes("dark")
-    ? "dark"
-    : "light";
-  expect(await seriousViolations(page)).toEqual([]);
-  await page.getByRole("button", { name: "Toggle theme" }).click();
-  await expect(page.locator("html")).toContainClass(start === "dark" ? "light" : "dark");
-  expect(await seriousViolations(page)).toEqual([]);
-}
 
 const reminders = (page: Page) => page.getByRole("switch", { name: "Reminders" });
 
@@ -61,7 +40,6 @@ test("settings: connection state, the reminder switch, the cap and disconnecting
 }) => {
   const email = await createVerifiedAccount(page, "e2e-settings");
 
-  // Not connected, and this server has no LINE Login channel, so there is nothing to press.
   await page.getByRole("link", { name: "Settings" }).click();
   await expect(page).toHaveURL(/\/settings$/);
   await expect(page).toHaveTitle("Settings · Koyomi");
@@ -71,7 +49,6 @@ test("settings: connection state, the reminder switch, the cap and disconnecting
   await expect(reminders(page)).toHaveCount(0);
   await scanBothThemes(page);
 
-  // A linked user who is a friend of the bot and holds a reminder place.
   await linkLine(email, { reminderSlot: 1 });
   await page.reload();
   await expect(page.getByText("Connected", { exact: true })).toBeVisible();
@@ -85,7 +62,6 @@ test("settings: connection state, the reminder switch, the cap and disconnecting
   await expect(page.getByText("No messages are sent while this is off.")).toBeVisible();
   await scanBothThemes(page);
 
-  // Ten other users hold every place: the eleventh is told so, and stays off.
   await fillReminderSlots(1);
   await reminders(page).click();
   await expect(page.getByRole("alert").filter({ hasText: "Reminders are full" })).toBeVisible();

@@ -1,13 +1,3 @@
-// Creates (or updates) the three QStash schedules that drive the background work: the schedule
-// sync every six hours, the sync at 08:45 and the digest at 09:00 Bangkok time.
-//
-//   bun scripts/create-qstash-schedules.ts            create or update the schedules
-//   bun scripts/create-qstash-schedules.ts --dry-run  print what would be created, call nothing
-//
-// Needs QSTASH_TOKEN and BETTER_AUTH_URL (bun reads .env.local); QSTASH_URL when the QStash
-// account is not in the default region. BETTER_AUTH_URL must be the deployed, public origin: QStash
-// calls it from the internet. Safe to run again: each schedule has a fixed id, so a second run
-// overwrites the first instead of adding copies. It prints no token.
 import { Client } from "@upstash/qstash";
 
 import { jobUrl } from "../src/features/notifications/queue";

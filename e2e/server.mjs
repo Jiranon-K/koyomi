@@ -16,12 +16,8 @@ if (!process.env.E2E_SKIP_BUILD) {
 const mongo = await MongoMemoryServer.create();
 mkdirSync(".e2e", { recursive: true });
 const log = createWriteStream(".e2e/server.log");
-// Tests that must change data behind the server's back (to prove a cache, or to seed a linked
-// LINE account) connect with this; see e2e/seed.ts.
 writeFileSync(".e2e/mongo-uri", mongo.getUri("e2e"));
 
-// LINE and QStash are off unless a run opts in with E2E_-prefixed placeholders, whatever the shell
-// or .env.local holds: no real token can reach this server.
 const line = Object.fromEntries(
   [
     "LINE_LOGIN_CHANNEL_ID",
@@ -42,8 +38,6 @@ const server = spawn(process.execPath, [next, "start", "-p", port], {
     BETTER_AUTH_URL: `http://localhost:${port}`,
     ADMIN_EMAILS: "",
     USE_FAKES: "true",
-    // Signing keys that exist only here, so the job endpoints can be shown to refuse a call that
-    // is unsigned or signed with another key, and to accept one signed with these (e2e/digest.spec.ts).
     QSTASH_CURRENT_SIGNING_KEY: E2E_SIGNING_KEYS.current,
     QSTASH_NEXT_SIGNING_KEY: E2E_SIGNING_KEYS.next,
     QSTASH_DEV: "",

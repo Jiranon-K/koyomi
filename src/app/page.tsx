@@ -10,7 +10,6 @@ import { HandwritingText } from "@/components/ui/handwriting-text";
 import { SIGN_IN_PATH, SIGN_UP_PATH } from "@/features/auth/paths";
 import { SCHEDULE_PATH } from "@/features/schedule/paths";
 
-// The brand sentence with its one mention of LINE picked out in LINE's green.
 function Support() {
   const [before, ...rest] = BRAND.support.split("LINE");
   if (rest.length === 0) return before;

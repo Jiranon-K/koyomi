@@ -9,26 +9,27 @@ import { SCHEDULE_PATH } from "@/features/schedule/paths";
 import { followSchema } from "./schema";
 import { followShow, unfollowShow } from "./service";
 
-// Both pages render follow state per request; revalidating them makes the open page refetch.
 function refresh(): void {
   revalidatePath(SCHEDULE_PATH);
   revalidatePath(DASHBOARD_PATH);
 }
 
-export async function followAction(formData: FormData): Promise<void> {
+async function withShowRoute(
+  formData: FormData,
+  run: (userId: string, showRoute: string) => Promise<unknown>,
+): Promise<void> {
   const { user } = await requireSession();
   const parsed = followSchema.safeParse({ showRoute: formData.get("showRoute") });
   if (!parsed.success) return;
 
-  await followShow(user.id, parsed.data.showRoute);
+  await run(user.id, parsed.data.showRoute);
   refresh();
 }
 
-export async function unfollowAction(formData: FormData): Promise<void> {
-  const { user } = await requireSession();
-  const parsed = followSchema.safeParse({ showRoute: formData.get("showRoute") });
-  if (!parsed.success) return;
+export async function followAction(formData: FormData): Promise<void> {
+  await withShowRoute(formData, followShow);
+}
 
-  await unfollowShow(user.id, parsed.data.showRoute);
-  refresh();
+export async function unfollowAction(formData: FormData): Promise<void> {
+  await withShowRoute(formData, unfollowShow);
 }

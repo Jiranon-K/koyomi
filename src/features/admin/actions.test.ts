@@ -27,8 +27,6 @@ const mocks = vi.hoisted(() => ({
   revalidatePath: vi.fn(),
 }));
 
-// The guard as `src/features/auth/session.ts` behaves (see its own tests): a signed-out caller is
-// redirected to sign-in, a signed-in regular user gets a 404.
 vi.mock("@/features/auth/session", () => ({
   requireAdmin: async () => {
     if (!mocks.role) throw new Error("REDIRECT /sign-in");

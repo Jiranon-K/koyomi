@@ -10,7 +10,7 @@ function entry(overrides: Partial<ScheduleEntry> = {}): ScheduleEntry {
     title: "Lantern Street Diaries",
     episodeNumber: 5,
     firstEpisodeNumber: null,
-    airAt: "2026-10-03T15:30:00.000Z", // 22:30 in Bangkok
+    airAt: "2026-10-03T15:30:00.000Z",
     delayed: false,
     delayedText: null,
     ...overrides,
@@ -69,6 +69,17 @@ describe("digestText", () => {
         "",
         "Your week: https://koyomi.example/dashboard",
       ].join("\n"),
+    );
+  });
+
+  it("is cut to what LINE accepts and still ends with the dashboard link", () => {
+    const many = Array.from({ length: 200 }, (_, index) => entry({ episodeNumber: index + 1 }));
+
+    const text = digestText(many, "https://koyomi.example/dashboard");
+
+    expect(text.length).toBeLessThanOrEqual(5000);
+    expect(text.endsWith("(more not shown)\n\nYour week: https://koyomi.example/dashboard")).toBe(
+      true,
     );
   });
 });

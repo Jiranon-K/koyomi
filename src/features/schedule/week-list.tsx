@@ -42,11 +42,9 @@ function EntryRow({ entry, action }: { entry: ScheduleEntry; action?: React.Reac
 type WeekListProps = {
   days: readonly ScheduleDay[];
   now: Date;
-  /** Rendered at the end of each row, e.g. a follow button. */
   action?: (entry: ScheduleEntry) => React.ReactNode;
 };
 
-/** The week as one block per schedule day, with Thai air times. Shared by every weekly view. */
 export function WeekList({ days, now, action }: WeekListProps) {
   const today = dayWindowOf(now).day;
 

@@ -21,7 +21,10 @@ let server: MongoMemoryServer;
 let outbox: EmailMessage[];
 
 type NewAuthOptions = Partial<
-  Pick<Parameters<typeof createAuth>[0], "adminEmails" | "line" | "onLineAccount" | "sendEmail">
+  Pick<
+    Parameters<typeof createAuth>[0],
+    "adminEmails" | "line" | "onLineAccount" | "onLineAccountRemoved" | "sendEmail"
+  >
 >;
 
 function newAuth(options: NewAuthOptions = {}) {
@@ -527,8 +530,6 @@ describe("LINE sign-in", () => {
   type LineIdentity = { sub: string; email?: string };
   type LineAccountEvent = Parameters<NonNullable<NewAuthOptions["onLineAccount"]>>[0];
 
-  // A fake identity provider: LINE's token endpoint answers with an ID token for `identity`.
-  // The provider reads the profile from that token, exactly as it does after a real redirect.
   function lineAnswersAs(identity: LineIdentity) {
     const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString("base64url");
     const idToken = [
@@ -563,7 +564,6 @@ describe("LINE sign-in", () => {
     );
   }
 
-  // Follows the redirect LINE would send the browser back with, carrying the cookies set so far.
   async function returnFromLine(auth: ReturnType<typeof newAuth>, started: Response, cookies = "") {
     const { url } = (await started.json()) as { url: string };
     const state = new URL(url).searchParams.get("state") ?? "";
@@ -860,6 +860,23 @@ describe("LINE sign-in", () => {
       expect(target.searchParams.get("error")).toBe("email_not_found");
       const accounts = await auth.api.listUserAccounts({ headers: ada.headers });
       expect(accounts.map((account) => account.providerId)).toEqual(["credential"]);
+    });
+
+    it("reports the LINE account it removed", async () => {
+      const removed: { userId: string; lineUserId: string }[] = [];
+      const auth = newAuth({
+        line,
+        onLineAccountRemoved: async (account) => {
+          removed.push(account);
+        },
+      });
+      const ada = await signedInEmailUser(auth, "ada@example.com");
+      lineAnswersAs({ sub: "U-ada" });
+      await connectLine(auth, ada.headers);
+
+      expect(await disconnectLine(auth, ada.headers)).toEqual({ kind: "ok" });
+
+      expect(removed).toEqual([{ userId: expect.any(String), lineUserId: "U-ada" }]);
     });
 
     it("treats disconnecting when nothing is connected as done", async () => {

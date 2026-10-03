@@ -330,7 +330,6 @@ describe("appUrl", () => {
 });
 
 describe("redactSecrets", () => {
-  // Put together here so that no address with credentials is written out in the repository.
   const address = (scheme: string, credentials: string, rest: string) =>
     `${scheme}://${credentials}@${rest}`;
   const source = {

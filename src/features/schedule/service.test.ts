@@ -8,7 +8,6 @@ import { Episode, Show, SyncRun } from "./model";
 import { episodesBetween, lastSyncRun, syncSchedule, weekSchedule } from "./service";
 import { ScheduleSourceError, type ScheduleSource, type SourceEpisode } from "./source";
 
-// Saturday 3 October 2026, 12:00 in Bangkok.
 const NOW = new Date("2026-10-03T05:00:00Z");
 const saved = { ...process.env };
 
@@ -46,7 +45,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await syncSchedule(sourceOf([]), NOW); // connects
+  await syncSchedule(sourceOf([]), NOW);
   await Promise.all([Show.deleteMany({}), Episode.deleteMany({}), SyncRun.deleteMany({})]);
 });
 
@@ -107,8 +106,6 @@ describe("syncSchedule", () => {
   });
 
   it("never moves an episode's sync mark backwards when an older run finishes last", async () => {
-    // Two runs can overlap (Sync now beside a scheduled run). If the older one could lower the
-    // mark, the newer run's clean-up would delete every row as "not written by this run".
     const later = new Date(NOW.getTime() + 60_000);
     await syncSchedule(sourceOf([episode()]), later);
     await syncSchedule(sourceOf([episode()]), NOW);
@@ -247,7 +244,6 @@ describe("weekSchedule", () => {
 
     expect(week.lastSyncedAt).toBe(NOW.toISOString());
     expect(week.days.map((day) => [day.day, day.entries.map((entry) => entry.showRoute)])).toEqual([
-      // 00:30 on Sunday belongs to Saturday night, after the 22:30 show.
       ["2026-10-03", ["lantern-street-diaries", "clockwork-orchard"]],
       ["2026-10-04", ["salt-and-starlight"]],
       ["2026-10-05", ["the-ninth-platform"]],

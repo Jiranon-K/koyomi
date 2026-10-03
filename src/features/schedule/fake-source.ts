@@ -1,11 +1,7 @@
 import { DAY_START_HOUR, dayWindowOf } from "./day-window";
 import type { ScheduleSource, ShowStatus, SourceEpisode } from "./source";
 
-// Invented shows at fixed places in the week that contains `now`, so tests and the end-to-end server
-// get the same schedule on any date without a network or a token.
-
 export const FAKE_SCENARIOS = ["base", "revised"] as const;
-/** `revised` is `base` after the source announced one more delay: "The Ninth Platform". */
 export type FakeScenario = (typeof FAKE_SCENARIOS)[number];
 
 type Slot = {
@@ -14,9 +10,7 @@ type Slot = {
   status: ShowStatus;
   totalEpisodes: number;
   episodeNumber: number;
-  /** Schedule days after today; negative is in the past. */
   day: number;
-  /** Thai clock time. Before 05:00 it is the small hours that end the schedule day. */
   at: `${number}:${number}`;
   delayedText?: string;
 };
@@ -93,7 +87,6 @@ const HOUR_MS = 60 * 60 * 1000;
 function airAt(now: Date, slot: Slot): Date {
   const [hour = 0, minute = 0] = slot.at.split(":").map(Number);
   const hoursIntoDay = (hour < DAY_START_HOUR ? hour + 24 : hour) - DAY_START_HOUR;
-  // Thai time has no daylight saving, so a schedule day is always 24 hours long.
   const start = dayWindowOf(now).start.getTime() + slot.day * 24 * HOUR_MS;
   return new Date(start + hoursIntoDay * HOUR_MS + minute * 60_000);
 }

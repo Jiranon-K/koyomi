@@ -14,7 +14,6 @@ import { FORGOT_PASSWORD_PATH, VERIFY_EMAIL_PATH } from "./paths";
 import { signInSchema } from "./schema";
 import { useAuthForm } from "./use-auth-form";
 
-/** `returnTo` must already be a safe same-site path: the page passes it through `safeReturnPath`. */
 export function SignInForm({ returnTo }: { returnTo: string }) {
   const router = useRouter();
   const { errors, message, pending, onSubmit } = useAuthForm(signInSchema, async (data) => {

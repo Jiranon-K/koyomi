@@ -1,15 +1,9 @@
-// A schedule "day" runs from 05:00 to 05:00 in Thai time, so a broadcast at 00:30 is listed under
-// the evening it follows. Every feature that asks "what airs today / this week" goes through here.
-
 export const SCHEDULE_TIME_ZONE = "Asia/Bangkok";
 export const DAY_START_HOUR = 5;
 
 export type DayWindow = {
-  /** The Bangkok calendar date the window starts on, as `YYYY-MM-DD`. */
   day: string;
-  /** Inclusive start: 05:00 Bangkok time on `day`. */
   start: Date;
-  /** Exclusive end: 05:00 Bangkok time on the following date. */
   end: Date;
 };
 
@@ -39,13 +33,10 @@ function wallTimeOf(instant: Date): WallTime {
   };
 }
 
-// The wall time written as if it were UTC: a plain number line for calendar arithmetic.
 function asUtc({ year, month, day, hour, minute }: WallTime): number {
   return Date.UTC(year, month - 1, day, hour, minute);
 }
 
-// The instant at which the zone's clocks show `wall`. The zone's offset is read from `Intl` rather
-// than hard-coded; the second pass settles the answer if the offset differs at the first guess.
 function instantOf(wall: WallTime): Date {
   const target = asUtc(wall);
   let guess = target;
@@ -77,25 +68,37 @@ function calendarDayMs(day: DayWindow["day"]): number {
   return Date.parse(`${day}T00:00:00Z`);
 }
 
-/** The schedule day that contains `instant`. */
 export function dayWindowOf(instant: Date): DayWindow {
   const wall = wallTimeOf(instant);
   const calendarDay = Date.UTC(wall.year, wall.month - 1, wall.day);
   return windowStartingOn(wall.hour < DAY_START_HOUR ? calendarDay - DAY_MS : calendarDay);
 }
 
-/** The schedule day that starts on the Bangkok calendar date `day` (`YYYY-MM-DD`). */
 export function dayWindowFor(day: DayWindow["day"]): DayWindow {
   return windowStartingOn(calendarDayMs(day));
 }
 
-/** `days` consecutive schedule days, the first being the one that contains `now`. */
 export function weekWindows(now: Date, days = 7): DayWindow[] {
   const first = calendarDayMs(dayWindowOf(now).day);
   return Array.from({ length: days }, (_, index) => windowStartingOn(first + index * DAY_MS));
 }
 
-/** Files items under the window their air time falls in, earliest first; the rest are dropped. */
+export function weekRange(now: Date): { start: Date; end: Date; windows: DayWindow[] } {
+  const today = dayWindowOf(now);
+  const windows = weekWindows(now);
+  return { start: today.start, end: windows.at(-1)?.end ?? today.end, windows };
+}
+
+export function isScheduleDay(day: string): boolean {
+  const ms = calendarDayMs(day);
+  return !Number.isNaN(ms) && isoDay(ms) === day;
+}
+
+export function calendarMonthOf(instant: Date): string {
+  const { year, month } = wallTimeOf(instant);
+  return `${year}-${String(month).padStart(2, "0")}`;
+}
+
 export function groupByDay<Item>(
   items: readonly Item[],
   airAt: (item: Item) => Date,
@@ -116,7 +119,6 @@ const airTime = new Intl.DateTimeFormat("en-GB", {
   minute: "2-digit",
 });
 
-/** The Thai clock time of an instant, as `HH:mm`. */
 export function formatAirTime(instant: Date): string {
   return airTime.format(instant);
 }
@@ -130,7 +132,6 @@ const dateTime = new Intl.DateTimeFormat("en-GB", {
   minute: "2-digit",
 });
 
-/** The Thai calendar date and clock time of an instant, e.g. `3 Oct, 12:00`. */
 export function formatDateTime(instant: Date): string {
   return dateTime.format(instant);
 }
@@ -142,12 +143,10 @@ const dayDate = new Intl.DateTimeFormat("en-GB", {
   month: "short",
 });
 
-/** The weekday of a schedule day, e.g. `Saturday`. */
 export function formatWeekday(day: DayWindow["day"]): string {
   return weekday.format(calendarDayMs(day));
 }
 
-/** The date of a schedule day, e.g. `3 Oct`. */
 export function formatDayDate(day: DayWindow["day"]): string {
   return dayDate.format(calendarDayMs(day));
 }

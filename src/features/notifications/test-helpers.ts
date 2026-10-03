@@ -1,20 +1,12 @@
 import { createHash, createHmac, randomUUID } from "node:crypto";
 
-// For tests only (unit and end-to-end): builds the `Upstash-Signature` token the way QStash does,
-// so a job Route Handler can be called with a valid signature, or with one that is wrong in
-// exactly one way.
-
 const base64url = (value: string | Buffer) => Buffer.from(value).toString("base64url");
 
 export type JobSignatureOptions = {
-  /** The signing key QStash would use. */
   key: string;
-  /** The URL the call is sent to. */
   url: string;
-  /** The raw request body. */
   body: string;
   issuer?: string;
-  /** Seconds from now until the token expires; negative for one that already has. */
   expiresIn?: number;
   algorithm?: "HS256" | "none";
 };

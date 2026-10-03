@@ -24,15 +24,12 @@ import { DigestDelivery, DigestRun, PushQuota } from "./model";
 import type { EnqueueOptions, JobName, JobPayload, JobQueue } from "./queue";
 import { pushesThisMonth, quotaMonth } from "./quota";
 
-// Saturday 3 October 2026, 09:00 in Bangkok: the moment the digest job runs.
 const NOW = new Date("2026-10-03T02:00:00Z");
 const DAY = "2026-10-03";
 const DASHBOARD = "https://koyomi.example/dashboard";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const saved = { ...process.env };
 
-// In the fake schedule, relative to NOW: these two air today (22:30 and 00:30 after midnight),
-// `salt-and-starlight` airs tomorrow, `moss-and-thunder` in six days.
 const TODAY_SHOW = "lantern-street-diaries";
 const LATE_SHOW = "clockwork-orchard";
 const LATER_SHOW = "moss-and-thunder";
@@ -69,7 +66,6 @@ function recordingMessenger(answer: () => SendResult | Promise<SendResult> = () 
   return { messenger, pushed };
 }
 
-/** A user with LINE linked, a friend of the bot, reminders on, following `shows`. */
 async function subscriber(name: string, shows: string[]) {
   const userId = `user-${name}`;
   await recordLineAccount(
@@ -96,7 +92,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await lastDigestRun(); // connects
+  await lastDigestRun();
   await Promise.all([
     Follow.deleteMany({}),
     LineLink.deleteMany({}),
@@ -107,7 +103,6 @@ beforeEach(async () => {
     DigestRun.deleteMany({}),
     PushQuota.deleteMany({}),
   ]);
-  // The 08:45 sync, fifteen minutes before the digest.
   await syncSchedule(createFakeSource(), before(NOW, minutes(15)));
 });
 
@@ -152,7 +147,6 @@ describe("fanOutDigest", () => {
     await fanOutDigest(queue, NOW);
     expect(jobs.map(({ payload }) => payload.userId)).toEqual([ada]);
 
-    // Next morning at 09:00 that episode is yesterday's.
     jobs.length = 0;
     const tomorrow = new Date(NOW.getTime() + STALE_AFTER_MS);
     await SyncRun.updateMany({}, { $set: { startedAt: before(tomorrow, minutes(15)) } });
@@ -210,7 +204,6 @@ describe("fanOutDigest", () => {
 
   it("still goes out when the 08:45 sync failed but the data is fresher than 24 hours", async () => {
     await subscriber("ada", [TODAY_SHOW]);
-    // The last good sync was yesterday evening; this morning's attempt hit the rate limit.
     await SyncRun.updateMany({}, { $set: { startedAt: before(NOW, minutes(13 * 60)) } });
     const limited: ScheduleSource = {
       name: "animeschedule",
@@ -327,7 +320,6 @@ describe("sendDigest", () => {
     });
 
     const runs = Array.from({ length: 6 }, () => send(ada, messenger));
-    // Whoever holds the claim is now waiting for LINE; everyone else has been turned away.
     const losers = await Promise.all(
       runs.map((run) => Promise.race([run, new Promise<null>((r) => setTimeout(r, 500, null))])),
     );
@@ -404,7 +396,6 @@ describe("sendDigest", () => {
 
       expect(await send(ada, messenger)).toEqual({ kind: "sent" });
 
-      // LINE drops a push whose retry key it has already accepted, so this is not a second message.
       expect(pushed.map(({ retryKey }) => retryKey)).toEqual([key]);
       expect((await pushesThisMonth(NOW)).count).toBe(1);
       expect(await DigestDelivery.findOne({ userId: ada }).lean()).toMatchObject({
@@ -452,7 +443,7 @@ describe("sendDigest", () => {
   it("sends nothing for a day that is not today's schedule day", async () => {
     const ada = await subscriber("ada", [TODAY_SHOW]);
     const { messenger, pushed } = recordingMessenger();
-    const nextMorning = new Date("2026-10-03T22:00:00Z"); // 05:00 on 4 October in Bangkok
+    const nextMorning = new Date("2026-10-03T22:00:00Z");
 
     expect(await send(ada, messenger, nextMorning)).toEqual({ kind: "wrong-day" });
     expect(await send(ada, messenger, before(nextMorning, 1))).toEqual({ kind: "sent" });

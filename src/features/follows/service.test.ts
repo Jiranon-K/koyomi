@@ -16,7 +16,6 @@ import {
   unfollowShow,
 } from "./service";
 
-// Saturday 3 October 2026, 12:00 in Bangkok.
 const NOW = new Date("2026-10-03T05:00:00Z");
 const ADA = "user-ada";
 const BOB = "user-bob";
@@ -36,7 +35,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await syncSchedule(createFakeSource(), NOW); // connects
+  await syncSchedule(createFakeSource(), NOW);
   await Promise.all([
     Follow.deleteMany({}),
     Show.deleteMany({}),
@@ -139,8 +138,8 @@ describe("one user's follows are invisible to another", () => {
 
 describe("myWeek", () => {
   it("groups the followed episodes by the same Bangkok schedule day as the public page", async () => {
-    await followShow(ADA, "clockwork-orchard"); // 00:30 after midnight: still Saturday night
-    await followShow(ADA, "moss-and-thunder"); // 05:00 on the dot: the start of Friday
+    await followShow(ADA, "clockwork-orchard");
+    await followShow(ADA, "moss-and-thunder");
     await followShow(ADA, "salt-and-starlight");
 
     const week = await myWeek(ADA, NOW);
@@ -192,7 +191,6 @@ describe("myWeek", () => {
 
   it("treats a show that dropped out of the timetable as finished", async () => {
     await followShow(ADA, "the-ninth-platform");
-    // A later sync no longer lists the show, and its episodes have aired.
     const later = new Date(NOW.getTime() + 14 * 24 * 60 * 60 * 1000);
     await syncSchedule(
       { name: "fake", fetchTimetable: async () => ({ episodes: [], requests: 0, skipped: 0 }) },

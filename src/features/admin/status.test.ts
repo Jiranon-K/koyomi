@@ -17,7 +17,6 @@ import type { ScheduleSource } from "@/features/schedule/source";
 
 import { adminStatus } from "./status";
 
-// Saturday 3 October 2026, 09:00 in Bangkok.
 const NOW = new Date("2026-10-03T02:00:00Z");
 const DAY = "2026-10-03";
 const SECRET = "test-secret-test-secret-test-secret-1234";
@@ -45,7 +44,6 @@ function failingSource(message: string): ScheduleSource {
   };
 }
 
-/** A user with LINE linked, a friend of the bot or not, holding a reminder place. */
 async function linked(name: string, friend = true) {
   const userId = `user-${name}`;
   await recordLineAccount(
@@ -69,7 +67,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await adminStatus(NOW); // connects
+  await adminStatus(NOW);
   await Promise.all([
     Follow.deleteMany({}),
     LineLink.deleteMany({}),
@@ -132,7 +130,6 @@ describe("adminStatus", () => {
   });
 
   it("never repeats a configured secret or a credential in the failure reason", async () => {
-    // Put together here so that no address with credentials is written out in the repository.
     const uri = ["mongodb+srv:", "", "koyomi:hunter2-password@cluster0.example/koyomi"].join("/");
     await syncSchedule(
       failingSource(

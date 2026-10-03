@@ -4,10 +4,6 @@ import { createFakeSource, FAKE_SCENARIOS } from "@/features/schedule/fake-sourc
 import { runScheduleSync, scheduleSource } from "@/features/schedule/sync";
 import { devRoutesEnabled, fakesEnabled } from "@/lib/env";
 
-// A development and end-to-end trigger for the schedule sync, so the data cache is expired from
-// inside the server. It has no authentication, so it does not exist in a real production
-// deployment; the scheduled, signature-checked job endpoint is a later ticket.
-
 const bodySchema = z.object({ scenario: z.enum(FAKE_SCENARIOS).default("base") });
 
 export async function POST(request: Request) {

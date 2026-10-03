@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
+import { StatusNote as Note, StatusRow as Row } from "@/components/status-row";
 import { TextLink } from "@/components/text-link";
 import { isLineLoginEnabled } from "@/features/auth/auth";
 import { lineConnectErrorMessage } from "@/features/auth/line-errors";
@@ -14,26 +15,6 @@ import { getLineStatus, type LineStatus } from "@/features/line/service";
 import { lineBotEnv } from "@/lib/env";
 
 export const metadata: Metadata = { title: "Settings" };
-
-function Row({
-  label,
-  state,
-  children,
-}: {
-  label: string;
-  state: string;
-  children?: React.ReactNode;
-}) {
-  return (
-    <StaggerItem className="grid gap-x-4 gap-y-3 border-b border-border py-5 sm:grid-cols-[7rem_1fr]">
-      <dt className="pt-1.5 label-mono text-muted-foreground">{label}</dt>
-      <dd className="grid gap-3">
-        <p className="text-lg leading-snug">{state}</p>
-        {children}
-      </dd>
-    </StaggerItem>
-  );
-}
 
 function reminderNote(status: Extract<LineStatus, { linked: true }>): string {
   if (status.remindersOn) {
@@ -49,7 +30,6 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
   const { user } = await requireSession();
   const { error } = await searchParams;
   const status = await getLineStatus(user.id);
-  // Only what is rendered below crosses to the browser; channel ids and secrets stay on the server.
   const lineEnabled = isLineLoginEnabled();
   const addFriendUrl = lineBotEnv()?.addFriendUrl;
 
@@ -75,17 +55,15 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
         {status.linked ? (
           <>
             <Row label="LINE" state="Connected">
-              <p className="text-sm text-muted-foreground">
-                Your LINE account is connected to {user.email}.
-              </p>
+              <Note>Your LINE account is connected to {user.email}.</Note>
               <DisconnectLineButton />
             </Row>
             <Row label="Bot" state={status.friend ? "Friend" : "Not a friend yet"}>
-              <p className="text-sm text-muted-foreground">
+              <Note>
                 {status.friend
                   ? "The Koyomi bot can message you on LINE."
                   : "The Koyomi bot can only message its friends. Add it in LINE, then reload this page."}
-              </p>
+              </Note>
               {!status.friend && addFriendUrl ? (
                 <p className="text-sm">
                   <TextLink href={addFriendUrl} target="_blank" rel="noreferrer">
@@ -95,7 +73,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
               ) : null}
             </Row>
             <Row label="Reminders" state={status.remindersOn ? "On" : "Off"}>
-              <p className="text-sm text-muted-foreground">{reminderNote(status)}</p>
+              <Note>{reminderNote(status)}</Note>
               <ReminderSwitch on={status.switchedOn} />
             </Row>
           </>
@@ -104,20 +82,18 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
             <Row label="LINE" state="Not connected">
               {lineEnabled ? (
                 <>
-                  <p className="text-sm text-muted-foreground">
+                  <Note>
                     You will be asked to add the Koyomi bot as a friend on the way, so that its
                     messages can reach you.
-                  </p>
+                  </Note>
                   <ConnectLineButton />
                 </>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  LINE is not set up on this server yet.
-                </p>
+                <Note>LINE is not set up on this server yet.</Note>
               )}
             </Row>
             <Row label="Reminders" state="Off">
-              <p className="text-sm text-muted-foreground">Connect LINE to switch reminders on.</p>
+              <Note>Connect LINE to switch reminders on.</Note>
             </Row>
           </>
         )}

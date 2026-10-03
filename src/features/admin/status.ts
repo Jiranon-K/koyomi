@@ -6,22 +6,16 @@ import type { SyncOutcome } from "@/features/schedule/model";
 import { lastSyncRun } from "@/features/schedule/service";
 import { redactSecrets } from "@/lib/env";
 
-// What the admin status page shows: one read of what the background work last did. Nothing here
-// writes, and nothing here is per user.
-
 export type SyncStatus =
   | { state: "never" }
   | {
       state: SyncOutcome;
-      /** When the run started. */
       at: Date;
       source: string;
       shows: number;
       episodes: number;
       skipped: number;
-      /** Why it failed, safe to show; null for a success. */
       reason: string | null;
-      /** When the last successful sync started: this run when it succeeded, or one before it. */
       lastSuccessAt: Date | null;
     };
 
@@ -29,13 +23,9 @@ export type DigestStatus =
   | { state: "never" }
   | {
       state: DigestRunOutcome;
-      /** When the fan-out started. */
       at: Date;
-      /** The schedule day it was for, `YYYY-MM-DD`. */
       day: string;
-      /** Users with reminders on when the run looked. */
       recipients: number;
-      /** Of those, the ones with something airing: one per-user job each. */
       enqueued: number;
       reason: string | null;
       deliveries: DigestRunSummary["deliveries"];
@@ -50,11 +40,6 @@ export type AdminStatus = {
 
 const REASON_MAX_LENGTH = 300;
 
-/**
- * A stored failure reason, made fit for the page. The schedule source words its own errors without
- * the token, but a sync can also fail on an error a library threw, whose message this app does not
- * control; so every reason is passed through `redactSecrets` and kept short.
- */
 function shownReason(error: string | null): string | null {
   if (error === null) return null;
   const safe = redactSecrets(error);
@@ -62,13 +47,13 @@ function shownReason(error: string | null): string | null {
 }
 
 export async function adminStatus(now: Date = new Date()): Promise<AdminStatus> {
-  const [sync, success, digest, pushes, reminders] = await Promise.all([
+  const [sync, digest, pushes, reminders] = await Promise.all([
     lastSyncRun(),
-    lastSyncRun("success"),
     lastDigestRun(),
     pushesThisMonth(now),
     reminderPlaces(),
   ]);
+  const lastSuccess = sync?.outcome === "failure" ? await lastSyncRun("success") : sync;
 
   return {
     sync: sync
@@ -80,7 +65,7 @@ export async function adminStatus(now: Date = new Date()): Promise<AdminStatus> 
           episodes: sync.episodes,
           skipped: sync.skipped,
           reason: shownReason(sync.error),
-          lastSuccessAt: success?.startedAt ?? null,
+          lastSuccessAt: lastSuccess?.startedAt ?? null,
         }
       : { state: "never" },
     digest: digest

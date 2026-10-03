@@ -19,18 +19,15 @@ import { syncSchedule } from "@/features/schedule/service";
 import { botEventHandlers } from "./bot-reply";
 import { PushQuota } from "./model";
 import { pushesThisMonth } from "./quota";
-import { LINE_TEXT_LIMIT, USAGE_REPLY } from "./reply-text";
+import { LINE_TEXT_LIMIT } from "./digest-text";
+import { USAGE_REPLY } from "./reply-text";
 
-// Saturday 3 October 2026, 09:00 in Bangkok.
 const NOW = new Date("2026-10-03T02:00:00Z");
 const CHANNEL_SECRET = "test-messaging-channel-secret";
 const ENDPOINT = "http://localhost:3000/api/line/webhook";
 const SETTINGS = "https://koyomi.example/settings";
 const saved = { ...process.env };
 
-// In the fake schedule, relative to NOW: Lantern Street Diaries airs today at 22:30 and Clockwork
-// Orchard at 00:30 after midnight, Salt and Starlight tomorrow (delayed), Moss and Thunder in six
-// days at 05:00, and the next Lantern Street Diaries episode in seven days, outside the week.
 const TODAY_SHOW = "lantern-street-diaries";
 const LATE_SHOW = "clockwork-orchard";
 const DELAYED_SHOW = "salt-and-starlight";
@@ -54,7 +51,6 @@ function signedRequest(events: unknown[], signature?: string): Request {
 
 let tokens = 0;
 
-/** A text message event from one LINE user, with a reply token of its own. */
 function textFrom(lineUserId: string, text: string) {
   return {
     type: "message",
@@ -65,7 +61,6 @@ function textFrom(lineUserId: string, text: string) {
   };
 }
 
-/** A sender that records what it was asked to send and answers a reply as told. */
 function recordingMessenger(answer: () => SendResult | Promise<SendResult> = () => ({ ok: true })) {
   const replies: { replyToken: string; text: string }[] = [];
   const pushed: string[] = [];
@@ -83,7 +78,6 @@ function recordingMessenger(answer: () => SendResult | Promise<SendResult> = () 
   return { messenger, replies, pushed };
 }
 
-/** Posts a correctly signed delivery to the webhook, the bot answering through `messenger`. */
 function deliver(events: unknown[], messenger: LineMessenger, signature?: string) {
   return handleLineWebhook(signedRequest(events, signature), {
     channelSecret: CHANNEL_SECRET,
@@ -91,7 +85,6 @@ function deliver(events: unknown[], messenger: LineMessenger, signature?: string
   });
 }
 
-/** Sends one text to the bot and returns the texts it replied with. */
 async function ask(lineUserId: string, text: string): Promise<string[]> {
   const { messenger, replies } = recordingMessenger();
   const response = await deliver([textFrom(lineUserId, text)], messenger);
@@ -99,7 +92,6 @@ async function ask(lineUserId: string, text: string): Promise<string[]> {
   return replies.map((reply) => reply.text);
 }
 
-/** A user who linked LINE and follows `shows`. */
 async function linked(name: string, shows: string[]) {
   const userId = `user-${name}`;
   await recordLineAccount(
@@ -122,7 +114,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await getLineStatus("nobody"); // connects
+  await getLineStatus("nobody");
   await Promise.all([
     Follow.deleteMany({}),
     LineLink.deleteMany({}),
@@ -172,7 +164,6 @@ describe("the bot's answer to `today`", () => {
 
   it("marks a delayed episode", async () => {
     await linked("ada", [DELAYED_SHOW]);
-    // Sunday 4 October, 09:00 in Bangkok: the delayed episode's day.
     const { messenger, replies } = recordingMessenger();
 
     await handleLineWebhook(signedRequest([textFrom("U-ada", "today")]), {
@@ -422,7 +413,6 @@ describe("the webhook route", () => {
     expect(repliesInLineLog(log.mock.calls.map(([line]) => String(line)).join("\n"))).toEqual([
       { replyToken: message.replyToken, text: USAGE_REPLY },
     ]);
-    // The friendship handlers are still in place beside the new one.
     expect(await getLineStatus("user-ada")).toMatchObject({ friend: false });
   });
 });

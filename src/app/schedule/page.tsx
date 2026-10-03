@@ -18,8 +18,6 @@ import { WeekList } from "@/features/schedule/week-list";
 export const metadata: Metadata = { title: "Schedule" };
 
 export default async function SchedulePage() {
-  // Public: no guard. Reading the session makes this a per-request render, which "this week" needs
-  // anyway; the schedule itself comes from the data cache, never from the source.
   const session = await currentSession();
   const now = new Date();
   const [{ days, lastSyncedAt }, followed] = await Promise.all([

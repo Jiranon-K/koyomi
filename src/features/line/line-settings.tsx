@@ -36,7 +36,6 @@ export function DisconnectLineButton() {
   );
 }
 
-/** A square switch in the house style: a ruled track with a block that sits left (off) or right (on). */
 export function ReminderSwitch({ on }: { on: boolean }) {
   const [state, action, pending] = useActionState(setRemindersAction, IDLE);
 

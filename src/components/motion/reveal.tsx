@@ -7,9 +7,7 @@ import { ARRIVE, HIDDEN, IN_VIEW, SHOWN } from "./tokens";
 type RevealProps = {
   children: React.ReactNode;
   className?: string;
-  /** Slide only and keep full opacity, for content that must be visible from first paint. */
   slideOnly?: boolean;
-  /** Play when the block enters the viewport (once) instead of on mount. */
   inView?: boolean;
 };
 

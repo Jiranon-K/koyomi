@@ -26,7 +26,6 @@ function Submit({ title, followed }: Omit<FollowButtonProps, "showRoute">) {
   );
 }
 
-/** Follows or unfollows one show for the signed-in user. Works as a plain form without JavaScript. */
 export function FollowButton({ showRoute, title, followed }: FollowButtonProps) {
   return (
     <form action={followed ? unfollowAction : followAction}>

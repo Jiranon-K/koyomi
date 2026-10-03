@@ -13,7 +13,6 @@ const getSession = cache(async () => {
   return auth.api.getSession({ headers: requestHeaders });
 });
 
-/** The session of the current request, or null. For public pages that adapt to a signed-in visitor. */
 export async function currentSession() {
   return getSession();
 }

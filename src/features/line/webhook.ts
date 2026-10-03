@@ -8,10 +8,6 @@ import { setFriendByLineUserId } from "./service";
 export type LineEventHandler = (event: LineEvent) => Promise<void>;
 export type LineEventHandlers = Partial<Record<string, LineEventHandler>>;
 
-/**
- * True when `signature` is the Base64 HMAC-SHA256 of the raw request body under the Messaging API
- * channel secret. The comparison takes the same time whatever the signature is.
- */
 export function isValidSignature(
   rawBody: string,
   signature: string | null,
@@ -27,19 +23,10 @@ function friendshipHandler(friend: boolean): LineEventHandler {
   return async (event) => {
     const lineUserId = event.source?.type === "user" ? event.source.userId : undefined;
     if (!lineUserId) return;
-    // An event for a LINE user nobody has linked changes nothing; that is not an error.
     await setFriendByLineUserId(lineUserId, friend, new Date(event.timestamp ?? Date.now()));
   };
 }
 
-/**
- * What this feature does for each LINE event type; a type that is not listed is ignored. A handler
- * gets the whole event as LINE sent it and must not throw for a sender it does not know.
- *
- * The `message` handler (the bot's `today` and `week` answers) is not here: it needs follows and
- * the schedule, so it lives in `src/features/notifications/bot-reply.ts`, whose
- * `botEventHandlers()` adds it to these for the Route Handler.
- */
 export const lineEventHandlers: LineEventHandlers = {
   follow: friendshipHandler(true),
   unfollow: friendshipHandler(false),
@@ -61,16 +48,10 @@ function parseEvents(rawBody: string): LineEvent[] {
 }
 
 type WebhookOptions = {
-  /** Defaults to the configured Messaging API channel secret. */
   channelSecret?: string | undefined;
   handlers?: LineEventHandlers;
 };
 
-/**
- * The whole webhook: refuse when no channel secret is configured, refuse a bad or missing
- * signature, and only then read the body. A correctly signed request is always answered with 200,
- * whatever its events are and even when handling one fails, so that LINE does not keep resending.
- */
 export async function handleLineWebhook(
   request: Request,
   options: WebhookOptions = {},

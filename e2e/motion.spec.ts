@@ -4,12 +4,6 @@ import { createVerifiedAccount } from "./account";
 import { syncSchedule } from "./schedule";
 import { makeAdmin } from "./seed";
 
-// The rest of the suite runs with reduced motion so scans see final-state content; the first describe
-// lets arrival animations play, to prove they always end with the content visible, and the second
-// proves that with reduced motion the final state is there at once.
-
-// CSS opacity is not inherited but it does compound, so a wrapper that is stuck half-faded dims
-// everything inside it. Multiply up the tree to get what the visitor actually sees.
 function effectiveOpacity(locator: Locator) {
   return locator.evaluate((el) => {
     let opacity = 1;
@@ -36,14 +30,12 @@ async function wrongPassword(page: Page) {
   await page.getByLabel("Email address").fill(`e2e-motion-${Date.now()}@example.com`);
   await page.getByLabel("Password", { exact: true }).fill("not-the-password");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  // The alert is a persistent live region; the fading element is inside it, so measure the text.
   return {
     alert: page.getByRole("alert").filter({ hasText: "Invalid email or password." }),
     text: page.getByText("Invalid email or password."),
   };
 }
 
-// The horizontal scale of an element's transform: 1 when it has none.
 function scaleOf(locator: Locator) {
   return locator.evaluate((el) => {
     const { transform } = getComputedStyle(el);

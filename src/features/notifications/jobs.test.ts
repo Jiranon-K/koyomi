@@ -70,7 +70,7 @@ beforeEach(async () => {
   mocks.revalidateTag.mockClear();
   log = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
-  await lastDigestRun(); // connects
+  await lastDigestRun();
   await Promise.all([
     Follow.deleteMany({}),
     LineLink.deleteMany({}),
@@ -93,7 +93,7 @@ describe("the sync job", () => {
   });
 
   it("asks for a retry when the sync fails", async () => {
-    process.env.USE_FAKES = "false"; // the real source, and no token
+    process.env.USE_FAKES = "false";
 
     const result = await runJob("sync-schedule", {});
 
@@ -176,7 +176,7 @@ describe("the per-user digest job", () => {
     const ada = await subscriber("ada", ["lantern-street-diaries"]);
     const target = { userId: ada, day: today() };
 
-    process.env.USE_FAKES = "false"; // the real sender, with no access token: every push fails
+    process.env.USE_FAKES = "false";
     expect(await runJob("digest-send", target)).toEqual({
       status: "ran",
       retry: true,

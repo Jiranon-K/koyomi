@@ -31,7 +31,6 @@ function jobRequest(body: string, signature: string | null, url = URL_SEND) {
   });
 }
 
-/** Stands in for the job itself, so a test can see whether it was reached and with what. */
 function spyJob(result: JobResult = { status: "ran", retry: false, result: { outcome: "sent" } }) {
   return vi.fn(async (job: JobName, payload: unknown) => {
     void job;
@@ -232,7 +231,6 @@ describe("with the keys and the origin taken from the environment", () => {
     process.env.BETTER_AUTH_SECRET = "test-secret-test-secret-test-secret-1234";
     process.env.BETTER_AUTH_URL = APP;
     const run = spyJob();
-    // The request reaches the server under an internal address; the signature names the public one.
     const internal = "http://127.0.0.1:3000/api/jobs/digest-send";
 
     const signed = await handleJobRequest(

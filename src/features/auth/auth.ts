@@ -4,7 +4,7 @@ import { APIError } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import type { Db } from "mongodb";
 
-import { recordLineAccount } from "@/features/line/service";
+import { recordLineAccount, removeLineLink } from "@/features/line/service";
 import { connectDb } from "@/lib/db/mongoose";
 import { authEnv, lineLoginEnv } from "@/lib/env";
 
@@ -19,10 +19,11 @@ export type AuthOptions = {
   adminEmails?: string;
   line?: { clientId: string; clientSecret: string } | undefined;
   onLineAccount?: (account: LineAccount) => Promise<void>;
+  onLineAccountRemoved?: (account: RemovedLineAccount) => Promise<void>;
 };
 
-/** A LINE account attached to an app user: just linked, or just used to sign in. */
 export type LineAccount = { userId: string; lineUserId: string; accessToken?: string };
+export type RemovedLineAccount = { userId: string; lineUserId: string };
 
 export const LINE_PROVIDER_ID = "line";
 
@@ -33,7 +34,6 @@ type StoredAccount = {
   accessToken?: string | null | undefined;
 };
 
-// What the database hooks below need from the request context Better Auth hands them.
 type HookContext = {
   context: {
     internalAdapter: {
@@ -47,10 +47,6 @@ export function isLineLoginEnabled(): boolean {
   return lineLoginEnv() !== undefined;
 }
 
-// Better Auth refuses a profile with no email before it even looks for a linked account, so a
-// LINE profile without one (the email scope needs approval in the LINE console) is given a
-// stand-in. The stand-in only lets an already linked user sign in: it is never stored, and no
-// account is ever created from it.
 const LINE_PLACEHOLDER_EMAIL = /^line-user-[^@]+@no-email\.invalid$/;
 const LINE_EMAIL_NOT_FOUND = "email_not_found";
 
@@ -89,6 +85,7 @@ export function createAuth({
   adminEmails,
   line,
   onLineAccount,
+  onLineAccountRemoved,
 }: AuthOptions) {
   const admins = parseAdminEmails(adminEmails);
   const sendInBackground = (message: EmailMessage) => {
@@ -97,8 +94,6 @@ export function createAuth({
     });
   };
 
-  // The app hears about a LINE account only while its user's email is verified. A LINE sign-up
-  // whose emailed link was never used gets nothing in the app: no link row, no reminder place.
   const reportLineAccounts = async (
     accounts: StoredAccount[],
     isVerified: () => Promise<boolean>,
@@ -119,14 +114,12 @@ export function createAuth({
     }
   };
 
-  // A LINE account was linked, or used to sign in (which refreshes its tokens).
   const onAccountWritten = (account: StoredAccount, hook: HookContext) =>
     reportLineAccounts([account], async () => {
       const user = await hook?.context.internalAdapter.findUserById(account.userId);
       return user?.emailVerified === true;
     });
 
-  // A user changed; the change that matters is the emailed link being used after a LINE sign-up.
   const onUserUpdated = async (user: { id: string; emailVerified: boolean }, hook: HookContext) => {
     if (!onLineAccount || !user.emailVerified || !hook) return;
     try {
@@ -134,6 +127,15 @@ export function createAuth({
       await reportLineAccounts(accounts, async () => true);
     } catch (error) {
       console.error("[auth] could not look up the LINE accounts of a user", error);
+    }
+  };
+
+  const onAccountDeleted = async (account: StoredAccount) => {
+    if (!onLineAccountRemoved || account.providerId !== LINE_PROVIDER_ID) return;
+    try {
+      await onLineAccountRemoved({ userId: account.userId, lineUserId: account.accountId });
+    } catch (error) {
+      console.error("[auth] the LINE account removal listener failed", error);
     }
   };
 
@@ -165,11 +167,9 @@ export function createAuth({
       account: {
         create: { after: onAccountWritten },
         update: { after: onAccountWritten },
+        delete: { after: onAccountDeleted },
       },
     },
-    // LINE never reports an email as verified, so a LINE-supplied address is held to the rule that
-    // guards email sign-up: no session until the emailed link is used. The browser cannot hand
-    // over an ID token; the profile only ever comes from LINE's token endpoint.
     socialProviders: line
       ? {
           line: {
@@ -181,9 +181,6 @@ export function createAuth({
           },
         }
       : {},
-    // Connecting LINE is always an explicit act by a signed-in user ("Connect LINE" in settings),
-    // which is why LINE is trusted there and its email may differ or be missing. A LINE sign-in
-    // never attaches itself to an existing account because the emails match.
     account: {
       accountLinking: {
         trustedProviders: [LINE_PROVIDER_ID],
@@ -249,6 +246,7 @@ export function getAuth(): Promise<Auth> {
       adminEmails: env.ADMIN_EMAILS,
       line: lineLoginEnv(),
       onLineAccount: recordLineAccount,
+      onLineAccountRemoved: ({ userId, lineUserId }) => removeLineLink(userId, lineUserId),
     });
   })();
   cached = building;

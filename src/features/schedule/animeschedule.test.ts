@@ -6,10 +6,6 @@ import {
   MIN_REQUEST_INTERVAL_MS,
   parseTimetable,
 } from "./animeschedule";
-// NOT a recording. This sample was written by hand from the field list in the API documentation
-// (https://animeschedule.net/api/v3/documentation/anime, "Timetable Anime"), because no token was
-// available when the client was built. Replace it with the output of
-// `bun scripts/record-animeschedule-sample.ts` and re-check the expectations below.
 import documented from "./fixtures/timetable.documented.json";
 import { ScheduleSourceError } from "./source";
 

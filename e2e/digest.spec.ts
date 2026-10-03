@@ -8,15 +8,11 @@ import { followBehindTheServer, syncSchedule } from "./schedule";
 import { linkLine, removeLineLinks, seedSubscriber } from "./seed";
 import { E2E_SIGNING_KEYS } from "./signing-keys.mjs";
 
-// The server runs with the fakes: the queue runs each job in process and the LINE sender writes
-// to the server log. Nothing here signs in, so the sign-in budget of the run is untouched.
-
 const JOBS = ["sync-schedule", "digest-fanout", "digest-send"] as const;
 
 const seeded: string[] = [];
 
 test.afterEach(async () => {
-  // settings.spec.ts fills every reminder place; leave none taken behind.
   await removeLineLinks(seeded.splice(0));
 });
 
@@ -64,7 +60,6 @@ test("the daily digest reaches a linked user once, and nobody with nothing airin
 }) => {
   const email = await createVerifiedAccount(page, "e2e-digest");
   await syncSchedule(request, "base");
-  // Two of today's episodes (22:30, and 00:30 after midnight) and one that airs in six days.
   await followBehindTheServer(email, "lantern-street-diaries");
   await followBehindTheServer(email, "clockwork-orchard");
   await followBehindTheServer(email, "moss-and-thunder");
@@ -93,8 +88,6 @@ test("the daily digest reaches a linked user once, and nobody with nothing airin
   ]);
   expect(await linePushes(quiet)).toEqual([]);
 
-  // The 09:00 job runs again (a retry), and QStash delivers the per-user job once more through
-  // the real, signed endpoint: still one message.
   expect((await request.post("/api/dev/digest")).status()).toBe(200);
   const url = `${baseURL}/api/jobs/digest-send`;
   const body = JSON.stringify({ userId, day: dayWindowOf(new Date()).day });

@@ -1,59 +1,37 @@
 import { createHash } from "node:crypto";
 
-import mongoose from "mongoose";
-
-import { followedEpisodesBetween } from "@/features/follows/service";
+import { followedEpisodesBetween, hasFollowedEpisodeBetween } from "@/features/follows/service";
 import type { LineMessenger } from "@/features/line/messenger";
 import { findReminderRecipient, listReminderRecipients } from "@/features/line/service";
 import { dayWindowFor, dayWindowOf } from "@/features/schedule/day-window";
 import { lastSyncRun } from "@/features/schedule/service";
+import { isDuplicateKey } from "@/lib/db/mongoose";
 
 import { digestText } from "./digest-text";
 import { DigestDelivery, DigestRun, ready, type DigestRunDoc } from "./model";
 import type { JobQueue } from "./queue";
 import { pushWithinQuota } from "./quota";
 
-/** A digest is not sent from schedule data whose last successful sync is older than this. */
 export const STALE_AFTER_MS = 24 * 60 * 60 * 1000;
 
-/**
- * How long a per-user job may hold its claim before another attempt may take it over. Longer than
- * a push can take (the sender gives up after ten seconds), shorter than the gap before the queue's
- * second retry.
- */
 export const CLAIM_LEASE_MS = 60_000;
 
 export type DigestTarget = { userId: string; day: string };
 
 export type DigestSendOutcome =
   | { kind: "sent" }
-  /** An earlier run of the same job already delivered this digest. */
   | { kind: "already-sent" }
-  /** The user switched reminders off, unlinked or blocked the bot since the fan-out. */
   | { kind: "reminders-off" }
   | { kind: "nothing-airing" }
-  /** The job ran outside the schedule day it was made for (a very late retry). */
   | { kind: "wrong-day" }
   | { kind: "refused-quota" }
-  /** Another run of the same job holds the claim right now. Try again later. */
   | { kind: "in-progress" }
-  /** Nothing was sent. Try again later. */
   | { kind: "failed"; error: string };
 
 export type DigestRunSummary = DigestRunDoc & {
-  /** What the per-user jobs of the run's day have done so far. */
   deliveries: { sent: number; refusedQuota: number; failed: number; inProgress: number };
 };
 
-function isDuplicateKey(error: unknown): boolean {
-  return error instanceof mongoose.mongo.MongoServerError && error.code === 11000;
-}
-
-/**
- * The LINE retry key of one user's digest for one day: always the same UUID. If a job dies after
- * LINE accepted the push but before that was recorded, the retry pushes with this key again and
- * LINE drops it, so the user still gets one message.
- */
 export function digestRetryKey({ userId, day }: DigestTarget): string {
   const hex = createHash("sha256").update(`koyomi:digest:${day}:${userId}`).digest("hex");
   const variant = ((parseInt(hex.slice(16, 18), 16) & 0x3f) | 0x80).toString(16);
@@ -66,13 +44,6 @@ export function digestRetryKey({ userId, day }: DigestTarget): string {
   ].join("-");
 }
 
-/**
- * The 09:00 job. For each user with reminders on who has a followed episode in today's schedule
- * day, enqueues one per-user job; a user with nothing airing gets none. When the last successful
- * sync is older than 24 hours (or there never was one) it enqueues nothing and records the skip.
- * Every run is recorded. If the queue refuses a job the run is recorded as failed and the error is
- * thrown, so the caller reports failure and the job is retried.
- */
 export async function fanOutDigest(queue: JobQueue, now: Date = new Date()): Promise<DigestRunDoc> {
   await ready();
   const { day, start, end } = dayWindowOf(now);
@@ -94,8 +65,7 @@ export async function fanOutDigest(queue: JobQueue, now: Date = new Date()): Pro
   let enqueued = 0;
   try {
     for (const { userId } of recipients) {
-      const episodes = await followedEpisodesBetween(userId, start, end);
-      if (episodes.length === 0) continue;
+      if (!(await hasFollowedEpisodeBetween(userId, start, end))) continue;
       await queue.enqueue(
         "digest-send",
         { userId, day },
@@ -115,11 +85,6 @@ export async function fanOutDigest(queue: JobQueue, now: Date = new Date()): Pro
   return record({ outcome: "enqueued", recipients: recipients.length, enqueued });
 }
 
-/**
- * Takes the (user, day) claim. The unique index decides: of any number of runs at the same moment
- * exactly one inserts the row. A row left by an attempt that failed, was refused, or died holding
- * the claim (its lease ran out) can be taken over, again by exactly one run.
- */
 async function claim(
   { userId, day }: DigestTarget,
   now: Date,
@@ -157,12 +122,6 @@ async function claim(
   return row?.status === "sent" ? "already-sent" : "in-progress";
 }
 
-/**
- * The per-user job: sends one user's digest for one schedule day, at most once however often it
- * runs. It asks again whether reminders are on, claims the unique (user, day) record, and only
- * then pushes, through the quota guard. A failed push releases the claim (and its place in the
- * quota) so that a retry can send; a refused or sent one is final.
- */
 export async function sendDigest(
   target: DigestTarget,
   deps: { messenger: LineMessenger; dashboardUrl: string },
@@ -199,7 +158,6 @@ export async function sendDigest(
     );
     return outcome;
   }
-  // Never overwrite `sent`: a slower run of the same job may have delivered in the meantime.
   await DigestDelivery.updateOne(
     { userId, day, status: { $ne: "sent" } },
     outcome.kind === "refused-quota"
@@ -209,24 +167,18 @@ export async function sendDigest(
   return outcome;
 }
 
-/** The most recent fan-out run (sent or skipped) with what its day's per-user jobs did. */
 export async function lastDigestRun(): Promise<DigestRunSummary | null> {
   await ready();
-  const run = await DigestRun.findOne({}).sort({ startedAt: -1 }).lean();
+  const run = await DigestRun.findOne({})
+    .sort({ startedAt: -1 })
+    .select("-_id -__v")
+    .lean<DigestRunDoc>();
   if (!run) return null;
 
   const rows = await DigestDelivery.find({ day: run.day }).select({ status: 1 }).lean();
   const count = (status: string) => rows.filter((row) => row.status === status).length;
-  const { startedAt, finishedAt, day, outcome, recipients, enqueued, lastSyncAt, error } = run;
   return {
-    startedAt,
-    finishedAt,
-    day,
-    outcome,
-    recipients,
-    enqueued,
-    lastSyncAt,
-    error,
+    ...run,
     deliveries: {
       sent: count("sent"),
       refusedQuota: count("refused"),
