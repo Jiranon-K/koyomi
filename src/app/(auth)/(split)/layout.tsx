@@ -1,30 +1,18 @@
 import { ArrowLeft } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import { BRAND } from "@/components/brand";
 import { Masthead } from "@/components/masthead";
 import { Reveal } from "@/components/motion/reveal";
-import { Curtain, LineReveal } from "@/components/motion/unveil";
+import { LineReveal } from "@/components/motion/unveil";
+import { BrandPoster } from "@/features/auth/brand-poster";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function SplitAuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <aside className="relative isolate hidden flex-col justify-between overflow-hidden bg-scrim p-10 text-scrim-foreground lg:flex">
-        <Curtain className="absolute inset-0 -z-10">
-          <Image
-            src="/images/auth-poster.jpg"
-            alt=""
-            fill
-            sizes="(min-width: 1024px) 50vw, 1px"
-            className="scale-110 object-cover blur-sm"
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-linear-to-t from-scrim via-scrim/60 to-scrim/45"
-          />
-        </Curtain>
+        <BrandPoster />
         <div>
           <Link
             href="/"
