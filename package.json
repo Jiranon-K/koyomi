@@ -14,7 +14,8 @@
     "e2e": "playwright test",
     "verify": "bash ./verify.sh",
     "audit": "bun audit --ignore GHSA-vfj7-8cjw-p6xm",
-    "prepare": "git config core.hooksPath .githooks"
+    "prepare": "git config core.hooksPath .githooks",
+    "media": "playwright test -c playwright.media.config.ts"
   },
   "dependencies": {
     "@upstash/qstash": "2.12.0",
