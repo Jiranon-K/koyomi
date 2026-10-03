@@ -30,3 +30,5 @@ export function safeReturnPath(value: unknown): string {
 export function signInPathReturningTo(path: string): string {
   return `${SIGN_IN_PATH}?${new URLSearchParams({ [RETURN_PARAM]: path }).toString()}`;
 }
+
+export const SETTINGS_PATH = "/settings";

@@ -73,3 +73,56 @@ export function scheduleEnv(source: Source = process.env) {
 export function devRoutesEnabled(source: Source = process.env): boolean {
   return fakesEnabled(source) || source.NODE_ENV === "development";
 }
+
+const warned = new Set<string>();
+
+function warnOnce(message: string): void {
+  if (warned.has(message)) return;
+  warned.add(message);
+  console.warn(message);
+}
+
+/**
+ * LINE Login credentials, or `undefined` when LINE Login is off. Never throws: the app must run
+ * without LINE. A half-configured pair is reported once, by variable name only.
+ */
+export function lineLoginEnv(
+  source: Source = process.env,
+): { clientId: string; clientSecret: string } | undefined {
+  const clientId = source.LINE_LOGIN_CHANNEL_ID;
+  const clientSecret = source.LINE_LOGIN_CHANNEL_SECRET;
+  if (clientId && clientSecret) return { clientId, clientSecret };
+  if (clientId || clientSecret) {
+    const missing = clientId ? "LINE_LOGIN_CHANNEL_SECRET" : "LINE_LOGIN_CHANNEL_ID";
+    warnOnce(
+      `${missing} is not set, so LINE Login is off. Set both LINE_LOGIN_CHANNEL_ID and LINE_LOGIN_CHANNEL_SECRET, or leave both empty. See .env.example.`,
+    );
+  }
+  return undefined;
+}
+
+/**
+ * The Messaging API channel secret that signs webhook calls, or `undefined` when it is not set.
+ * A caller must then refuse the request; it must never skip the signature check.
+ */
+export function lineWebhookEnv(
+  source: Source = process.env,
+): { channelSecret: string } | undefined {
+  const channelSecret = source.LINE_MESSAGING_CHANNEL_SECRET;
+  return channelSecret ? { channelSecret } : undefined;
+}
+
+const BOT_BASIC_ID = /^@[\w.-]+$/;
+
+/** The bot's add-friend link, built from its basic ID, or `undefined` when that is not set. */
+export function lineBotEnv(source: Source = process.env): { addFriendUrl: string } | undefined {
+  const basicId = source.LINE_BOT_BASIC_ID;
+  if (!basicId) return undefined;
+  if (!BOT_BASIC_ID.test(basicId)) {
+    warnOnce(
+      "LINE_BOT_BASIC_ID must look like @123abcde, so the add-friend link is off. See .env.example.",
+    );
+    return undefined;
+  }
+  return { addFriendUrl: `https://line.me/R/ti/p/${encodeURIComponent(basicId)}` };
+}

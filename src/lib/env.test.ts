@@ -1,6 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { authEnv, dbEnv, devRoutesEnabled, fakesEnabled, scheduleEnv } from "./env";
+import {
+  authEnv,
+  dbEnv,
+  devRoutesEnabled,
+  fakesEnabled,
+  lineBotEnv,
+  lineLoginEnv,
+  lineWebhookEnv,
+  scheduleEnv,
+} from "./env";
 
 describe("fakesEnabled", () => {
   it("is off unless USE_FAKES is true", () => {
@@ -117,5 +126,128 @@ describe("authEnv", () => {
 
   it("points at .env.example", () => {
     expect(() => authEnv({})).toThrow(/\.env\.example/);
+  });
+});
+
+describe("lineLoginEnv", () => {
+  it("is off when neither variable is set", () => {
+    expect(lineLoginEnv({})).toBeUndefined();
+  });
+
+  it("is off when only one of the two is set", () => {
+    expect(lineLoginEnv({ LINE_LOGIN_CHANNEL_ID: "id" })).toBeUndefined();
+    expect(lineLoginEnv({ LINE_LOGIN_CHANNEL_SECRET: "secret" })).toBeUndefined();
+  });
+
+  it("is off when a value is empty", () => {
+    expect(
+      lineLoginEnv({ LINE_LOGIN_CHANNEL_ID: "id", LINE_LOGIN_CHANNEL_SECRET: "" }),
+    ).toBeUndefined();
+  });
+
+  it("returns the credentials when both are set", () => {
+    expect(
+      lineLoginEnv({ LINE_LOGIN_CHANNEL_ID: "id", LINE_LOGIN_CHANNEL_SECRET: "secret" }),
+    ).toEqual({ clientId: "id", clientSecret: "secret" });
+  });
+});
+
+describe("LINE configuration warnings", () => {
+  async function freshEnv() {
+    vi.resetModules();
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const fresh = await import("./env");
+    return { ...fresh, warned: () => warn.mock.calls.map(String) };
+  }
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it.each([
+    [{ LINE_LOGIN_CHANNEL_ID: "the-channel-id" }, "LINE_LOGIN_CHANNEL_SECRET"],
+    [{ LINE_LOGIN_CHANNEL_SECRET: "the-channel-secret" }, "LINE_LOGIN_CHANNEL_ID"],
+    [
+      { LINE_LOGIN_CHANNEL_ID: "the-channel-id", LINE_LOGIN_CHANNEL_SECRET: "" },
+      "LINE_LOGIN_CHANNEL_SECRET",
+    ],
+  ])("names the missing variable when only one is set", async (source, missing) => {
+    const { lineLoginEnv, warned } = await freshEnv();
+
+    lineLoginEnv(source);
+
+    expect(warned()).toHaveLength(1);
+    expect(warned()[0]).toContain(`${missing} is not set`);
+    expect(warned()[0]).toMatch(/\.env\.example/);
+  });
+
+  it.each([
+    [{ LINE_LOGIN_CHANNEL_ID: "the-channel-id" }, "the-channel-id"],
+    [{ LINE_LOGIN_CHANNEL_SECRET: "the-channel-secret" }, "the-channel-secret"],
+  ])("does not print the value that was set", async (source, value) => {
+    const { lineLoginEnv, warned } = await freshEnv();
+
+    lineLoginEnv(source);
+
+    expect(warned()).toHaveLength(1);
+    expect(warned()[0]).not.toContain(value);
+  });
+
+  it("warns once, not on every call", async () => {
+    const { lineLoginEnv, warned } = await freshEnv();
+
+    lineLoginEnv({ LINE_LOGIN_CHANNEL_ID: "the-channel-id" });
+    lineLoginEnv({ LINE_LOGIN_CHANNEL_ID: "the-channel-id" });
+
+    expect(warned()).toHaveLength(1);
+  });
+
+  it.each([
+    ["both are set", { LINE_LOGIN_CHANNEL_ID: "id", LINE_LOGIN_CHANNEL_SECRET: "secret" }],
+    ["neither is set", {}],
+    ["both are empty", { LINE_LOGIN_CHANNEL_ID: "", LINE_LOGIN_CHANNEL_SECRET: "" }],
+  ])("stays quiet when %s", async (_case, source) => {
+    const { lineLoginEnv, warned } = await freshEnv();
+
+    lineLoginEnv(source);
+
+    expect(warned()).toEqual([]);
+  });
+
+  it("reports a malformed bot basic ID once, without printing it", async () => {
+    const { lineBotEnv, warned } = await freshEnv();
+
+    expect(lineBotEnv({ LINE_BOT_BASIC_ID: "https://evil.example/x" })).toBeUndefined();
+    lineBotEnv({ LINE_BOT_BASIC_ID: "https://evil.example/x" });
+
+    expect(warned()).toHaveLength(1);
+    expect(warned()[0]).toContain("LINE_BOT_BASIC_ID");
+    expect(warned()[0]).not.toContain("evil.example");
+  });
+});
+
+describe("lineWebhookEnv", () => {
+  it("is undefined when the channel secret is missing or empty", () => {
+    expect(lineWebhookEnv({})).toBeUndefined();
+    expect(lineWebhookEnv({ LINE_MESSAGING_CHANNEL_SECRET: "" })).toBeUndefined();
+  });
+
+  it("returns the channel secret when it is set", () => {
+    expect(lineWebhookEnv({ LINE_MESSAGING_CHANNEL_SECRET: "secret" })).toEqual({
+      channelSecret: "secret",
+    });
+  });
+});
+
+describe("lineBotEnv", () => {
+  it("is undefined when the basic ID is not set", () => {
+    expect(lineBotEnv({})).toBeUndefined();
+    expect(lineBotEnv({ LINE_BOT_BASIC_ID: "" })).toBeUndefined();
+  });
+
+  it("builds the add-friend link from the basic ID", () => {
+    expect(lineBotEnv({ LINE_BOT_BASIC_ID: "@123abcde" })).toEqual({
+      addFriendUrl: "https://line.me/R/ti/p/%40123abcde",
+    });
   });
 });

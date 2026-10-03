@@ -14,8 +14,20 @@ if (!process.env.E2E_SKIP_BUILD) {
 const mongo = await MongoMemoryServer.create();
 mkdirSync(".e2e", { recursive: true });
 const log = createWriteStream(".e2e/server.log");
-// Tests that must change data behind the server's back (to prove a cache) connect with this.
+// Tests that must change data behind the server's back (to prove a cache, or to seed a linked
+// LINE account) connect with this; see e2e/seed.ts.
 writeFileSync(".e2e/mongo-uri", mongo.getUri("e2e"));
+
+// LINE is off unless a run opts in with E2E_-prefixed placeholders, whatever the shell or
+// .env.local holds.
+const line = Object.fromEntries(
+  [
+    "LINE_LOGIN_CHANNEL_ID",
+    "LINE_LOGIN_CHANNEL_SECRET",
+    "LINE_MESSAGING_CHANNEL_SECRET",
+    "LINE_BOT_BASIC_ID",
+  ].map((name) => [name, process.env[`E2E_${name}`] ?? ""]),
+);
 
 const server = spawn(process.execPath, [next, "start", "-p", port], {
   env: {
@@ -25,6 +37,7 @@ const server = spawn(process.execPath, [next, "start", "-p", port], {
     BETTER_AUTH_URL: `http://localhost:${port}`,
     ADMIN_EMAILS: "",
     USE_FAKES: "true",
+    ...line,
   },
   stdio: ["ignore", "pipe", "pipe"],
 });

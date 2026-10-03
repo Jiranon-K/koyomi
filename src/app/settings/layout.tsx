@@ -4,19 +4,15 @@ import { Masthead } from "@/components/masthead";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
-import { SETTINGS_PATH } from "@/features/auth/paths";
+import { DASHBOARD_PATH } from "@/features/auth/paths";
 import { SignOutButton } from "@/features/auth/sign-out-button";
-import { SCHEDULE_PATH } from "@/features/schedule/paths";
 
-export default function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
+export default function SettingsLayout({ children }: LayoutProps<"/settings">) {
   return (
     <div className="flex min-h-screen flex-col">
       <Masthead>
         <Button asChild variant="ghost" size="sm">
-          <Link href={SCHEDULE_PATH}>Schedule</Link>
-        </Button>
-        <Button asChild variant="ghost" size="sm">
-          <Link href={SETTINGS_PATH}>Settings</Link>
+          <Link href={DASHBOARD_PATH}>Dashboard</Link>
         </Button>
         <ThemeToggle />
         <SignOutButton />

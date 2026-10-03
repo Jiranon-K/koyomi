@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { TextLink } from "@/components/text-link";
+import { isLineLoginEnabled } from "@/features/auth/auth";
+import { LineButton } from "@/features/auth/line-button";
 import { SIGN_IN_PATH } from "@/features/auth/paths";
 import { redirectSignedIn } from "@/features/auth/session";
 import { SignUpForm } from "@/features/auth/sign-up-form";
@@ -21,6 +23,7 @@ export default async function SignUpPage() {
           We will email you a link to verify your address.
         </p>
         <SignUpForm />
+        {isLineLoginEnabled() ? <LineButton /> : null}
       </div>
     </>
   );
