@@ -1,0 +1,9 @@
+.next
+out
+build
+coverage
+bun.lock
+next-env.d.ts
+public
+*.md
+src/components/ui/handwriting-text.tsx
