@@ -10,7 +10,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `./verify.sh` (`bun run verify`) — the baseline gate: format check, lint, typecheck, tests, build. Run it before claiming work is done.
 - `bun run test` — Vitest. DB tests use `mongodb-memory-server`, so no local mongod is needed.
 - `bun run e2e` — Playwright (Chromium) against a production build on port 3100 with an in-memory MongoDB; no local mongod or `.env.local` needed. First time on a machine: `bunx playwright install --only-shell chromium`. Tests live in `e2e/`.
-- `bun run audit` — dependency vulnerability scan (needs network, so it is not part of `verify.sh`). Run it before adding or upgrading a dependency.
+- `bun run audit` — dependency vulnerability scan (needs network, so it is not part of `verify.sh`; CI runs it). Run it before adding or upgrading a dependency. It ignores one advisory, `GHSA-vfj7-8cjw-p6xm` (`braces@3.0.3`): no patched release exists and it is reachable only through build tooling (`shadcn`, `eslint-config-next`). Remove the `--ignore` when a fix ships.
 
 ## Gates (mechanical, do not bypass)
 
@@ -21,6 +21,8 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `noUncheckedIndexedAccess` is on: `array[0]` is `T | undefined`. Handle the missing case; do not assert it away.
 - `src/components` and `src/lib` must not import from `src/features` or `src/app` (lint-enforced). Features may import shared code, never the reverse.
 - `bunfig.toml` installs exact versions that are at least 3 days old. Do not lower the cooldown to get a fresh release.
+
+- CI (Continuous Integration) is `.github/workflows/ci.yml`: audit, `./verify.sh`, then the end-to-end tests, on every push to the default branch and every pull request. Actions are pinned to commit hashes; Dependabot (`.github/dependabot.yml`) proposes weekly grouped updates with the same 3-day cooldown.
 
 ## Workflow (one ticket at a time)
 
@@ -53,6 +55,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 
 ## Next steps (not built yet)
 
+- Unused-code check: `knip` was tried and dropped. Its native resolver binding is blocked by Windows Application Control on the development machine, so it could not be run or verified locally.
 - Deployment config (none yet; defaults work on Vercel). Auth rate limits are per client IP taken from `x-forwarded-for`; off Vercel, configure `advanced.ipAddress` in `src/features/auth/auth.ts` first or all clients share one bucket.
 
 ## Agent skills

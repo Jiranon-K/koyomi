@@ -13,7 +13,7 @@
     "test": "vitest run",
     "e2e": "playwright test",
     "verify": "bash ./verify.sh",
-    "audit": "bun audit",
+    "audit": "bun audit --ignore GHSA-vfj7-8cjw-p6xm",
     "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {
