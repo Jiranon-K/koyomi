@@ -34,16 +34,23 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/sign-in$/);
 
+  const tiles = page.getByRole("listitem");
   await page.goto("/schedule");
-  await page.getByRole("link", { name: `Follow ${lantern}` }).click();
+  await tiles.getByRole("link", { name: `Follow ${lantern}` }).click();
   await expect(page).toHaveURL(/\/sign-in\?next=%2Fschedule$/);
   await page.getByLabel("Email address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page).toHaveURL(/\/schedule$/);
 
-  await page.getByRole("button", { name: `Follow ${lantern}` }).click();
-  await expect(page.getByRole("button", { name: `Unfollow ${lantern}` })).toBeVisible();
+  await tiles.getByRole("button", { name: `Follow ${lantern}` }).click();
+  await expect(tiles.getByRole("button", { name: `Unfollow ${lantern}` })).toBeVisible();
+  await expect(
+    page.getByRole("listitem").filter({ hasText: lantern }).getByText("Following"),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("listitem").filter({ hasText: "Clockwork Orchard" }).getByText("Following"),
+  ).toHaveCount(0);
   await followBehindTheServer(email, "harbor-of-paper-cranes");
 
   await page.getByRole("link", { name: "My week" }).click();
@@ -79,7 +86,7 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
 
   await page.getByRole("link", { name: "Browse the schedule" }).click();
   await expect(page).toHaveURL(/\/schedule$/);
-  await expect(page.getByRole("button", { name: `Follow ${lantern}` })).toBeVisible();
+  await expect(tiles.getByRole("button", { name: `Follow ${lantern}` })).toBeVisible();
   await page.getByRole("link", { name: "My week" }).click();
 
   await signOut(page);

@@ -1,13 +1,8 @@
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 
 import { dayWindowOf, formatAirTime, formatDayDate, formatWeekday } from "./day-window";
+import { delayNote, entryKey, episodeLabel } from "./episode-label";
 import type { ScheduleDay, ScheduleEntry } from "./service";
-
-function episodeLabel(entry: ScheduleEntry): string {
-  return entry.firstEpisodeNumber === null
-    ? `Episode ${entry.episodeNumber}`
-    : `Episodes ${entry.firstEpisodeNumber}–${entry.episodeNumber}`;
-}
 
 function EntryRow({ entry, action }: { entry: ScheduleEntry; action?: React.ReactNode }) {
   return (
@@ -31,7 +26,7 @@ function EntryRow({ entry, action }: { entry: ScheduleEntry; action?: React.Reac
         </p>
         <p className="text-sm text-muted-foreground">
           {episodeLabel(entry)}
-          {entry.delayedText && entry.delayedText !== "Delayed" ? ` · ${entry.delayedText}` : null}
+          {delayNote(entry) ? ` · ${delayNote(entry)}` : null}
         </p>
       </div>
       {action}
@@ -68,11 +63,7 @@ export function WeekList({ days, now, action }: WeekListProps) {
               {entries.length ? (
                 <ul>
                   {entries.map((entry) => (
-                    <EntryRow
-                      key={`${entry.showRoute}#${entry.episodeNumber}`}
-                      entry={entry}
-                      action={action?.(entry)}
-                    />
+                    <EntryRow key={entryKey(entry)} entry={entry} action={action?.(entry)} />
                   ))}
                 </ul>
               ) : (

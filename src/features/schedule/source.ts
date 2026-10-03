@@ -6,6 +6,7 @@ export type SourceShow = {
   title: string;
   status: ShowStatus;
   totalEpisodes: number;
+  coverUrl: string | null;
 };
 
 export type SourceEpisode = {

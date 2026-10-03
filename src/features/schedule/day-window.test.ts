@@ -5,8 +5,11 @@ import {
   dayWindowOf,
   formatAirTime,
   formatDateTime,
+  dayOfMonth,
   formatDayDate,
+  formatUntil,
   formatWeekday,
+  formatWeekdayShort,
   groupByDay,
   weekWindows,
 } from "./day-window";
@@ -105,6 +108,31 @@ describe("formatting", () => {
 
     expect(formatWeekday(day)).toBe("Saturday");
     expect(formatDayDate(day)).toBe("3 Oct");
+  });
+
+  it.each([
+    ["2026-10-03T12:00:00", "now"],
+    ["2026-10-03T11:00:00", "now"],
+    ["2026-10-03T12:00:01", "in 1 min"],
+    ["2026-10-03T12:01:00", "in 1 min"],
+    ["2026-10-03T12:24:00", "in 24 min"],
+    ["2026-10-03T12:59:00", "in 59 min"],
+    ["2026-10-03T12:59:01", "in 1 h"],
+    ["2026-10-03T15:00:00", "in 3 h"],
+    ["2026-10-03T15:20:00", "in 3 h 20 min"],
+    ["2026-10-04T11:59:00", "in 23 h 59 min"],
+    ["2026-10-04T11:59:30", "in 1 d"],
+    ["2026-10-04T12:00:00", "in 1 d"],
+    ["2026-10-05T16:00:00", "in 2 d 4 h"],
+    ["2026-10-05T16:40:00", "in 2 d 4 h"],
+  ])("says how long until %s from noon on 3 Oct: %s", (target, wording) => {
+    expect(formatUntil(utc(target), utc("2026-10-03T12:00:00"))).toBe(wording);
+  });
+
+  it("gives a schedule day's short weekday and its day of the month", () => {
+    expect(formatWeekdayShort("2026-10-03")).toBe("Sat");
+    expect(dayOfMonth("2026-10-03")).toBe(3);
+    expect(dayOfMonth("2026-10-31")).toBe(31);
   });
 });
 

@@ -8,6 +8,7 @@ function entry(overrides: Partial<ScheduleEntry> = {}): ScheduleEntry {
   return {
     showRoute: "lantern-street-diaries",
     title: "Lantern Street Diaries",
+    coverUrl: null,
     episodeNumber: 5,
     firstEpisodeNumber: null,
     airAt: "2026-10-03T15:30:00.000Z",

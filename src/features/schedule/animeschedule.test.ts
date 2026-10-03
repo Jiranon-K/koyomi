@@ -48,6 +48,8 @@ describe("parseTimetable", () => {
         title: "Lantern Street Diaries",
         status: "ongoing",
         totalEpisodes: 12,
+        coverUrl:
+          "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/lantern-street-diaries-1a2b3c.jpg",
       },
       episodeNumber: 5,
       firstEpisodeNumber: null,
@@ -102,6 +104,36 @@ describe("parseTimetable", () => {
     expect(skipped).toBe(2);
   });
 
+  it("keeps an entry without an image and gives it no cover", () => {
+    const { episodes } = parseTimetable(documented);
+
+    expect(episodes[2]?.show).toMatchObject({ route: "harbor-of-paper-cranes", coverUrl: null });
+  });
+
+  it.each([
+    ["an empty path", ""],
+    ["an absolute address", "https://elsewhere.example/cover.jpg"],
+    ["a protocol-relative address", "//elsewhere.example/cover.jpg"],
+    ["a rooted path", "/anime/jpg/default/cover.jpg"],
+    ["a path that climbs out", "anime/../../secret.jpg"],
+    ["a path with a query", "anime/jpg/default/cover.jpg?next=1"],
+    ["a file that is no image", "anime/jpg/default/cover.html"],
+    ["a value that is no text", 42],
+  ])("gives no cover for %s and still parses the episode", (_, imageVersionRoute) => {
+    const { episodes, skipped } = parseTimetable([
+      {
+        title: "Odd Cover",
+        route: "odd-cover",
+        episodeDate: "2026-10-04T16:00:00Z",
+        episodeNumber: 2,
+        imageVersionRoute,
+      },
+    ]);
+
+    expect(skipped).toBe(0);
+    expect(episodes[0]?.show).toMatchObject({ route: "odd-cover", coverUrl: null });
+  });
+
   it("rejects a body that is not a list", () => {
     expect(() => parseTimetable({ message: "nope" })).toThrow(ScheduleSourceError);
   });
@@ -116,6 +148,16 @@ describe("parseTimetable on a week recorded from the real API", () => {
     expect(skipped).toBe(0);
     expect(episodes).toHaveLength(recorded.length);
     expect(episodes.every((episode) => !Number.isNaN(episode.airAt.getTime()))).toBe(true);
+  });
+
+  it("gives every entry its cover on the image host", () => {
+    const covers = new Map(episodes.map((episode) => [episode.show.route, episode.show.coverUrl]));
+
+    for (const entry of recorded) {
+      expect(covers.get(entry.route)).toBe(
+        `https://img.animeschedule.net/production/assets/public/img/${entry.imageVersionRoute}`,
+      );
+    }
   });
 
   it("recognises every show status the API sends", () => {
