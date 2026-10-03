@@ -14,7 +14,9 @@ export default function ForgotPasswordPage() {
         <CardTitle>
           <h1>Forgot password</h1>
         </CardTitle>
-        <CardDescription>Enter your email and we will send you a link to choose a new one.</CardDescription>
+        <CardDescription>
+          Enter your email and we will send you a link to choose a new one.
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <ForgotPasswordForm />

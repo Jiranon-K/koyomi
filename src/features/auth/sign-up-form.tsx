@@ -20,7 +20,10 @@ export function SignUpForm() {
       .email({ ...data, callbackURL: VERIFY_EMAIL_PATH })
       .catch(networkError);
     if (error) {
-      return errorMessage(error, "We could not create the account. Check the fields and try again.");
+      return errorMessage(
+        error,
+        "We could not create the account. Check the fields and try again.",
+      );
     }
     rememberPendingEmail(data.email);
     router.push(VERIFY_EMAIL_PATH);
@@ -28,14 +31,7 @@ export function SignUpForm() {
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-5">
-      <FormField
-        name="name"
-        label="Name"
-        autoComplete="name"
-        required
-        large
-        error={errors.name}
-      />
+      <FormField name="name" label="Name" autoComplete="name" required large error={errors.name} />
       <FormField
         name="email"
         label="Email address"

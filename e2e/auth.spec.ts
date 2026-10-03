@@ -1,0 +1,54 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test, type Page } from "@playwright/test";
+
+import { emailedLink } from "./outbox";
+
+const password = "e2e-journey-password";
+
+async function signOut(page: Page) {
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page).toHaveURL(/\/sign-in$/);
+}
+
+test("a signed-out visitor to the dashboard is sent to sign-in", async ({ page }) => {
+  await page.goto("/dashboard");
+  await expect(page).toHaveURL(/\/sign-in$/);
+});
+
+test("sign up, verify the email, sign out and sign back in", async ({ page }) => {
+  const email = `e2e-${Date.now()}@example.com`;
+
+  await page.goto("/sign-up");
+  await page.getByLabel("Name").fill("Ada");
+  await page.getByLabel("Email address").fill(email);
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Create account" }).click();
+  await expect(page).toHaveURL(/\/verify-email$/);
+
+  await page.goto(await emailedLink(email, "Verify your email"));
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByText(email)).toBeVisible();
+
+  await signOut(page);
+  await page.goto("/dashboard");
+  await expect(page).toHaveURL(/\/sign-in$/);
+
+  await page.getByLabel("Email address").fill(email);
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByText(email)).toBeVisible();
+
+  await signOut(page);
+});
+
+for (const path of ["/sign-in", "/sign-up"]) {
+  test(`${path} has no serious accessibility violations`, async ({ page }) => {
+    await page.goto(path);
+    const { violations } = await new AxeBuilder({ page }).analyze();
+    const serious = violations
+      .filter(({ impact }) => impact === "serious" || impact === "critical")
+      .map(({ id, help }) => `${id}: ${help}`);
+    expect(serious).toEqual([]);
+  });
+}

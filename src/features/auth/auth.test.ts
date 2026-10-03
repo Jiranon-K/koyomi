@@ -261,7 +261,10 @@ describe("password reset", () => {
     await expect(auth.api.signInEmail({ body: credentials })).resolves.toBeTruthy();
   });
 
-  async function followResetLink(auth: ReturnType<typeof newAuth>, message: EmailMessage | undefined) {
+  async function followResetLink(
+    auth: ReturnType<typeof newAuth>,
+    message: EmailMessage | undefined,
+  ) {
     if (!message) throw new Error("No email was sent");
     const response = await auth.handler(new Request(message.url));
     return new URL(response.headers.get("location") ?? "", BASE_URL);
@@ -490,7 +493,12 @@ describe("rate limiting", () => {
 
     await statuses(max, () => post(auth, "/sign-in/email", credentials));
 
-    const rows = await mongoose.connection.getClient().db().collection("rateLimit").find().toArray();
+    const rows = await mongoose.connection
+      .getClient()
+      .db()
+      .collection("rateLimit")
+      .find()
+      .toArray();
     expect(rows).toHaveLength(1);
     expect(rows[0]?.count).toBe(max);
   });
@@ -599,9 +607,9 @@ describe("Google sign-in", () => {
   it("is refused when no Google credentials are configured", async () => {
     const auth = newAuth();
 
-    await expect(
-      auth.api.signInSocial({ body: { provider: "google" } }),
-    ).rejects.toMatchObject({ status: "NOT_FOUND" });
+    await expect(auth.api.signInSocial({ body: { provider: "google" } })).rejects.toMatchObject({
+      status: "NOT_FOUND",
+    });
   });
 
   it("sends the visitor to Google with the app's callback when credentials are configured", async () => {

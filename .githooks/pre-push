@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+bash ./verify.sh
+E2E_SKIP_BUILD=1 bun run e2e
