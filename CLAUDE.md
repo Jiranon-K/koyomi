@@ -43,6 +43,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `src/lib/db/mongoose.ts` — cached connection (`connectDb`). Call it inside services, not at module top level.
 - `e2e/` — `server.mjs` builds, starts MongoDB in memory and runs `next start`, writing the server log to `.e2e/server.log`. `outbox.ts` reads emailed links from that log through `linkInEmailLog` in `src/features/auth/email.ts`, which also owns the format the stub prints (`emailLog`); change the two together. Keep a log transport for tests when a real provider lands. Sign-in is rate-limited to 5 per minute per IP, so keep sign-in attempts per run under that.
 - `src/lib/env.ts` — the only place that reads `process.env` (lint-enforced; tests are exempt). `dbEnv()`, `authEnv()` and `googleEnv()` validate with Zod on each call and throw an error that names the variable, never its value. Add a new variable to its schema here and to `.env.example`.
+- `src/components` — shared components that are not shadcn (`text-link.tsx`, `theme-toggle.tsx`).
 - `src/components/ui` — shadcn components. Add more with `bunx --bun shadcn@latest add <name>`.
 
 ## Conventions

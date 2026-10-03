@@ -3,6 +3,7 @@
 import { cn } from "cn";
 import { useRouter } from "next/navigation";
 
+import { TextLink } from "@/components/text-link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,6 @@ import { FormError, FormField, LARGE_CONTROL } from "./form-field";
 import { PasswordField } from "./password-field";
 import { DASHBOARD_PATH, FORGOT_PASSWORD_PATH, VERIFY_EMAIL_PATH } from "./paths";
 import { signInSchema } from "./schema";
-import { TextLink } from "./text-link";
 import { useAuthForm } from "./use-auth-form";
 
 export function SignInForm() {

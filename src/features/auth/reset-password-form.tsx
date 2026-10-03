@@ -2,13 +2,13 @@
 
 import { useRouter } from "next/navigation";
 
+import { TextLink } from "@/components/text-link";
 import { Button } from "@/components/ui/button";
 
 import { resetPassword } from "./client";
 import { FormError, FormField } from "./form-field";
 import { FORGOT_PASSWORD_PATH, SIGN_IN_PATH } from "./paths";
 import { PASSWORD_HINT, resetPasswordSchema } from "./schema";
-import { TextLink } from "./text-link";
 import { useAuthForm } from "./use-auth-form";
 
 const LINK_EXPIRED_MESSAGE = (
