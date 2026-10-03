@@ -1,35 +1,39 @@
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import { SIGN_IN_PATH } from "@/features/auth/paths";
+import { BRAND } from "@/components/brand";
+import { Masthead } from "@/components/masthead";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
 import { HandwritingText } from "@/components/ui/handwriting-text";
+import { SIGN_IN_PATH } from "@/features/auth/paths";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="mx-auto flex w-full max-w-5xl items-center justify-end gap-2 px-6 py-5">
+      <Masthead>
         <Button asChild variant="ghost" size="sm">
           <Link href={SIGN_IN_PATH}>Sign in</Link>
         </Button>
         <ThemeToggle />
-      </header>
+      </Masthead>
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center gap-8 px-6 pb-24 text-center">
-        <h1 className="max-w-2xl text-4xl leading-tight font-bold tracking-tight sm:text-6xl">
-          Start your next idea
-          <br />
-          <HandwritingText
-            words={["fast.", "full-stack.", "your way."]}
-            fontUrl="/fonts/handwriting.ttf"
-            className="text-chart-1 dark:text-chart-2"
-            height="1.15em"
-          />
-        </h1>
-
-        <p className="max-w-xl text-muted-foreground">
-          A clean template with a Next.js App Router, shadcn/ui and MongoDB already wired together.
-        </p>
+      <main className="grid flex-1 lg:grid-cols-12">
+        <section className="flex flex-col justify-center px-6 py-14 sm:px-10 lg:col-span-8 lg:py-24">
+          <h1 className="font-display text-[clamp(3.5rem,9.5vw,9.5rem)] leading-[0.92] tracking-tight">
+            A calm place to <em className="text-primary">start</em> your next full-stack project.
+          </h1>
+        </section>
+        <aside className="flex flex-col justify-between gap-16 bg-primary p-8 text-primary-foreground lg:col-span-4 lg:border-l lg:border-foreground">
+          <p className="label-mono">Fig. 1 — the promise</p>
+          <div>
+            <HandwritingText
+              words={["fast.", "full-stack.", "your way."]}
+              fontUrl="/fonts/handwriting.ttf"
+              height="5rem"
+            />
+            <p className="mt-6 max-w-xs text-lg">{BRAND.support}</p>
+          </div>
+        </aside>
       </main>
     </div>
   );

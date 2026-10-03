@@ -18,7 +18,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
 
   return (
     <>
-      <h1 className="text-3xl font-semibold">Welcome back</h1>
+      <h1 className="font-display text-5xl leading-none">Welcome back</h1>
       <p className="mt-2 text-muted-foreground">
         Don&apos;t have an account? <TextLink href={SIGN_UP_PATH}>Sign up</TextLink>
       </p>

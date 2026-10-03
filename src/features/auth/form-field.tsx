@@ -3,14 +3,11 @@ import { cn } from "cn";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export const LARGE_CONTROL = "h-11 rounded-xl";
-
 export type FormFieldProps = Omit<React.ComponentProps<typeof Input>, "id" | "name"> & {
   name: string;
   label: string;
   error?: string;
   hint?: string;
-  large?: boolean;
   trailing?: React.ReactNode;
 };
 
@@ -19,7 +16,6 @@ export function FormField({
   label,
   error,
   hint,
-  large,
   trailing,
   className,
   ...props
@@ -37,7 +33,7 @@ export function FormField({
           name={name}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy || undefined}
-          className={cn(large && [LARGE_CONTROL, "px-4"], trailing && "pr-11", className)}
+          className={cn(trailing && "pr-11", className)}
           {...props}
         />
         {trailing ? (

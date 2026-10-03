@@ -27,7 +27,7 @@ export function SignOutButton() {
   }
 
   return (
-    <Button variant="outline" onClick={onClick} disabled={pending} aria-busy={pending}>
+    <Button variant="outline" size="sm" onClick={onClick} disabled={pending} aria-busy={pending}>
       {pending ? "Signing out…" : "Sign out"}
     </Button>
   );
