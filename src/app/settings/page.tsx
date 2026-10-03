@@ -12,9 +12,17 @@ import {
   ReminderSwitch,
 } from "@/features/line/line-settings";
 import { getLineStatus, type LineStatus } from "@/features/line/service";
+import { DashboardViewChoice } from "@/features/preferences/dashboard-view-choice";
+import { DASHBOARD_VIEW_LABELS, type DashboardView } from "@/features/preferences/schema";
+import { getDashboardView } from "@/features/preferences/service";
 import { lineBotEnv } from "@/lib/env";
 
 export const metadata: Metadata = { title: "Settings" };
+
+const VIEW_NOTES: Record<DashboardView, string> = {
+  feature: "My week opens with the next episode to air, then the week in covers.",
+  index: "My week is a numbered list of your shows, the soonest episode first.",
+};
 
 function reminderNote(status: Extract<LineStatus, { linked: true }>): string {
   if (status.remindersOn) {
@@ -29,7 +37,7 @@ function reminderNote(status: Extract<LineStatus, { linked: true }>): string {
 export default async function SettingsPage({ searchParams }: PageProps<"/settings">) {
   const { user } = await requireSession();
   const { error } = await searchParams;
-  const status = await getLineStatus(user.id);
+  const [status, view] = await Promise.all([getLineStatus(user.id), getDashboardView(user.id)]);
   const lineEnabled = isLineLoginEnabled();
   const addFriendUrl = lineBotEnv()?.addFriendUrl;
 
@@ -40,7 +48,8 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
       </StaggerItem>
       <StaggerItem>
         <p className="mt-2 text-muted-foreground">
-          Connect LINE and Koyomi tells you, each morning, what airs tonight.
+          Connect LINE and Koyomi tells you, each morning, what airs tonight. Choose how My week
+          looks.
         </p>
       </StaggerItem>
       {error ? (
@@ -97,6 +106,10 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
             </Row>
           </>
         )}
+        <Row label="Dashboard" state={DASHBOARD_VIEW_LABELS[view]}>
+          <Note>{VIEW_NOTES[view]}</Note>
+          <DashboardViewChoice current={view} />
+        </Row>
       </dl>
     </Stagger>
   );

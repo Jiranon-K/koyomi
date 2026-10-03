@@ -57,7 +57,12 @@ function DayLinks({ days, today }: { days: readonly WallDay[]; today: string }) 
   );
 }
 
-type CoverProps = { entry: ScheduleEntry; sizes: string; eager?: boolean; greyscale?: boolean };
+type CoverProps = {
+  entry: Pick<ScheduleEntry, "coverUrl" | "title">;
+  sizes: string;
+  eager?: boolean;
+  greyscale?: boolean;
+};
 
 export function Cover({ entry, sizes, eager = false, greyscale = false }: CoverProps) {
   return entry.coverUrl ? (

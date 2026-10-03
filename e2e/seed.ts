@@ -125,3 +125,13 @@ export async function clearSeededSyncs() {
     await db.collection("schedulesyncruns").deleteMany({ source: SEEDED_SYNC_SOURCE });
   });
 }
+
+export async function chooseDashboardView(email: string, dashboardView: "feature" | "index") {
+  await withDb(async (db) => {
+    const user = await db.collection("user").findOne({ email });
+    if (!user) throw new Error(`No user with the email ${email}`);
+    await db
+      .collection("preferences")
+      .updateOne({ userId: user._id.toHexString() }, { $set: { dashboardView } }, { upsert: true });
+  });
+}

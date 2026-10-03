@@ -1,8 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { createVerifiedAccount } from "./account";
-import { syncSchedule } from "./schedule";
-import { makeAdmin } from "./seed";
+import { followBehindTheServer, syncSchedule } from "./schedule";
+import { chooseDashboardView, makeAdmin } from "./seed";
 
 function effectiveOpacity(locator: Locator) {
   return locator.evaluate((el) => {
@@ -50,6 +50,43 @@ const dashboardText = (page: Page, email: string) => [
   page.getByRole("link", { name: "Browse the schedule" }),
 ];
 
+function arrival(locator: Locator) {
+  return locator.evaluate((el) => {
+    const moved = el.closest("[data-arrive]") ?? el;
+    const { transform, clipPath } = getComputedStyle(moved);
+    const matrix = new DOMMatrixReadOnly(transform === "none" ? undefined : transform);
+    const clipped = clipPath !== "none" && !/^inset\((0(px|%)?\s*)+\)$/.test(clipPath);
+    return { shiftY: matrix.f, scale: matrix.a, clipped };
+  });
+}
+
+async function expectUnveiled(locator: Locator) {
+  await locator.scrollIntoViewIfNeeded();
+  await expect.poll(() => arrival(locator)).toEqual({ shiftY: 0, scale: 1, clipped: false });
+}
+
+function curtainCovers(page: Page) {
+  return page.locator("[data-curtain]").evaluate((el) => {
+    const frame = el.parentElement?.getBoundingClientRect();
+    return frame ? el.getBoundingClientRect().left < frame.right - 1 : true;
+  });
+}
+
+async function followedDashboard(page: Page, view: "feature" | "index") {
+  await syncSchedule(page.request, "base");
+  const email = await createVerifiedAccount(page, `e2e-motion-${view}`);
+  await followBehindTheServer(email, "the-ninth-platform");
+  await chooseDashboardView(email, view);
+  await page.goto("/dashboard");
+  return {
+    title: page.getByRole("heading", { level: 1, name: "My week" }),
+    show: page.getByRole("heading", { level: 2, name: "The Ninth Platform" }),
+    cover: page.getByRole("region", { name: "The Ninth Platform" }).locator("img"),
+    tile: page.getByRole("region", { name: "The week" }).getByRole("listitem").locator("time"),
+    row: page.getByRole("main").getByRole("listitem").getByText("The Ninth Platform"),
+  };
+}
+
 const AUTH_PAGES = [
   "/sign-in",
   "/sign-up",
@@ -76,6 +113,27 @@ test.describe("with motion", () => {
     for (const text of dashboardText(page, email)) {
       await expectArrived(text);
     }
+  });
+
+  test("the feature view lifts its curtain and ends with nothing shifted, scaled or clipped", async ({
+    page,
+  }) => {
+    const { title, show, cover, tile } = await followedDashboard(page, "feature");
+
+    await expectArrived(title);
+    await expectArrived(show);
+    await expectUnveiled(show.locator("[data-arrive]"));
+    await expectUnveiled(cover);
+    await expect.poll(() => curtainCovers(page)).toBe(false);
+    await expectUnveiled(tile);
+  });
+
+  test("the index view's title, rows and pinned cover arrive", async ({ page }) => {
+    const { title, row } = await followedDashboard(page, "index");
+
+    await expectUnveiled(title.locator("[data-arrive]"));
+    await expectArrived(row);
+    await expectUnveiled(page.getByRole("complementary", { name: "Selected show" }).locator("img"));
   });
 
   test("the admin title and status rows arrive at full opacity", async ({ page }) => {
@@ -167,6 +225,18 @@ test.describe("with reduced motion", () => {
     for (const text of dashboardText(page, email)) {
       await expect(text).toBeVisible();
       expect(await effectiveOpacity(text)).toBe(1);
+    }
+  });
+
+  test("the feature view shows its cover, lines and tiles at once, with no curtain", async ({
+    page,
+  }) => {
+    const { show, cover, tile } = await followedDashboard(page, "feature");
+
+    await expect(show).toBeVisible();
+    await expect(page.locator("[data-curtain]")).toBeHidden();
+    for (const part of [show.locator("[data-arrive]"), cover, tile]) {
+      expect(await arrival(part)).toEqual({ shiftY: 0, scale: 1, clipped: false });
     }
   });
 
