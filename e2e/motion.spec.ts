@@ -95,7 +95,8 @@ test.describe("with motion", () => {
     await page.goto("/schedule");
 
     await expectArrived(page.getByRole("heading", { level: 1, name: "On air this week" }));
-    await expectArrived(page.getByText("Lantern Street Diaries"));
+    await expectArrived(page.getByRole("listitem").getByText("Lantern Street Diaries"));
+    await expectArrived(page.getByRole("group", { name: "Up next" }));
     await expectArrived(page.getByRole("heading", { level: 2 }).last());
   });
 

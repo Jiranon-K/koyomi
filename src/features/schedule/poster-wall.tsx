@@ -9,7 +9,8 @@ import {
   formatWeekdayShort,
 } from "./day-window";
 import { delayNote, entryKey, episodeLabel } from "./episode-label";
-import type { ScheduleDay, ScheduleEntry } from "./service";
+import type { ScheduleEntry } from "./service";
+import type { WallDay, WallEntry } from "./wall";
 
 const COVER_SIZES =
   "(min-width: 1024px) 200px, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw";
@@ -22,7 +23,7 @@ function episodeCount(count: number): string {
   return count === 1 ? "1 episode" : `${count} episodes`;
 }
 
-function DayLinks({ days, today }: { days: readonly ScheduleDay[]; today: string }) {
+function DayLinks({ days, today }: { days: readonly WallDay[]; today: string }) {
   return (
     <nav
       aria-label="Jump to a day"
@@ -56,16 +57,31 @@ function DayLinks({ days, today }: { days: readonly ScheduleDay[]; today: string
   );
 }
 
-function Tile({
-  entry,
-  followed,
-  action,
-}: {
-  entry: ScheduleEntry;
-  followed: boolean;
-  action?: React.ReactNode;
-}) {
+type CoverProps = { entry: ScheduleEntry; sizes: string; eager?: boolean; greyscale?: boolean };
+
+export function Cover({ entry, sizes, eager = false, greyscale = false }: CoverProps) {
+  return entry.coverUrl ? (
+    <Image
+      src={entry.coverUrl}
+      alt=""
+      fill
+      sizes={sizes}
+      loading={eager ? "eager" : "lazy"}
+      className={cn("object-cover", greyscale && "grayscale")}
+    />
+  ) : (
+    <p
+      aria-hidden
+      className="absolute inset-x-3 inset-y-10 flex items-center justify-center text-center font-display text-xl leading-tight"
+    >
+      <span className="line-clamp-4 break-words">{entry.title}</span>
+    </p>
+  );
+}
+
+function Tile({ entry, action }: { entry: WallEntry; action?: React.ReactNode }) {
   const delay = delayNote(entry);
+  const { aired, followed } = entry;
 
   return (
     <li className="flex flex-col">
@@ -75,16 +91,7 @@ function Tile({
           followed ? "border-2 border-primary" : "border border-foreground",
         )}
       >
-        {entry.coverUrl ? (
-          <Image src={entry.coverUrl} alt="" fill sizes={COVER_SIZES} className="object-cover" />
-        ) : (
-          <p
-            aria-hidden
-            className="absolute inset-x-3 inset-y-10 flex items-center justify-center text-center font-display text-xl leading-tight"
-          >
-            <span className="line-clamp-4 break-words">{entry.title}</span>
-          </p>
-        )}
+        <Cover entry={entry} sizes={COVER_SIZES} greyscale={aired} />
         <time
           dateTime={entry.airAt}
           className={cn(
@@ -94,10 +101,11 @@ function Tile({
         >
           {formatAirTime(new Date(entry.airAt))}
         </time>
-        {followed || entry.delayed ? (
+        {followed || entry.delayed || aired ? (
           <p className="absolute inset-x-0 bottom-0 flex flex-wrap gap-x-3 bg-scrim px-2 py-1 label-mono text-scrim-foreground">
             {followed ? <span>Following</span> : null}
             {entry.delayed ? <span>Delayed</span> : null}
+            {aired ? <span>Aired</span> : null}
           </p>
         ) : null}
       </div>
@@ -112,13 +120,12 @@ function Tile({
 }
 
 type PosterWallProps = {
-  days: readonly ScheduleDay[];
+  days: readonly WallDay[];
   today: string;
-  followed: ReadonlySet<string>;
-  action?: (entry: ScheduleEntry) => React.ReactNode;
+  action?: (entry: WallEntry) => React.ReactNode;
 };
 
-export function PosterWall({ days, today, followed, action }: PosterWallProps) {
+export function PosterWall({ days, today, action }: PosterWallProps) {
   return (
     <>
       <DayLinks days={days} today={today} />
@@ -143,12 +150,7 @@ export function PosterWall({ days, today, followed, action }: PosterWallProps) {
           {entries.length ? (
             <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               {entries.map((entry) => (
-                <Tile
-                  key={entryKey(entry)}
-                  entry={entry}
-                  followed={followed.has(entry.showRoute)}
-                  action={action?.(entry)}
-                />
+                <Tile key={entryKey(entry)} entry={entry} action={action?.(entry)} />
               ))}
             </ul>
           ) : (

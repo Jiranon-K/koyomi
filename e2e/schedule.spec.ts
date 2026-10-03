@@ -61,6 +61,34 @@ test("the landing page links to the schedule, which needs no account", async ({ 
   await expect(page.getByRole("heading", { level: 1, name: "On air this week" })).toBeVisible();
 });
 
+test("the page opens with the next episode to air, and only its cover loads eagerly", async ({
+  page,
+}) => {
+  await page.goto("/schedule");
+
+  const upNext = page.getByRole("group", { name: "Up next" });
+  await expect(
+    upNext.getByText(/^(now|in \d+ (min|h|d)( \d+ (min|h))?)$/, { exact: true }),
+  ).toBeVisible();
+  await expect(upNext.locator("time")).toHaveText(/^\d{2}:\d{2}$/);
+  await expect(upNext.getByText(/^Episodes? \d+/)).toBeVisible();
+  await expect(upNext.getByRole("link", { name: /^Follow / })).toBeVisible();
+  await expect(
+    page.getByText(/\d+ still to air today, \d+ already out(, \d+ delayed)?\./),
+  ).toBeVisible();
+  await expect(upNext.locator("xpath=preceding::img[1]")).toHaveAttribute("loading", "eager");
+
+  const loading = await page
+    .locator("main img")
+    .evaluateAll((images) => images.map((image) => image.getAttribute("loading")));
+  expect(loading.filter((value) => value === "eager")).toHaveLength(1);
+  const tileLoading = await page
+    .getByRole("listitem")
+    .locator("img")
+    .evaluateAll((images) => images.map((image) => image.getAttribute("loading")));
+  expect(new Set(tileLoading)).toEqual(new Set(["lazy"]));
+});
+
 test("a show with a cover shows it from this server, one without gets a title tile", async ({
   page,
   baseURL,
@@ -143,7 +171,7 @@ test("keyboard focus on a tile is not hidden under the day links", async ({ page
 
   await page.getByRole("link", { name: "AnimeSchedule.net" }).focus();
   await page.keyboard.press("Shift+Tab");
-  const follow = page.getByRole("link", { name: "Follow Moss and Thunder" });
+  const follow = page.getByRole("listitem").getByRole("link", { name: "Follow Moss and Thunder" });
   await expect(follow).toBeFocused();
 
   const bar = await days.boundingBox();
