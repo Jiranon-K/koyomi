@@ -42,14 +42,7 @@ function parseAdminEmails(adminEmails = ""): Set<string> {
   );
 }
 
-export function createAuth({
-  db,
-  secret,
-  baseURL,
-  sendEmail,
-  adminEmails,
-  google,
-}: AuthOptions) {
+export function createAuth({ db, secret, baseURL, sendEmail, adminEmails, google }: AuthOptions) {
   const admins = parseAdminEmails(adminEmails);
   const sendInBackground = (message: EmailMessage) => {
     sendEmail(message).catch((error) => {

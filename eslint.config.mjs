@@ -64,12 +64,7 @@ const eslintConfig = defineConfig([
     files: ["src/features/auth/email.ts"],
     rules: { "no-console": "off" },
   },
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ]);
 
 export default eslintConfig;
