@@ -41,6 +41,14 @@ async function wrongPassword(page: Page) {
   };
 }
 
+// The horizontal scale of an element's transform: 1 when it has none.
+function scaleOf(locator: Locator) {
+  return locator.evaluate((el) => {
+    const { transform } = getComputedStyle(el);
+    return transform === "none" ? 1 : new DOMMatrixReadOnly(transform).a;
+  });
+}
+
 const dashboardText = (page: Page, email: string) => [
   page.getByRole("heading", { level: 1, name: "Dashboard" }),
   page.getByText("You are signed in."),
@@ -74,6 +82,36 @@ test.describe("with motion", () => {
     for (const text of dashboardText(page, email)) {
       await expectArrived(text);
     }
+  });
+
+  for (const theme of ["light", "dark"]) {
+    test(`buttons and the theme toggle shrink slightly while pressed in the ${theme} theme`, async ({
+      page,
+    }) => {
+      await page.addInitScript((stored) => window.localStorage.setItem("theme", stored), theme);
+      await page.goto("/sign-in");
+      const submit = page.getByRole("button", { name: "Sign in", exact: true });
+      const toggle = page.getByRole("button", { name: "Toggle theme" });
+
+      for (const control of [submit, toggle]) {
+        await control.hover();
+        await page.mouse.down();
+        await expect.poll(() => scaleOf(control)).toBeCloseTo(0.98, 2);
+        await page.mouse.up();
+        await expect.poll(() => scaleOf(control)).toBeCloseTo(1, 3);
+      }
+    });
+  }
+
+  test("a link styled as a button shrinks while pressed too", async ({ page }) => {
+    await page.goto("/");
+    const link = page.getByRole("link", { name: "Sign in" });
+
+    await link.hover();
+    await page.mouse.down();
+    await expect.poll(() => scaleOf(link)).toBeCloseTo(0.98, 2);
+    await page.mouse.up();
+    await expect(page).toHaveURL(/\/sign-in$/);
   });
 
   test("a sign-in error is announced as an alert and unfolds to full opacity", async ({ page }) => {
@@ -114,6 +152,17 @@ test.describe("with reduced motion", () => {
       await expect(text).toBeVisible();
       expect(await effectiveOpacity(text)).toBe(1);
     }
+  });
+
+  test("a pressed button does not scale", async ({ page }) => {
+    await page.goto("/sign-in");
+    const submit = page.getByRole("button", { name: "Sign in", exact: true });
+
+    await submit.hover();
+    await page.mouse.down();
+    await page.waitForTimeout(400);
+    expect(await scaleOf(submit)).toBe(1);
+    await page.mouse.up();
   });
 
   test("a sign-in error is at full opacity at once", async ({ page }) => {
