@@ -13,10 +13,20 @@ const saved = { ...process.env };
 
 let server: MongoMemoryServer;
 
-function episode(overrides: Partial<SourceEpisode> & { route?: string } = {}): SourceEpisode {
-  const { route = "lantern-street-diaries", ...rest } = overrides;
+const COVER = "https://covers.example/lantern-street-diaries.jpg";
+
+function episode(
+  overrides: Partial<SourceEpisode> & { route?: string; coverUrl?: string | null } = {},
+): SourceEpisode {
+  const { route = "lantern-street-diaries", coverUrl = COVER, ...rest } = overrides;
   return {
-    show: { route, title: "Lantern Street Diaries", status: "ongoing", totalEpisodes: 12 },
+    show: {
+      route,
+      title: "Lantern Street Diaries",
+      status: "ongoing",
+      totalEpisodes: 12,
+      coverUrl,
+    },
     episodeNumber: 5,
     firstEpisodeNumber: null,
     airAt: new Date("2026-10-03T15:30:00Z"),
@@ -213,12 +223,44 @@ describe("episodesBetween", () => {
     expect(entries[0]).toEqual({
       showRoute: "lantern-street-diaries",
       title: "Lantern Street Diaries",
+      coverUrl: COVER,
       episodeNumber: 2,
       firstEpisodeNumber: null,
       airAt: today.start.toISOString(),
       delayed: false,
       delayedText: null,
     });
+  });
+
+  it("returns no cover for a show the source gave none", async () => {
+    const today = dayWindowOf(NOW);
+    await syncSchedule(sourceOf([episode({ coverUrl: null })]), NOW);
+
+    const [entry] = await episodesBetween(today.start, today.end);
+
+    expect(entry?.coverUrl).toBeNull();
+  });
+
+  it("gives a show stored before covers existed its cover at the next sync", async () => {
+    const today = dayWindowOf(NOW);
+    await syncSchedule(sourceOf([episode()]), NOW);
+    await Show.collection.updateMany({}, { $unset: { coverUrl: "" } });
+
+    const before = await episodesBetween(today.start, today.end);
+    await syncSchedule(sourceOf([episode()]), new Date(NOW.getTime() + 60_000));
+    const after = await episodesBetween(today.start, today.end);
+
+    expect(before[0]?.coverUrl).toBeNull();
+    expect(after[0]?.coverUrl).toBe(COVER);
+  });
+
+  it("returns the cover when the read is limited to some shows", async () => {
+    const today = dayWindowOf(NOW);
+    await syncSchedule(sourceOf([episode()]), NOW);
+
+    const [entry] = await episodesBetween(today.start, today.end, ["lantern-street-diaries"]);
+
+    expect(entry?.coverUrl).toBe(COVER);
   });
 
   it("can be limited to some shows, and to none", async () => {
@@ -253,6 +295,10 @@ describe("weekSchedule", () => {
       ["2026-10-09", ["moss-and-thunder"]],
     ]);
     expect(week.days[0]?.entries[1]?.airAt).toBe("2026-10-03T17:30:00.000Z");
+    expect(week.days[0]?.entries[0]?.coverUrl).toBe(
+      "/images/fake-covers/lantern-street-diaries.png",
+    );
+    expect(week.days[6]?.entries[0]?.coverUrl).toBeNull();
     expect(week.days[1]?.entries[0]).toMatchObject({
       delayed: true,
       delayedText: "Delayed one week",

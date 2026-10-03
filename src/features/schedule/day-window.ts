@@ -147,6 +147,26 @@ export function formatWeekday(day: DayWindow["day"]): string {
   return weekday.format(calendarDayMs(day));
 }
 
+export function formatUntil(instant: Date, now: Date): string {
+  const minutes = Math.ceil((instant.getTime() - now.getTime()) / 60_000);
+  if (minutes < 1) return "now";
+  if (minutes < 60) return `in ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return minutes % 60 ? `in ${hours} h ${minutes % 60} min` : `in ${hours} h`;
+  const days = Math.floor(hours / 24);
+  return hours % 24 ? `in ${days} d ${hours % 24} h` : `in ${days} d`;
+}
+
+const weekdayShort = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short" });
+
+export function formatWeekdayShort(day: DayWindow["day"]): string {
+  return weekdayShort.format(calendarDayMs(day));
+}
+
+export function dayOfMonth(day: DayWindow["day"]): number {
+  return new Date(calendarDayMs(day)).getUTCDate();
+}
+
 export function formatDayDate(day: DayWindow["day"]): string {
   return dayDate.format(calendarDayMs(day));
 }

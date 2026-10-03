@@ -10,10 +10,12 @@ import { DASHBOARD_PATH, SIGN_IN_PATH, signInPathReturningTo } from "@/features/
 import { currentSession } from "@/features/auth/session";
 import { FollowButton } from "@/features/follows/follow-button";
 import { followedRoutes } from "@/features/follows/service";
-import { formatDateTime } from "@/features/schedule/day-window";
+import { formatDateTime, formatDayDate, formatWeekday } from "@/features/schedule/day-window";
 import { SCHEDULE_PATH } from "@/features/schedule/paths";
+import { Cover, PosterWall } from "@/features/schedule/poster-wall";
 import { cachedWeekSchedule } from "@/features/schedule/sync";
-import { WeekList } from "@/features/schedule/week-list";
+import { UpNext } from "@/features/schedule/up-next";
+import { posterWall, type WallEntry } from "@/features/schedule/wall";
 
 export const metadata: Metadata = { title: "Schedule" };
 
@@ -24,7 +26,19 @@ export default async function SchedulePage() {
     cachedWeekSchedule(now),
     session ? followedRoutes(session.user.id) : [],
   ]);
-  const follows = new Set(followed);
+  const wall = posterWall(days, now, new Set(followed));
+  const { upNext, today } = wall;
+
+  const action = (entry: WallEntry) =>
+    session ? (
+      <FollowButton showRoute={entry.showRoute} title={entry.title} followed={entry.followed} />
+    ) : (
+      <Button asChild variant="outline" size="sm">
+        <Link href={signInPathReturningTo(SCHEDULE_PATH)} aria-label={`Follow ${entry.title}`}>
+          Follow
+        </Link>
+      </Button>
+    );
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -39,39 +53,45 @@ export default async function SchedulePage() {
         <ThemeToggle />
       </Masthead>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-16 sm:px-10">
-        <Reveal>
-          <h1 className="font-display text-5xl leading-none">This week</h1>
-          <p className="mt-2 max-w-xl text-muted-foreground">
-            Japanese broadcast times, shown in Thai time. A day runs from 05:00 to 05:00, so a
-            late-night episode stays with the evening it belongs to.
-          </p>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-16 sm:px-10">
+        <Reveal
+          slideOnly
+          className={
+            upNext
+              ? "grid gap-8 md:grid-cols-[minmax(0,18rem)_1fr] md:items-end md:gap-12"
+              : undefined
+          }
+        >
+          {upNext ? (
+            <div className="relative aspect-[2/3] w-40 overflow-hidden border border-foreground bg-muted md:w-full">
+              <Cover entry={upNext} sizes="(min-width: 768px) 288px, 160px" eager />
+            </div>
+          ) : null}
+          <div>
+            <p className="label-mono text-muted-foreground">
+              {formatWeekday(today.day)} · {formatDayDate(today.day)} · Thai time
+            </p>
+            <h1 className="mt-4 font-display text-6xl leading-none sm:text-7xl">
+              On air this <em className="text-primary">week</em>
+            </h1>
+            {upNext ? (
+              <UpNext entry={upNext} now={now} today={today.day} action={action(upNext)} />
+            ) : null}
+            <p className="mt-6 max-w-xl text-muted-foreground">
+              {lastSyncedAt
+                ? `${today.remaining} still to air today, ${today.aired} already out${
+                    today.delayed ? `, ${today.delayed} delayed` : ""
+                  }. `
+                : null}
+              Japanese broadcast times, shown in Thai time. A day runs from 05:00 to 05:00, so a
+              late-night episode stays with the evening it belongs to.
+            </p>
+          </div>
         </Reveal>
 
         <div className="mt-12">
           {lastSyncedAt ? (
-            <WeekList
-              days={days}
-              now={now}
-              action={(entry) =>
-                session ? (
-                  <FollowButton
-                    showRoute={entry.showRoute}
-                    title={entry.title}
-                    followed={follows.has(entry.showRoute)}
-                  />
-                ) : (
-                  <Button asChild variant="outline" size="sm">
-                    <Link
-                      href={signInPathReturningTo(SCHEDULE_PATH)}
-                      aria-label={`Follow ${entry.title}`}
-                    >
-                      Follow
-                    </Link>
-                  </Button>
-                )
-              }
-            />
+            <PosterWall days={wall.days} today={today.day} action={action} />
           ) : (
             <p className="border-t border-foreground py-4 text-muted-foreground">
               The schedule has not been synced yet. Check back soon.
@@ -81,7 +101,7 @@ export default async function SchedulePage() {
 
         <footer className="mt-12 border-t border-foreground pt-4 text-sm text-muted-foreground">
           <p>
-            Schedule data from{" "}
+            Schedule data and covers from{" "}
             <TextLink href="https://animeschedule.net" target="_blank" rel="noopener noreferrer">
               AnimeSchedule.net
             </TextLink>

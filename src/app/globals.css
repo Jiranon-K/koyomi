@@ -134,6 +134,9 @@
   html {
     @apply font-sans;
   }
+  html:has([data-sticky-bar]) {
+    scroll-padding-top: 6rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

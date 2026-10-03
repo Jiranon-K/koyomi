@@ -36,7 +36,7 @@ export async function runScheduleSync(
 
 const cachedWeek = unstable_cache(
   (dayStart: string) => weekSchedule(new Date(dayStart)),
-  ["schedule-week"],
+  ["schedule-week", "covers"],
   { tags: [SCHEDULE_TAG], revalidate: CACHE_SECONDS },
 );
 

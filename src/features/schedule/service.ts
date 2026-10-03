@@ -7,6 +7,7 @@ import type { ScheduleSource, SourceEpisode, SourceShow } from "./source";
 export type ScheduleEntry = {
   showRoute: string;
   title: string;
+  coverUrl: string | null;
   episodeNumber: number;
   firstEpisodeNumber: number | null;
   airAt: string;
@@ -138,30 +139,34 @@ export async function episodesBetween(
     .sort({ airAt: 1, showRoute: 1 })
     .select({ _id: 0, syncedAt: 0, __v: 0 })
     .lean();
-  const findTitles = (routes: readonly string[]) =>
+  const findShows = (routes: readonly string[]) =>
     Show.find({ route: { $in: routes } })
-      .select({ route: 1, title: 1 })
+      .select({ route: 1, title: 1, coverUrl: 1 })
       .lean();
 
   let episodes: Awaited<typeof findEpisodes>;
-  let shows: Awaited<ReturnType<typeof findTitles>>;
+  let shows: Awaited<ReturnType<typeof findShows>>;
   if (showRoutes) {
-    [episodes, shows] = await Promise.all([findEpisodes, findTitles(showRoutes)]);
+    [episodes, shows] = await Promise.all([findEpisodes, findShows(showRoutes)]);
   } else {
     episodes = await findEpisodes;
-    shows = await findTitles([...new Set(episodes.map((episode) => episode.showRoute))]);
+    shows = await findShows([...new Set(episodes.map((episode) => episode.showRoute))]);
   }
-  const titles = new Map(shows.map((show) => [show.route, show.title]));
+  const byRoute = new Map(shows.map((show) => [show.route, show]));
 
-  return episodes.map((episode) => ({
-    showRoute: episode.showRoute,
-    title: titles.get(episode.showRoute) ?? episode.showRoute,
-    episodeNumber: episode.episodeNumber,
-    firstEpisodeNumber: episode.firstEpisodeNumber,
-    airAt: episode.airAt.toISOString(),
-    delayed: episode.delayed,
-    delayedText: episode.delayedText,
-  }));
+  return episodes.map((episode) => {
+    const show = byRoute.get(episode.showRoute);
+    return {
+      showRoute: episode.showRoute,
+      title: show?.title ?? episode.showRoute,
+      coverUrl: show?.coverUrl ?? null,
+      episodeNumber: episode.episodeNumber,
+      firstEpisodeNumber: episode.firstEpisodeNumber,
+      airAt: episode.airAt.toISOString(),
+      delayed: episode.delayed,
+      delayedText: episode.delayedText,
+    };
+  });
 }
 
 export function scheduleDays(entries: readonly ScheduleEntry[], now: Date): ScheduleDay[] {
