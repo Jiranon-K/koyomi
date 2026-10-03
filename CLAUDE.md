@@ -50,7 +50,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 
 - Validate all input with Zod at the Server Action / Route Handler boundary.
 - Server Actions write; Route Handlers are for external clients.
-- Every private page and Server Action starts with `requireSession()` or `requireAdmin()` from `src/features/auth/session.ts`. Roles (`user`, `admin`) are set once at account creation from `ADMIN_EMAILS`.
+- Every private page and Server Action starts with `requireSession()` or `requireAdmin()` from `src/features/auth/session.ts`. `src/proxy.test.ts` checks pages for a forgotten guard (a text check, not proof that the call comes first): every page under a path in the proxy's matcher must await a guard, and every page that awaits one must be under the matcher, so add a new private area to the matcher in `src/proxy.ts`. Server Actions are not checked yet. Roles (`user`, `admin`) are set once at account creation from `ADMIN_EMAILS`.
 - Theme tokens (Linen Stone, oklch) live in `src/app/globals.css`. Use semantic classes (`bg-card`, `text-muted-foreground`), not raw colors.
 - `src/features/auth/email.ts` is a stub that logs the email instead of sending it; its `no-console` exception in `eslint.config.mjs` goes away when a real provider lands.
 - `src/components/ui/handwriting-text.tsx` is a verbatim third-party component; its lint exceptions are in `eslint.config.mjs`. The landing page self-hosts its font at `public/fonts/handwriting.ttf` (the default CDN font is blocked by CORS). It still loads opentype.js from a CDN at runtime and falls back to plain text if that fails.
