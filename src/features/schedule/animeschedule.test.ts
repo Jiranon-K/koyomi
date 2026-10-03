@@ -7,6 +7,7 @@ import {
   parseTimetable,
 } from "./animeschedule";
 import documented from "./fixtures/timetable.documented.json";
+import recorded from "./fixtures/timetable.recorded.json";
 import { ScheduleSourceError } from "./source";
 
 const NOW = new Date("2026-10-03T05:00:00Z");
@@ -103,6 +104,45 @@ describe("parseTimetable", () => {
 
   it("rejects a body that is not a list", () => {
     expect(() => parseTimetable({ message: "nope" })).toThrow(ScheduleSourceError);
+  });
+});
+
+describe("parseTimetable on a week recorded from the real API", () => {
+  const { episodes, skipped } = parseTimetable(recorded);
+  const keyOf = (route: string, episodeNumber: number) => `${route}#${episodeNumber}`;
+
+  it("maps every entry, each with a real air time", () => {
+    expect(recorded.length).toBeGreaterThan(0);
+    expect(skipped).toBe(0);
+    expect(episodes).toHaveLength(recorded.length);
+    expect(episodes.every((episode) => !Number.isNaN(episode.airAt.getTime()))).toBe(true);
+  });
+
+  it("recognises every show status the API sends", () => {
+    expect(episodes.filter((episode) => episode.show.status === "unknown")).toEqual([]);
+  });
+
+  it("marks every entry the API calls delayed-air as delayed", () => {
+    const delayedAir = recorded
+      .filter((entry) => entry.airingStatus === "delayed-air")
+      .map((entry) => keyOf(entry.route, entry.episodeNumber));
+    const delayed = new Set(
+      episodes
+        .filter((episode) => episode.delayed)
+        .map((episode) => keyOf(episode.show.route, episode.episodeNumber)),
+    );
+
+    expect(delayedAir.length).toBeGreaterThan(0);
+    expect(delayedAir.filter((key) => !delayed.has(key))).toEqual([]);
+  });
+
+  it("reads a block of episodes as a range that ends on the entry's episode number", () => {
+    const blocks = episodes.filter((episode) => episode.firstEpisodeNumber !== null);
+
+    expect(blocks.length).toBeGreaterThan(0);
+    for (const block of blocks) {
+      expect(block.firstEpisodeNumber).toBeLessThan(block.episodeNumber);
+    }
   });
 });
 

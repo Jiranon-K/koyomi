@@ -1,0 +1,3679 @@
+[
+  {
+    "title": "Wangu Zhizun: Li Yunxiao Zhuan",
+    "route": "wangu-zhizun-li-yunxiao-zhuan",
+    "romaji": "Wangu Zhizun: Li Yunxiao Zhuan",
+    "english": "The Eternal Supreme, Li Yunxiao",
+    "native": "万古至尊：李云霄传",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-28T01:00:00Z",
+    "episodeNumber": 23,
+    "episodes": 34,
+    "lengthMin": 15,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wangu-zhizun-li-yunxiao-zhuan-cfa06ab66a197d974e46831366fcf120.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLXx79s6zP9tA",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Ling Wu Dalu",
+    "route": "ling-wu-dalu",
+    "romaji": "Ling Wu Dalu",
+    "english": "Lingwu Continent",
+    "native": "灵武大陆",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-28T02:00:00Z",
+    "episodeNumber": 219,
+    "episodes": 300,
+    "lengthMin": 10,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ling-wu-dalu-a46c70230c.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLTndXYWs2JgEVI78OwWARRYlzQ5Me6Pmu",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Wu Shang Shen Di 2",
+    "route": "wu-shang-shen-di-2",
+    "romaji": "Wu Shang Shen Di 2",
+    "english": "Supreme God Emperor 2",
+    "native": "无上神帝 第二季",
+    "delayedFrom": "2026-02-16T00:00:00Z",
+    "delayedUntil": "2026-03-09T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-28T02:00:00Z",
+    "episodeNumber": 580,
+    "episodes": 624,
+    "lengthMin": 7,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wu-shang-shen-di-2-56b02eb7ea.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnIPfojW6RGend3zez62A5NJ",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Ni Tian Zhizun",
+    "route": "ni-tian-zhizun",
+    "romaji": "Ni Tian Zhizun",
+    "english": "Against The Sky Supreme",
+    "native": "逆天至尊",
+    "delayedFrom": "2026-02-16T00:00:00Z",
+    "delayedUntil": "2026-03-09T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-28T02:00:00Z",
+    "episodeNumber": 553,
+    "episodes": 580,
+    "lengthMin": 10,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ni-tian-zhizun-93c7c24da3.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnINIFewNItlqrjooBeTDoIF",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Tunshi Xingkong 4",
+    "route": "tunshi-xingkong-4",
+    "romaji": "Tunshi Xingkong 4",
+    "english": "Swallowed Star 4",
+    "native": "吞噬星空 第四季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-28T10:00:00Z",
+    "episodeNumber": 158,
+    "episodes": 260,
+    "lengthMin": 21,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tunshi-xingkong-4-c7c30b1404.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnKgeFGyyrtQxbxrdSlOxkei",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "BLEACH: Sennen Kessen-hen - Kashin-tan",
+    "route": "bleach-sennen-kessen-hen-kashin-tan",
+    "romaji": "BLEACH: Sennen Kessen-hen - Kashin-tan",
+    "english": "BLEACH: Thousand-Year Blood War - The Calamity",
+    "native": "BLEACH 千年血戦篇-禍進譚-",
+    "delayedText": "Delayed",
+    "delayedFrom": "2026-09-14T00:00:00Z",
+    "delayedUntil": "2026-10-19T00:00:00Z",
+    "status": "Delayed",
+    "episodeDate": "2026-09-28T15:00:00Z",
+    "episodeNumber": 9,
+    "episodes": 10,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/bleach-sennen-kessen-hen-kashin-tan-f6f55ab4137d9ca1e73b7f8d74341751.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4pD39X7",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "hulu",
+        "url": "www.hulu.com/series/bleach-thousand-year-blood-war-02a3c8c0-4f1d-4610-bbb4-5b8e9468d7b1",
+        "name": "Hulu"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLYDN8muP8huc",
+        "name": "YouTube"
+      },
+      {
+        "platform": "disney",
+        "url": "www.disneyplus.com/series/bleach-thousand-year-blood-war/4Afet1Q421gy",
+        "name": "Disney+"
+      }
+    ],
+    "airingStatus": "delayed-air"
+  },
+  {
+    "title": "LIAR GAME",
+    "route": "liar-game",
+    "native": "ライアーゲーム",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-09-28T15:00:00Z",
+    "episodeNumber": 26,
+    "episodes": 26,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/liar-game-3f4f5cc7766e387b191f5b7fcf2dfa54.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4tBAKBq",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00371851/liar-game",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/4wWjj0q",
+        "name": "Amazon"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Chiikawa",
+    "route": "chiikawa",
+    "native": "ちいかわ",
+    "delayedText": "Delayed",
+    "delayedFrom": "2026-10-05T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-28T22:40:00Z",
+    "episodeNumber": 382,
+    "lengthMin": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/chiikawa-c656267c1a.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLHIKP_Dyl1zwJy0JjSvVV5l8Kyg-8sjdv",
+        "name": "YouTube"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLAP-gqrRNhgU",
+        "name": "YouTube (Dub)"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Lian Qi Shi Wan Nian",
+    "route": "lian-qi-shi-wan-nian",
+    "romaji": "Lian Qi Shi Wan Nian",
+    "english": "One Hundred Thousand Years of Qi Training",
+    "native": "炼气十万年",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T02:00:00Z",
+    "episodeNumber": 381,
+    "episodes": 420,
+    "lengthMin": 8,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/lian-qi-shi-wan-nian-1001a04e26.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnJAcLepyz4KYPXxW3KQ--8q",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Jueshi Zhan Hun 2nd Season",
+    "route": "jueshi-zhan-hun-2nd-season",
+    "romaji": "Jueshi Zhan Hun 2nd Season",
+    "english": "Peerless Battle Spirit 2nd Season",
+    "native": "绝世战魂 第2季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T02:00:00Z",
+    "episodeNumber": 28,
+    "episodes": 100,
+    "lengthMin": 10,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/jueshi-zhan-hun-2nd-season-f4d1c7c715ecaac5025200aad5907230.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Zhangmen Didiao Dian",
+    "route": "zhangmen-didiao-dian",
+    "romaji": "Zhangmen Didiao Dian",
+    "english": "Stay Low Profile, Sect Chief",
+    "native": "掌门低调点",
+    "delayedFrom": "2026-07-07T00:00:00Z",
+    "delayedUntil": "2026-08-11T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T02:00:00Z",
+    "episodeNumber": 32,
+    "episodes": 40,
+    "lengthMin": 10,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/zhangmen-didiao-dian-8ed6e460215db9274756788ce3fe90db.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLwJAwkKCGfFNvgCHyrZ2njyZy9UadUcBc",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Yi Zhan Cangqiong",
+    "route": "yi-zhan-cangqiong",
+    "romaji": "Yi Zhan Cangqiong",
+    "english": "GuAn",
+    "native": "一斩苍穹",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T02:00:00Z",
+    "episodeNumber": 11,
+    "episodes": 26,
+    "lengthMin": 24,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/yi-zhan-cangqiong-886b340452633bf71c0e5c29c648e548.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLX5Cj4Qw8cts",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Wan Jie Du Zun 3",
+    "route": "wan-jie-du-zun-3rd-season",
+    "romaji": "Wan Jie Du Zun 3",
+    "english": "Ten Thousand Worlds 3",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T02:00:00Z",
+    "episodeNumber": 213,
+    "episodes": 224,
+    "lengthMin": 9,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wan-jie-du-zun-3rd-season-0c47867575.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Wushen Zhuzai 3",
+    "route": "wushen-zhuzai-3",
+    "romaji": "Wushen Zhuzai 3",
+    "english": "The God of War Dominates Season 3",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T02:00:00Z",
+    "episodeNumber": 200,
+    "episodes": 224,
+    "lengthMin": 8,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wushen-zhuzai-3-977dfbf8ed.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnLJMZtGPLUMXFMQYuo1rr2Q",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Yi Nian Yong Heng: Wanjie Ji",
+    "route": "yi-nian-yong-heng-wanjie-ji",
+    "romaji": "Yi Nian Yong Heng: Wanjie Ji",
+    "english": "A Will Eternal Final Season",
+    "native": "一念永恒 完结季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T10:00:00Z",
+    "episodeNumber": 13,
+    "episodes": 46,
+    "lengthMin": 20,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/yi-nian-yong-heng-wanjie-ji-dd45cb303abb74640ed58c0a038de027.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Kimi ga Shinu made Koi wo Shitai",
+    "route": "kimi-ga-shinu-made-koi-wo-shitai",
+    "romaji": "Kimi ga Shinu made Koi wo Shitai",
+    "english": "I Want to Love You Till Your Dying Day",
+    "native": "きみが死ぬまで恋をしたい",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-09-29T12:30:00Z",
+    "episodeNumber": 13,
+    "episodes": 13,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/kimi-ga-shinu-made-koi-wo-shitai-3348e5c45a38dfd1f62934494022a647.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4y7To6P",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00374354/i-want-to-love-you-till-your-dying-day",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Sora wa Akai Kawa no Hotori",
+    "route": "sora-wa-akai-kawa-no-hotori",
+    "romaji": "Sora wa Akai Kawa no Hotori",
+    "english": "Red River",
+    "native": "天は赤い河のほとり",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T16:29:00Z",
+    "episodeNumber": 13,
+    "episodes": 24,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/sora-wa-akai-kawa-no-hotori-4391359efb7518859f19bf584124fd4f.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/3SFeQjF",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00378099/red-river",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/4gh74Vh",
+        "name": "Amazon"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Mofusand",
+    "route": "mofusand",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-29T23:00:00Z",
+    "episodeNumber": 39,
+    "lengthMin": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA",
+        "route": "ona"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/mofusand-5f3b82c53f.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLRj9zPfLhyY2BfhHtx01IzU9UU3Thjrff",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "You Shou Yan 6",
+    "route": "you-shou-yan-6",
+    "romaji": "You Shou Yan 6",
+    "english": "Fabulous Beasts 6",
+    "native": "有兽焉 第六季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-30T02:00:00Z",
+    "episodeNumber": 10,
+    "episodes": 12,
+    "lengthMin": 6,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/you-shou-yan-6-ea1a3c718963cdb72f4d9fce8f85fc3a.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLBakWosU0sfj_-XZSlGy-IOnDNplD3Ttj",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Du Shi Gu Xian Yi",
+    "route": "du-shi-gu-xian-yi",
+    "romaji": "Du Shi Gu Xian Yi",
+    "english": "Immortal Doctor In Modern City",
+    "native": "都市古仙医",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-30T02:00:00Z",
+    "episodeNumber": 217,
+    "episodes": 250,
+    "lengthMin": 11,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/du-shi-gu-xian-yi-1de1c0d7df.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLTndXYWs2JgGD1ZmpB6dsjo0mdrjWoDSf",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Zhe Tian",
+    "route": "zhe-tian",
+    "romaji": "Zhe Tian",
+    "english": "Shrouding the Heavens",
+    "native": "遮天",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-30T02:00:00Z",
+    "episodeNumber": 183,
+    "episodes": 208,
+    "lengthMin": 22,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/zhe-tian-0c14a39d34.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Shixiong A Shixiong Nian Fan 2",
+    "route": "shixiong-a-shixiong-nian-fan-2",
+    "romaji": "Shixiong A Shixiong Nian Fan 2",
+    "english": "My Senior Brother Is Too Steady 4th Season",
+    "native": "师兄啊师兄 年番2",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-30T02:00:00Z",
+    "episodeNumber": 70,
+    "episodes": 78,
+    "lengthMin": 21,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/shixiong-a-shixiong-nian-fan-2-047222ee2d.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/watch?v=VYOnbf1AY5M&list=PLOUUm4xsoaeCB6NnZQxVrQRDVWi3BHsVa",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Clevatess II: Majuu no Ou to Itsuwari no Yuusha Denshou",
+    "route": "clevatess-ii-majuu-no-ou-to-itsuwari-no-yuusha-denshou",
+    "native": "クレバテスⅡ-魔獣の王と偽りの勇者伝承-",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-09-30T12:00:00Z",
+    "episodeNumber": 13,
+    "episodes": 13,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/clevatess-ii-majuu-no-ou-to-itsuwari-no-yuusha-denshou-a7a80e94e630985a47a8663f283421c8.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4wAUSVW",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/G8DHV78ZM/clevatess",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/4fIUjUm",
+        "name": "Amazon"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLDvQscScOUXg",
+        "name": "YouTube"
+      },
+      {
+        "platform": "bilibili",
+        "url": "www.bilibili.tv/en/media/2413934",
+        "name": "BiliBili TV"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Re:Zero kara Hajimeru Isekai Seikatsu 4",
+    "route": "re-zero-kara-hajimeru-isekai-seikatsu-4",
+    "romaji": "Re:Zero kara Hajimeru Isekai Seikatsu 4",
+    "english": "Re:Zero - Starting Life in Another World 4",
+    "native": "Re:ゼロから始める異世界生活 4",
+    "delayedFrom": "2026-06-24T00:00:00Z",
+    "delayedUntil": "2026-08-12T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-09-30T13:00:00Z",
+    "episodeNumber": 19,
+    "episodes": 19,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/re-zero-kara-hajimeru-isekai-seikatsu-4-d5233583bd0dc12a3089d74e815f43bf.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/3CMHQyd",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GRGG9798R/rezero--starting-life-in-another-world-",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/4hC6hR5",
+        "name": "Amazon"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLwLSw1_eDZl3RN7t6wesJqlUkSUN6FHKF",
+        "name": "YouTube"
+      },
+      {
+        "platform": "bilibili",
+        "url": "www.bilibili.tv/en/media/2342439",
+        "name": "BiliBili TV"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Shin Tennis no Oujisama: U-17 World Cup Kesshou Member Ketteisen",
+    "route": "shin-tennis-no-oujisama-u-17-world-cup-kesshou-member-ketteisen",
+    "romaji": "Shin Tennis no Ouji-sama: U-17 WORLD CUP Kesshou Member Ketteisen",
+    "english": "The Prince of Tennis II U-17 WORLD CUP: The Final Tryouts",
+    "native": "新テニスの王子様 U-17 WORLD CUP 決勝メンバー決定戦",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-30T15:00:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/shin-tennis-no-oujisama-u-17-world-cup-kesshou-member-ketteisen-c6367a9e4daa70759358cad1b775235c.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/G5PHNMWWN/the-prince-of-tennis-ii-u-17-world-cup",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Tensei shitara Ken deshita 2",
+    "route": "tensei-shitara-ken-deshita-2",
+    "romaji": "Tensei Shitara Ken Deshita 2",
+    "english": "Reincarnated as a Sword 2",
+    "native": "転生したら剣でした2",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-09-30T15:00:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tensei-shitara-ken-deshita-2-511166102c8acc358c56754bd39fa34e.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4huYSRF",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "hidive",
+        "url": "www.hidive.com/season/39506",
+        "name": "HiDive"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Thunder 3",
+    "route": "thunder-3",
+    "english": "Thunder 3",
+    "native": "サンダー3",
+    "delayedFrom": "2026-09-23T00:00:00Z",
+    "delayedUntil": "2026-09-30T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-09-30T15:45:00Z",
+    "episodeNumber": 12,
+    "episodes": 12,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/thunder-3-0999e391ddb2f4751c4268623e307d2c.jpg",
+    "streams": [
+      {
+        "platform": "netflix",
+        "url": "www.netflix.com/title/82736186",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Dogul Wang",
+    "route": "dogul-wang",
+    "romaji": "Dogul Wang",
+    "english": "Tomb Raider King",
+    "native": "도굴왕",
+    "delayedFrom": "2026-09-23T00:00:00Z",
+    "delayedUntil": "2026-09-30T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-09-30T16:15:00Z",
+    "episodeNumber": 12,
+    "episodes": 12,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/dogul-wang-6b40a22efdc6bfd98e9123611d5cd359.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/44XPwrH",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00378123/tomb-raider-king",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLRwxYv2koIzY",
+        "name": "YouTube"
+      },
+      {
+        "platform": "bilibili",
+        "url": "www.bilibili.tv/en/media/2412873",
+        "name": "BiliBili TV"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Pie no Mi",
+    "route": "pie-no-mi",
+    "native": "パイの実",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T00:00:00Z",
+    "episodeNumber": 5,
+    "episodes": 8,
+    "lengthMin": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA",
+        "route": "ona"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/pie-no-mi-a3ec55e77783d4ebec64f294084bc4f7.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Nitian Xie Shen: Nian Fan",
+    "route": "nitian-xie-shen-nian-fan",
+    "romaji": "Nitian Xie Shen: Nian Fan",
+    "english": "Against the Gods 2nd Season",
+    "native": "逆天邪神 年番",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T01:00:00Z",
+    "episodeNumber": 27,
+    "episodes": 52,
+    "lengthMin": 22,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/nitian-xie-shen-nian-fan-e82f90a176fd40743fdffd97719fb86f.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLTndXYWs2JgG92KOUFZwTDmyEiN89dzHP",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Dongda Gao Wu Xueyuan",
+    "route": "dongda-gao-wu-xueyuan",
+    "romaji": "Dongda Gao Wu Xueyuan",
+    "english": "Oriental Martial Academy",
+    "native": "东大高武学院",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T02:00:00Z",
+    "episodeNumber": 12,
+    "episodes": 26,
+    "lengthMin": 22,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/dongda-gao-wu-xueyuan-5938a99175416347dc6ce001c0074fe3.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLAdMTuAcWcyI",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "PetitCure: Precure Fairies 3rd Season",
+    "route": "petitcure-precure-fairies-season-3",
+    "native": "ぷちきゅあ～Precure Fairies～ シーズン3",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T09:30:00Z",
+    "episodeNumber": 28,
+    "lengthMin": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA",
+        "route": "ona"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/petitcure-precure-fairies-season-3-90690a2edf53b4970f15eb7416fc0d4d.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLq34MZPUzQ9mGMf3-p798NI3FNNROkDMR",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Wanmei Shijie 7",
+    "route": "wanmei-shijie-7",
+    "romaji": "Wanmei Shijie 7",
+    "english": "Perfect World 7",
+    "native": "完美世界 第7季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T10:00:00Z",
+    "episodeNumber": 3,
+    "episodes": 52,
+    "lengthMin": 20,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wanmei-shijie-7-00b4881162e2bbbda152a5da7f28f5de.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnKfl20-jrXc1pflxjHKFnRf",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "FX Senshi Kurumi-chan",
+    "route": "fx-senshi-kurumi-chan",
+    "romaji": "FX Senshi Kurumi-chan",
+    "english": "FX Fighter Kurumi-chan",
+    "native": "FX戦士くるみちゃん",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T12:30:00Z",
+    "episodeNumber": 1,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/fx-senshi-kurumi-chan-4252f926b1ce50a8b7d35adcd2fa7406.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/46VWGxO",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "crunchyroll.com/series/GT00384001/fx-fighter-kurumi-chan",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Ganso! Bandori-chan",
+    "route": "ganso-bandori-chan",
+    "romaji": "Ganso! Bandori-chan",
+    "english": "GANSO! BanG Dream Chan",
+    "native": "元祖！バンドリちゃん",
+    "delayedFrom": "2026-01-01T00:00:00Z",
+    "delayedUntil": "2026-01-08T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-10-01T13:00:00Z",
+    "episodeNumber": 52,
+    "episodes": 52,
+    "lengthMin": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ganso-bandori-chan-6251cd7db2.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Koori no Jouheki 2nd Season",
+    "route": "koori-no-jouheki-2nd-season",
+    "romaji": "Koori no Jouheki 2nd Season",
+    "english": "The Ramparts of Ice 2nd Season",
+    "native": "氷の城壁 第2期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T14:56:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/koori-no-jouheki-2nd-season-fca87df2a19636f4d3510747dba21fd3.jpg",
+    "streams": [
+      {
+        "platform": "netflix",
+        "url": "www.netflix.com/title/82031882",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Kizu darake Seijo yori Houfuku wo Komete 2nd Season",
+    "route": "kizu-darake-seijo-yori-houfuku-wo-komete-2",
+    "romaji": "Kizu darake Seijo yori Houfuku wo Komete 2nd Season",
+    "english": "With Vengeance, Sincerely, Your Broken Saintess 2nd Season",
+    "native": "傷だらけ聖女より報復をこめて 2",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T15:00:00Z",
+    "episodeNumber": 1,
+    "lengthMin": 13,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/kizu-darake-seijo-yori-houfuku-wo-komete-2-29fa01a6cf997fe85403566e7ca61e23.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLcnM8O8NMtiU",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Tsuihou sareta Tensei Juukishi wa Game Chishiki de Musou suru",
+    "route": "tsuihou-sareta-tensei-juukishi-wa-game-chishiki-de-musou-suru",
+    "romaji": "Tsuihou sareta Tensei Juukishi wa Game Chishiki de Musou suru",
+    "english": "The Exiled Heavy Knight Knows How to Game the System",
+    "native": "追放された転生重騎士はゲーム知識で無双する",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-01T15:26:00Z",
+    "episodeNumber": 14,
+    "episodes": 26,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tsuihou-sareta-tensei-juukishi-wa-game-chishiki-de-musou-suru-dd11ec1143ac41fd56a9a6ff34e8a5e3.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4vVpHo0",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00378018/the-exiled-heavy-knight-knows-how-to-game-the-system",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/3SE9KEq",
+        "name": "Amazon"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLwLSw1_eDZl3yq1oZEC8iNCwgMsg0NmIZ",
+        "name": "YouTube"
+      },
+      {
+        "platform": "bilibili",
+        "url": "www.bilibili.tv/en/media/2411725",
+        "name": "BiliBili TV"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Da Zhu Zai (2023) 2nd Season",
+    "route": "da-zhu-zai-2023-2nd-season",
+    "romaji": "Da Zhu Zai (2023) 2nd Season",
+    "english": "The Great Ruler 2nd Season",
+    "native": "大主宰 第二季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T01:00:00Z",
+    "episodeNumber": 41,
+    "episodes": 52,
+    "lengthMin": 20,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/da-zhu-zai-2023-2nd-season-6ddedfa801.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLTndXYWs2JgE6k7h_HImcpKRCla6JyIvZ",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Sore Ike! Anpanman",
+    "route": "sore-ike-anpanman",
+    "native": "それいけ!アンパンマン",
+    "delayedFrom": "2026-06-26T00:00:00Z",
+    "delayedUntil": "2026-07-03T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T01:55:00Z",
+    "episodeNumber": 1747,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/sore-ike-anpanman-dbeb359c0e.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Zhangmen Didiao Dian",
+    "route": "zhangmen-didiao-dian",
+    "romaji": "Zhangmen Didiao Dian",
+    "english": "Stay Low Profile, Sect Chief",
+    "native": "掌门低调点",
+    "delayedFrom": "2026-07-07T00:00:00Z",
+    "delayedUntil": "2026-08-11T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T02:00:00Z",
+    "episodeNumber": 33,
+    "episodes": 40,
+    "lengthMin": 10,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/zhangmen-didiao-dian-8ed6e460215db9274756788ce3fe90db.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLwJAwkKCGfFNvgCHyrZ2njyZy9UadUcBc",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Wu Shang Shen Di 2",
+    "route": "wu-shang-shen-di-2",
+    "romaji": "Wu Shang Shen Di 2",
+    "english": "Supreme God Emperor 2",
+    "native": "无上神帝 第二季",
+    "delayedFrom": "2026-02-16T00:00:00Z",
+    "delayedUntil": "2026-03-09T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T02:00:00Z",
+    "episodeNumber": 581,
+    "episodes": 624,
+    "lengthMin": 7,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wu-shang-shen-di-2-56b02eb7ea.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnIPfojW6RGend3zez62A5NJ",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Ni Tian Zhizun",
+    "route": "ni-tian-zhizun",
+    "romaji": "Ni Tian Zhizun",
+    "english": "Against The Sky Supreme",
+    "native": "逆天至尊",
+    "delayedFrom": "2026-02-16T00:00:00Z",
+    "delayedUntil": "2026-03-09T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T02:00:00Z",
+    "episodeNumber": 554,
+    "episodes": 580,
+    "lengthMin": 10,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ni-tian-zhizun-93c7c24da3.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnINIFewNItlqrjooBeTDoIF",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Ling Wu Dalu",
+    "route": "ling-wu-dalu",
+    "romaji": "Ling Wu Dalu",
+    "english": "Lingwu Continent",
+    "native": "灵武大陆",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T02:00:00Z",
+    "episodeNumber": 220,
+    "episodes": 300,
+    "lengthMin": 10,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ling-wu-dalu-a46c70230c.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLTndXYWs2JgEVI78OwWARRYlzQ5Me6Pmu",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Cang Yuan Tu 3",
+    "route": "cang-yuan-tu-3",
+    "romaji": "Cang Yuan Tu 3",
+    "english": "The Demon Hunter 3",
+    "native": "沧元图3",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T02:00:00Z",
+    "episodeNumber": 28,
+    "episodes": 60,
+    "lengthMin": 22,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/cang-yuan-tu-3-de1cf5366727ff2ce7f41bbf2c127928.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLQXpxE9saH80uI3NY5nkKMuDYLdSaKRvz",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Shiguang Dailiren 3",
+    "route": "shi-guang-dai-li-ren-3",
+    "romaji": "Shiguang Dailiren 3",
+    "english": "LINK CLICK 3",
+    "native": "时光代理人 第三季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T03:00:00Z",
+    "episodeNumber": 9,
+    "episodes": 24,
+    "lengthMin": 21,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/shi-guang-dai-li-ren-3-ce0dbf52247c97f874a6e679624550cc.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/3S9HrNS",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GP5HJ8E81/link-click",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLU90m5tcq7b0",
+        "name": "YouTube"
+      },
+      {
+        "platform": "bilibili",
+        "url": "www.bilibili.tv/en/media/2410703",
+        "name": "BiliBili TV"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "JoJo no Kimyou na Bouken Part 7: Steel Ball Run - 2nd - 3rd STAGE",
+    "route": "jojo-no-kimyou-na-bouken-part-7-steel-ball-run-2nd-stage",
+    "romaji": "JoJo no Kimyou na Bouken Part 7: Steel Ball Run - 2nd - 3rd STAGE",
+    "english": "JoJo's Bizarre Adventure: Steel Ball Run 2nd - 3rd STAGE",
+    "native": "ジョジョの奇妙な冒険 スティール・ボール・ラン 2nd - 3rd STAGE",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T08:00:00Z",
+    "episodeNumber": 2,
+    "episodes": 11,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA",
+        "route": "ona"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/jojo-no-kimyou-na-bouken-part-7-steel-ball-run-2nd-stage-a301f1d7e93857a1d3bdc8bed2dfa411.jpg",
+    "streams": [
+      {
+        "platform": "netflix",
+        "url": "netflix.com/title/82116553",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Pan Dorobou",
+    "route": "pan-dorobou",
+    "native": "パンどろぼう",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T09:40:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/pan-dorobou-dfbb92ba85d3baa54bb80b010e7f4892.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Pokémon Horizons: The Series",
+    "route": "pokemon-2023",
+    "native": "ポケットモンスター (2023)",
+    "delayedText": "Delayed",
+    "delayedFrom": "2026-10-02T00:00:00Z",
+    "delayedUntil": "2026-10-09T00:00:00Z",
+    "status": "Delayed",
+    "episodeDate": "2026-10-02T09:55:00Z",
+    "episodeNumber": 152,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/pokemon-2023-273f1b2226.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4lQHVCT",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/3SfvRAO",
+        "name": "Amazon"
+      },
+      {
+        "platform": "netflix",
+        "url": "www.netflix.com/title/81696980",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "delayed-air"
+  },
+  {
+    "title": "Douluo Dalu 2: Jueshi Tangmen",
+    "route": "douluo-dalu-2-jueshi-tangmen",
+    "romaji": "Douluo Dalu 2: Jueshi Tangmen",
+    "english": "Soul Land 2: Peerless Tang Sect",
+    "native": "斗罗大陆2绝世唐门",
+    "delayedFrom": "2024-10-26T00:00:00Z",
+    "delayedUntil": "2024-11-02T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T10:00:00Z",
+    "episodeNumber": 173,
+    "episodes": 182,
+    "lengthMin": 20,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/douluo-dalu-2-jueshi-tangmen-9a6d55dd96.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnIHBNKvMwn8UAa4NVz2LZao",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Beyblade X",
+    "route": "beyblade-x",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T10:00:00Z",
+    "episodeNumber": 135,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/beyblade-x-f02b468b74.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4i07X3w",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "hulu",
+        "url": "hulu.com/series/0e46c665-5191-407f-8dc5-e22a0095578c",
+        "name": "Hulu"
+      },
+      {
+        "platform": "youtube",
+        "url": "youtube.com/playlist?list=PLfX0BhjZoHNlzLJSi0-CPYQXfV_JPWPUh",
+        "name": "YouTube"
+      },
+      {
+        "platform": "netflix",
+        "url": "netflix.com/title/81924739",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Aoki Denshou Welsh & Shedar",
+    "route": "aoki-denshou-welsh-and-shedar",
+    "native": "蒼き伝承 ウェルシュ＆シェダー",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T12:25:00Z",
+    "episodeNumber": 1,
+    "episodes": 12,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/aoki-denshou-welsh-and-shedar-968ac324b9cdfa6493a549369610e06d.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Kusuriya no Hitorigoto 3rd Season",
+    "route": "kusuriya-no-hitorigoto-zoku-hen",
+    "romaji": "Kusuriya no Hitorigoto 3rd Season",
+    "english": "The Apothecary Diaries 3rd Season",
+    "native": "薬屋のひとりごと 第3期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T14:00:00Z",
+    "episodeNumber": 1,
+    "episodes": 12,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/kusuriya-no-hitorigoto-zoku-hen-caf2bb3a7f2134aeda0fedbfe3ac7cd4.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4hCH5bc",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/G3KHEVDJ7/the-apothecary-diaries",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Tougen Anki: Nikko Kegon no Taki-hen",
+    "route": "tougen-anki-nikko-kegon-no-taki-hen",
+    "romaji": "Tougen Anki: Nikko Kegon no Taki-hen",
+    "english": "Tougen Anki: Nikko Kegon Falls Arc",
+    "native": "桃源暗鬼 日光・華厳の滝編",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T14:30:00Z",
+    "episodeNumber": 1,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tougen-anki-nikko-kegon-no-taki-hen-db1af61cb75a8279665d633d28a068f5.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4djPuiI",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GP5HJ84D2/tougen-anki",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Nige Jouzu no Wakagimi 2nd Season",
+    "route": "nige-jouzu-no-wakagimi-2nd-season",
+    "romaji": "Nige Jouzu no Wakagimi 2nd Season",
+    "english": "The Elusive Samurai 2nd Season",
+    "native": "逃げ上手の若君 第二期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-10-02T14:30:00Z",
+    "episodeNumber": 12,
+    "episodes": 12,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/nige-jouzu-no-wakagimi-2nd-season-b289bd1a9ed70f90e606aabc1507d3dc.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/3TMizMx",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GQWH0M19X/the-elusive-samurai",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/4xGdXGx",
+        "name": "Amazon"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Uchi no Otouto-domo ga Sumimasen",
+    "route": "uchi-no-otouto-domo-ga-sumimasen",
+    "romaji": "Uchi no Otouto-domo ga Sumimasen",
+    "english": "Please Excuse My Younger Brothers",
+    "native": "うちの弟どもがすみません",
+    "delayedFrom": "2026-09-25T00:00:00Z",
+    "delayedUntil": "2026-10-02T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T15:00:00Z",
+    "episodeNumber": 13,
+    "episodes": 24,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/uchi-no-otouto-domo-ga-sumimasen-0bf27550ff518b9e931429434a44ae02.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4gU1Ctc",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00371926",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Tokyo Revengers: Santen Sensou-hen",
+    "route": "tokyo-revengers-zoku-hen",
+    "romaji": "Tokyo Revengers: Santen Sensou-hen",
+    "english": "Tokyo Revengers: War of the Three Titans Arc",
+    "native": "東京リベンジャーズ 三天戦争編",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T16:53:00Z",
+    "episodeNumber": 1,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tokyo-revengers-zoku-hen-e319b90f01a783f702c61db9c2179542.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4zakgTx",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "hulu",
+        "url": "www.hulu.com/series/tokyo-revengers-1a195a35-e19c-4e36-b609-3b1c451f6ce4",
+        "name": "Hulu"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "BONOBONO (2016)",
+    "route": "bonobono-2016",
+    "romaji": "BONOBONO (2016)",
+    "english": "Bono Bono (2016)",
+    "native": "ぼのぼの (2016)",
+    "delayedFrom": "2026-07-10T00:00:00Z",
+    "delayedUntil": "2026-07-17T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T20:22:00Z",
+    "episodeNumber": 532,
+    "lengthMin": 8,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/bonobono-2016-d159da94d9.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/bono-bono",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Ninjala",
+    "route": "ninjala",
+    "native": "ニンジャラ",
+    "delayedFrom": "2026-01-02T00:00:00Z",
+    "delayedUntil": "2026-01-23T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T22:00:00Z",
+    "episodeNumber": 236,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ninjala-c19a7f2bbe.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/412i8h4",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "hidive",
+        "url": "www.hidive.com/tv/ninjala-the-animation",
+        "name": "HiDive"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Ghost Meets Gal!",
+    "route": "ghost-meets-gal",
+    "native": "ごーすと・みーつ・ぎゃる！",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T23:00:00Z",
+    "episodeNumber": 5,
+    "lengthMin": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ghost-meets-gal-5b1106d4c9859751b3a937b830057941.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLZZYdEtpc2mU",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Shimajirou no Wow!",
+    "route": "shimajirou-no-wow",
+    "native": "しまじろうのわお!",
+    "delayedFrom": "2024-12-28T00:00:00Z",
+    "delayedUntil": "2025-01-04T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T23:30:00Z",
+    "episodeNumber": 744,
+    "lengthMin": 8,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/shimajirou-no-wow-4b0c1cf53c.jpg",
+    "streams": [
+      {
+        "platform": "netflix",
+        "url": "www.netflix.com/title/81235103",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Pan no Akachan (TV)",
+    "route": "pan-no-akachan-tv",
+    "romaji": "Pan no Akachan (TV)",
+    "english": "Babies of Bread (TV)",
+    "native": "パンの赤ちゃん",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-02T23:30:00Z",
+    "episodeNumber": 14,
+    "lengthMin": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/pan-no-akachan-tv-38ddc4a4c49e0aa9e421c0e4c1f369bd.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Rilakkuma: Goyururi Yume no Tabi",
+    "route": "rilakkuma",
+    "native": "リラックマ ～ごゆるり夢の旅～",
+    "delayedFrom": "2026-09-26T00:00:00Z",
+    "delayedUntil": "2026-10-03T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T00:25:00Z",
+    "episodeNumber": 26,
+    "lengthMin": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/rilakkuma-ee9ff986777cda5e5bcff4320522e67f.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4seR0Hk",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00374493/rilakkuma",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLwLSw1_eDZl39KDdjidupfewWK2xookSn",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Nezumi-kun no Chokki (TV) 2nd Season",
+    "route": "nezumi-kun-no-chokki-tv-2nd-season",
+    "romaji": "Nezumi-kun no Chokki (TV) 2nd Season",
+    "english": "Little Mouse's Red Vest (TV) 2nd Season",
+    "native": "ねずみくんのチョッキ (TV) 第2期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T00:30:00Z",
+    "episodeNumber": 1,
+    "lengthMin": 5,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/nezumi-kun-no-chokki-tv-2nd-season-330862af164ebd19117e86e8219eb7cc.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Keroro Gunsou☆",
+    "route": "keroro-gunsou-2026",
+    "native": "ケロロ軍曹☆",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T00:30:00Z",
+    "episodeNumber": 1,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/keroro-gunsou-2026-7594ec883b8dbaafd0c8120eca50e923.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00383995/keroro",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Wangu Zhizun: Li Yunxiao Zhuan",
+    "route": "wangu-zhizun-li-yunxiao-zhuan",
+    "romaji": "Wangu Zhizun: Li Yunxiao Zhuan",
+    "english": "The Eternal Supreme, Li Yunxiao",
+    "native": "万古至尊：李云霄传",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T01:00:00Z",
+    "episodeNumber": 24,
+    "episodes": 34,
+    "lengthMin": 15,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wangu-zhizun-li-yunxiao-zhuan-cfa06ab66a197d974e46831366fcf120.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLXx79s6zP9tA",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Zeri Feisheng",
+    "route": "zeri-feisheng",
+    "romaji": "Zeri Feisheng",
+    "english": "A Good Day to Ascend",
+    "native": "择日飞升",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T01:00:00Z",
+    "episodeNumber": 14,
+    "episodes": 30,
+    "lengthMin": 20,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/zeri-feisheng-ce57690516c70377fb75ce58da93e0ef.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLBCXMW26PXbM",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Wan Jie Du Zun 3",
+    "route": "wan-jie-du-zun-3rd-season",
+    "romaji": "Wan Jie Du Zun 3",
+    "english": "Ten Thousand Worlds 3",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T02:00:00Z",
+    "episodeNumber": 214,
+    "episodes": 224,
+    "lengthMin": 9,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wan-jie-du-zun-3rd-season-0c47867575.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Yao Shen Ji 10th Season",
+    "route": "yao-shen-ji-10th-season",
+    "romaji": "Yao Shen Ji 10",
+    "english": "Tales of Demon and God 10",
+    "native": "妖神记 第十季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T02:00:00Z",
+    "episodeNumber": 25,
+    "subtractedEpisodeNumber": 24,
+    "episodes": 56,
+    "lengthMin": 7,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/yao-shen-ji-10th-season-0b5410bced0d7e4fbb6d3fe660019240.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Lian Qi Shi Wan Nian",
+    "route": "lian-qi-shi-wan-nian",
+    "romaji": "Lian Qi Shi Wan Nian",
+    "english": "One Hundred Thousand Years of Qi Training",
+    "native": "炼气十万年",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T02:00:00Z",
+    "episodeNumber": 382,
+    "episodes": 420,
+    "lengthMin": 8,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/lian-qi-shi-wan-nian-1001a04e26.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnJAcLepyz4KYPXxW3KQ--8q",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Jueshi Zhan Hun 2nd Season",
+    "route": "jueshi-zhan-hun-2nd-season",
+    "romaji": "Jueshi Zhan Hun 2nd Season",
+    "english": "Peerless Battle Spirit 2nd Season",
+    "native": "绝世战魂 第2季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T02:00:00Z",
+    "episodeNumber": 29,
+    "episodes": 100,
+    "lengthMin": 10,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/jueshi-zhan-hun-2nd-season-f4d1c7c715ecaac5025200aad5907230.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Da Wang Rao Ming 3",
+    "route": "da-wang-rao-ming-3",
+    "romaji": "Da Wang Rao Ming 3",
+    "english": "Spare Me, Great Lord! 3",
+    "native": "大王饶命 第三季",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T02:00:00Z",
+    "episodeNumber": 1,
+    "episodes": 12,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/da-wang-rao-ming-3-e14b90e582dc838ffdc5fbd8b0476bc8.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Fanren Xiu Xian Zhuan: Mulan Zhi Zhan",
+    "route": "fanren-xiu-xian-zhuan-mulan-zhi-zhan",
+    "romaji": "Fanren Xiu Xian Zhuan: Mulan Zhi Zhan",
+    "english": "A Record of Mortal's Journey to Immortality 5th Season",
+    "native": "凡人修仙传 慕兰之战",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T03:00:00Z",
+    "episodeNumber": 18,
+    "episodes": 52,
+    "lengthMin": 20,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/fanren-xiu-xian-zhuan-mulan-zhi-zhan-4270fd0d8fa14e0d3528f96d1b6b6ced.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLBakWosU0sfhr6k1-ldCYx05AYZ8HwslC",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Sirotan",
+    "route": "shirotan",
+    "native": "しろたん",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T07:29:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/shirotan-ad7161772a2177fb375e1f3bd91fca58.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Crayon Shin-chan",
+    "route": "crayon-shin-chan",
+    "romaji": "Crayon Shin-chan",
+    "english": "Shin Chan",
+    "native": "クレヨンしんちゃん",
+    "delayedFrom": "2026-01-03T00:00:00Z",
+    "delayedUntil": "2026-01-10T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T07:30:00Z",
+    "episodeNumber": 1355,
+    "lengthMin": 21,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/crayon-shin-chan-dc430f9db0.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Doraemon (2005)",
+    "route": "doraemon-2005",
+    "native": "ドラえもん (2005)",
+    "delayedFrom": "2024-12-28T00:00:00Z",
+    "delayedUntil": "2025-01-04T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T08:00:00Z",
+    "episodeNumber": 935,
+    "lengthMin": 25,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/doraemon-2005-371cbec0f6.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Honzuki no Gekokujou: Ryoushu no Youjo",
+    "route": "honzuki-no-gekokujou-shisho-ni-naru-tame-ni-wa-shudan-wo-erandeiraremasen-ryoushu-no-youjo",
+    "romaji": "Honzuki no Gekokujou: Ryoushu no Youjo",
+    "english": "Ascendance of a Bookworm: Adopted Daughter of an Archduke",
+    "native": "本好きの下剋上 領主の養女",
+    "delayedFrom": "2026-08-29T00:00:00Z",
+    "delayedUntil": "2026-09-05T00:00:00Z",
+    "status": "Finished",
+    "episodeDate": "2026-10-03T08:30:00Z",
+    "episodeNumber": 24,
+    "episodes": 24,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/honzuki-no-gekokujou-shisho-ni-naru-tame-ni-wa-shudan-wo-erandeiraremasen-ryoushu-no-youjo-2f1219ba9382337509a363ea096a04f1.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4sMVZ3b",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/G6793XKZY/ascendance-of-a-bookworm",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/4wlVr5o",
+        "name": "Amazon"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Detective Conan",
+    "route": "detective-conan",
+    "romaji": "Meitantei Conan",
+    "english": "Detective Conan",
+    "native": "名探偵コナン",
+    "delayedFrom": "2026-09-12T00:00:00Z",
+    "delayedUntil": "2026-09-19T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T09:00:00Z",
+    "episodeNumber": 1215,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/detective-conan-8d9a48d3dd.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/3JuGH1w",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/case-closed",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "netflix",
+        "url": "www.netflix.com/title/80090370",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Marronnier Oukoku no Shichinin no Kishi",
+    "route": "marronnier-oukoku-no-shichinin-no-kishi",
+    "romaji": "Marronnier Oukoku no Shichinin no Kishi",
+    "english": "The Seven Knights of the Marronnier Kingdom",
+    "native": "マロニエ王国の七人の騎士",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T09:25:00Z",
+    "episodeNumber": 1,
+    "episodes": 20,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/marronnier-oukoku-no-shichinin-no-kishi-4d929c9d83fa4672c2bbc82f25aa7e2b.jpg",
+    "streams": [
+      {
+        "platform": "amazon",
+        "url": "www.amazon.com/Seven-Knights-Marronnier-Kingdom/dp/B0HF9RBZL7",
+        "name": "Amazon"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Doupo Cangqiong: Nian Fan 4",
+    "route": "doupo-cangqiong-nian-fan-4",
+    "romaji": "Dou Po Cangqiong: Nian Fan 4",
+    "english": "Battle Through the Heavens 8",
+    "native": "斗破苍穹 年番4",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T10:00:00Z",
+    "episodeNumber": 56,
+    "episodes": 62,
+    "lengthMin": 24,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/doupo-cangqiong-nian-fan-4-e40ca02663.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLwJAwkKCGfFNY-9gOwREI6-ZEisdx8KP9",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Guangyin Zhi Wai 2",
+    "route": "guangyin-zhi-wai-2",
+    "romaji": "Guangyin Zhi Wai 2",
+    "english": "Beyond Time's Gaze 2nd Season",
+    "native": "光阴之外2",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T10:00:00Z",
+    "episodeNumber": 16,
+    "episodes": 52,
+    "lengthMin": 25,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/guangyin-zhi-wai-2-9acb42c27e68501d12b7940a94578d0a.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLQXpxE9saH81FhAB4q-8WfUuy8ZFBDB8x",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Romelia Senki",
+    "route": "romelia-senki",
+    "romaji": "Romelia Senki",
+    "english": "Romelia War Chronicle",
+    "native": "ロメリア戦記",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T12:00:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/romelia-senki-f402e7eb25e96732805ad04eca5c4eac.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "crunchyroll.com/series/GT00384007/romelia-war-chronicle",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Tensei shita Daiseijo wa, Seijo de Aru Koto wo Hitakakusu",
+    "route": "tensei-shita-daiseijo-wa-seijo-de-aru-koto-wo-hitakakusu",
+    "romaji": "Tensei shita Daiseijo wa, Seijo de Aru Koto wo Hitakakusu",
+    "english": "A Tale of the Secret Saint",
+    "native": "転生した大聖女は、聖女であることをひた隠す",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T13:00:00Z",
+    "episodeNumber": 2,
+    "subtractedEpisodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tensei-shita-daiseijo-wa-seijo-de-aru-koto-wo-hitakakusu-4d6347bc9eb2b8b9fba874cd638c6905.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "crunchyroll.com/series/GT00371633/a-tale-of-the-secret-saint",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Yasei no Last Boss ga Arawareta! 2nd Season",
+    "route": "yasei-no-last-boss-ga-arawareta-2nd-season",
+    "romaji": "Yasei no Last Boss ga Arawareta! 2nd Season",
+    "english": "A Wild Last Boss Appeared! 2nd Season",
+    "native": "野生のラスボスが現れた！",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T13:30:00Z",
+    "episodeNumber": 2,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/yasei-no-last-boss-ga-arawareta-2nd-season-a19d28b9330bc60e68ee76da78684be1.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4heUI1x",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00361955/a-wild-last-boss-appeared",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLbuF5Onrcu9fs9Jo_IR9nZ7WrulQuDup-",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Black Clover 2nd Season",
+    "route": "black-clover-2nd-season",
+    "native": "ブラッククローバー 第2期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T14:00:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/black-clover-2nd-season-1a68ca60738d1143706fcb27a13fc2c9.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/black-clover",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Gensou Suikoden",
+    "route": "gensou-suikoden",
+    "romaji": "Gensou Suikoden",
+    "english": "Suikoden: The Anime",
+    "native": "幻想水滸伝",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T14:30:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/gensou-suikoden-a42018f73c24d0257b5e0b187c92a90e.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "#Zombie Sagashitemasu",
+    "route": "zombie-sagashitemasu",
+    "romaji": "#Zombie Sagashitemasu",
+    "english": "#‌‌​I'm Looking For a Zombie",
+    "native": "#ゾンビさがしてます",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T14:30:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/zombie-sagashitemasu-7f747430694869c00e95440ef2b9d7fc.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "crunchyroll.com/series/GT00383996/im-looking-for-a-zombie",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Vertex Force",
+    "route": "vertex-force",
+    "native": "バーテックスフォース",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T14:30:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/vertex-force-8b82169cb5a87017d225e0a321ef4662.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Magical★Explorer: Eroge no Yuujin Chara ni Tensei Shitakedo, Game Chishiki Tsukatte Jiyuu ni Ikiru",
+    "route": "magical-explorer",
+    "romaji": "Magical★Explorer: Eroge no Yuujin Chara ni Tensei Shitakedo, Game Chishiki Tsukatte Jiyuu ni Ikiru",
+    "english": "Magical Explorer: Reborn as a Side Character in a Fantasy Dating Sim",
+    "native": "マジカル★エクスプロ",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T15:00:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/magical-explorer-59ec851ce103bed1418b5c790cd48156.jpg",
+    "airingStatus": "aired"
+  },
+  {
+    "title": "Seitokai ni mo Ana wa Aru!",
+    "route": "seitokai-ni-mo-ana-wa-aru",
+    "romaji": "Seitokai ni mo Ana wa Aru!",
+    "english": "There Is Also a Hole in the Student Organization!",
+    "native": "生徒会にも穴はある！",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-03T15:30:00Z",
+    "episodeNumber": 1,
+    "episodes": 12,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/seitokai-ni-mo-ana-wa-aru-af8fef5a0b35bba4e31d5dc0b0ae5ca3.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Ranma ½ (2024) 3rd Season",
+    "route": "ranma-2024-3rd-season",
+    "romaji": "Ranma ½ (2024) 3rd Season",
+    "native": "らんま1/2 第3期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-03T15:55:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ranma-2024-3rd-season-38d69bfe49d4dac414e104e9a774c4c4.jpg",
+    "streams": [
+      {
+        "platform": "netflix",
+        "url": "www.netflix.com/title/81171925",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Kashita Maryoku wa \"Revo Barai\" de Kyousei Choushuu",
+    "route": "kashita-maryoku-wa-revo-barai-de-kyousei-choushuu",
+    "romaji": "Kashita Maryoku wa \"Revo Barai\" de Kyousei Choushuu",
+    "english": "Magic Repo Man: Dumped by My Party, I’ll Cash In With a Cute Support Fairy to Become the Strongest!",
+    "native": "貸した魔力は【リボ払い】で強制徴収",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-03T16:30:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/kashita-maryoku-wa-revo-barai-de-kyousei-choushuu-f520274a9045bd89d1cbe13febef8644.jpg",
+    "streams": [
+      {
+        "platform": "bilibili",
+        "url": "www.bilibili.tv/media/2432615",
+        "name": "BiliBili TV"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Odekake Kozame 2nd Season",
+    "route": "odekake-kozame-2nd-season",
+    "romaji": "Odekake Kozame 2nd Season",
+    "english": "Little Shark's Day Out 2nd Season",
+    "native": "おでかけ子ザメ シーズン2",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T22:00:00Z",
+    "episodeNumber": 26,
+    "episodes": 72,
+    "lengthMin": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA",
+        "route": "ona"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/odekake-kozame-2nd-season-989132c0286e63fef1e3c2229c9909a7.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLjrUB63ikczNcRItB8koEfoBfA7sjCZ-k",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Shou 3 Ashibe QQ Goma-chan",
+    "route": "shou-3-ashibe-qq-goma-chan",
+    "native": "小３アシベ QQゴマちゃん",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T22:00:00Z",
+    "episodeNumber": 26,
+    "lengthMin": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/shou-3-ashibe-qq-goma-chan-8732cda459f49aa61c848a99e7f9b77a.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Tanuki to Kitsune (TV)",
+    "route": "tanuki-to-kitsune-tv",
+    "english": "Tanuki & Kitsune (TV)",
+    "native": "タヌキとキツネ (TV)",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-03T22:00:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tanuki-to-kitsune-tv-5e89b4710e39be19dbde833ce98068e7.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Koupen-chan",
+    "route": "koupen-chan",
+    "native": "コウペンちゃん",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T23:00:00Z",
+    "episodeNumber": 79,
+    "lengthMin": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/koupen-chan-9e4bc7e105.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLRj9zPfLhyY17a7iABkpz28-oamCLFUMQ",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Meitantei Precure!",
+    "route": "meitantei-precure",
+    "romaji": "Meitantei Precure!",
+    "english": "Star Detective Precure!",
+    "native": "名探偵プリキュア！",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-03T23:30:00Z",
+    "episodeNumber": 36,
+    "episodes": 51,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/meitantei-precure-7e5a1e4418385d3a27b5d2606be7e238.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/49XmHz9",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00369409",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Onegai AiPri",
+    "route": "onegai-aipri",
+    "native": "おねがいアイプリ",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T00:30:00Z",
+    "episodeNumber": 27,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/onegai-aipri-7b7baeed12f360503e819e45c4c0acf6.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Wushen Zhuzai 3",
+    "route": "wushen-zhuzai-3",
+    "romaji": "Wushen Zhuzai 3",
+    "english": "The God of War Dominates Season 3",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T02:00:00Z",
+    "episodeNumber": 201,
+    "episodes": 224,
+    "lengthMin": 8,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/wushen-zhuzai-3-977dfbf8ed.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnLJMZtGPLUMXFMQYuo1rr2Q",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Xian Ni",
+    "route": "xian-ni",
+    "romaji": "Xian Ni",
+    "english": "Renegade Immortal",
+    "native": "仙逆",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T02:00:00Z",
+    "episodeNumber": 161,
+    "episodes": 180,
+    "lengthMin": 23,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/xian-ni-90bbbb2910.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/45Sh82H",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GKEH2G0MN/renegade-immortal",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLxOs22nkVmnLTn3fbmCGCLDE1jlET4bfy",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Du Shi Gu Xian Yi",
+    "route": "du-shi-gu-xian-yi",
+    "romaji": "Du Shi Gu Xian Yi",
+    "english": "Immortal Doctor In Modern City",
+    "native": "都市古仙医",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T02:00:00Z",
+    "episodeNumber": 218,
+    "episodes": 250,
+    "lengthMin": 11,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/du-shi-gu-xian-yi-1de1c0d7df.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLTndXYWs2JgGD1ZmpB6dsjo0mdrjWoDSf",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Mu Shen Ji",
+    "route": "mu-shen-ji",
+    "romaji": "Mu Shen Ji",
+    "english": "Tales of Herding Gods",
+    "native": "牧神记",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T03:00:00Z",
+    "episodeNumber": 103,
+    "lengthMin": 20,
+    "donghua": true,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA (Chinese)",
+        "route": "ona-chinese"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/mu-shen-ji-678dbde080.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLBakWosU0sfiKF8-2v1-tT4GOj-RAoZ6L",
+        "name": "YouTube"
+      },
+      {
+        "platform": "bilibili",
+        "url": "www.bilibili.tv/en/media/2117053",
+        "name": "BiliBili TV"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Ao no Hako 2nd Season",
+    "route": "ao-no-hako-2nd-season",
+    "romaji": "Ao no Hako 2nd Season",
+    "english": "Blue Box 2nd Season",
+    "native": "アオのハコ 第2期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T07:30:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ao-no-hako-2nd-season-eb11b94cd5e4fa492c4fce994e4334b9.jpg",
+    "streams": [
+      {
+        "platform": "netflix",
+        "url": "www.netflix.com/title/81663323",
+        "name": "Netflix"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Ao Ashi 2nd Season",
+    "route": "ao-ashi-2nd-season",
+    "native": "アオアシ 第2期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T08:00:00Z",
+    "episodeNumber": 1,
+    "episodes": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ao-ashi-2nd-season-c7f95d28517ff7974a116fd93e9a8192.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/G4PH0WX5J/aoashi",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Seihantai na Kimi to Boku 2nd Season",
+    "route": "seihantai-na-kimi-to-boku-2nd-season",
+    "romaji": "Seihantai na Kimi to Boku 2nd Season",
+    "english": "You and I Are Polar Opposites 2nd Season",
+    "native": "正反対な君と僕 第2期",
+    "delayedFrom": "2026-09-20T00:00:00Z",
+    "delayedUntil": "2026-09-27T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T08:00:00Z",
+    "episodeNumber": 13,
+    "episodes": 13,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/seihantai-na-kimi-to-boku-2nd-season-e132cb438e9a0b4139a277787bfc63fe.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4eUISXR",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00365624/you-and-i-are-polar-opposites",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "amazon",
+        "url": "amzn.to/4bN8k0Y",
+        "name": "Amazon"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLHr3g0ivIWN4",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Chibi Maruko-chan (1995)",
+    "route": "chibi-maruko-chan-1995",
+    "romaji": "Chibi Maruko-chan (1995)",
+    "english": "Little Miss Maruko (1995)",
+    "native": "ちびまる子ちゃん",
+    "delayedFrom": "2026-03-22T00:00:00Z",
+    "delayedUntil": "2026-04-05T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T09:00:00Z",
+    "episodeNumber": 1550,
+    "lengthMin": 23,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/chibi-maruko-chan-1995-f4f98bb3b7.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GG5H5XQK4/chibi-maruko-chan",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Holo no Graffiti",
+    "route": "holo-no-graffiti",
+    "romaji": "Holo no Graffiti",
+    "english": "Holo Graffiti",
+    "native": "ホロのぐらふぃてぃ",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T09:00:00Z",
+    "episodeNumber": 386,
+    "lengthMin": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA",
+        "route": "ona"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/holo-no-graffiti-95cd497081.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLb7AOG3cj7UyJfqsfXpvL2LUVdg0dOK7q",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Sazae-san",
+    "route": "sazae-san",
+    "romaji": "Sazae-san",
+    "english": "Mrs. Sazae",
+    "native": "サザエさん",
+    "delayedFrom": "2026-03-29T00:00:00Z",
+    "delayedUntil": "2026-04-05T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T09:30:00Z",
+    "episodeNumber": 2872,
+    "lengthMin": 24,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/sazae-san-162010bbcb.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Mezametara Saikyou Soubi to Uchuusenmochi Datta node, Ikkodate Mezashite Youhei toshite Jiyuu ni Ikitai",
+    "route": "mezametara-saikyou-soubi-to-uchuusenmochi-datta-node-ikkodate-mezashite-youhei-toshite-jiyuu-ni-ikitai",
+    "romaji": "Mezametara Saikyou Soubi to Uchuusenmochi Datta node, Ikkodate Mezashite Youhei toshite Jiyuu ni Ikitai",
+    "english": "Reborn as a Space Mercenary: I Woke Up Piloting the Strongest Starship!",
+    "native": "目覚めたら最強装備と宇宙船持ちだったので、一戸建て目指して傭兵として自由に生きたい",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T10:30:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/mezametara-saikyou-soubi-to-uchuusenmochi-datta-node-ikkodate-mezashite-youhei-toshite-jiyuu-ni-ikitai-edc1b50e1933cdcad6f719e5465fb479.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GT00384006",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Oji-san wa Kawaii Mono ga Osuki.",
+    "route": "ojisan-wa-kawaii-mono-ga-osuki",
+    "romaji": "Oji-san wa Kawaii Mono ga Osuki.",
+    "english": "Uncle's Obsession with Cute Things",
+    "native": "おじさんはカワイイものがお好き。",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T13:00:00Z",
+    "episodeNumber": 1,
+    "episodes": 12,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/ojisan-wa-kawaii-mono-ga-osuki-a11333cb5321f0a6f1b0f2e95e1f6ae8.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "crunchyroll.com/series/GT00385445/uncles-obsession-with-cute-things",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Umayuru: Full Gate!",
+    "route": "umayuru-full-gate",
+    "native": "うまゆるふるげ〜と!",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T13:30:00Z",
+    "episodeNumber": 2,
+    "episodes": 26,
+    "lengthMin": 3,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "ONA",
+        "route": "ona"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/umayuru-full-gate-d5b642a7029f1f539ac1e40249926fdd.jpg",
+    "streams": [
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLNoVytAHV6zA",
+        "name": "YouTube"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Mahou no Shimai Lulutto Lilly Part 2",
+    "route": "mahou-no-shimai-lulutto-lilly-part-2",
+    "romaji": "Mahou no Shimai Lulutto Lilly Part 2",
+    "english": "Magical Sisters Lulutto Lilly Part 2",
+    "native": "魔法の姉妹ルルットリリィ 第2クール",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T13:30:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/mahou-no-shimai-lulutto-lilly-part-2-77490fb4490be9d1b15d2dd531c92ddd.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Tank Chair",
+    "route": "tank-chair",
+    "native": "TANK CHAIR-戦車椅子-",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T14:00:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tank-chair-fd6b406cc6af39c3fe8cade3cc7b2ccd.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Yowaki MAX Reijou Nano ni, Ratsuwan Konyakusha-sama no Kake ni Notte Shimatta",
+    "route": "yowaki-max-reijou-nano-ni-ratsuwan-konyakusha-sama-no-kake-ni-notte-shimatta",
+    "romaji": "Yowaki MAX Reijou Nano ni, Ratsuwan Konyakusha-sama no Kake ni Notte Shimatta",
+    "english": "Even Though I'm a Super Timid Noble Girl, I Accepted the Bet From My Cunning Fiancé",
+    "native": "弱気MAX令嬢なのに、辣腕婚約者様の賭けに乗ってしまった",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T14:30:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/yowaki-max-reijou-nano-ni-ratsuwan-konyakusha-sama-no-kake-ni-notte-shimatta-cd400ecda02d67155d275635c7d53fde.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "crunchyroll.com/series/GT00365562/even-though-im-a-super-timid-noble-girl-i-accepted-the-bet-from-my-cunning-fianc",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "OVERGEARED",
+    "route": "overgeared",
+    "native": "テムパル ～アイテムの力～",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T14:30:00Z",
+    "episodeNumber": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/overgeared-1bf1ac74329931e0469f4cddd6f77c59.jpg",
+    "streams": [
+      {
+        "platform": "crunchyroll",
+        "url": "crunchyroll.com/series/GT00384004/overgeared",
+        "name": "Crunchyroll"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Hotel Inhumans 2nd Season",
+    "route": "hotel-inhumans-2nd-season",
+    "native": "ホテル・インヒューマンズ 第2期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T14:45:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/hotel-inhumans-2nd-season-3142c3003f197023224648893373e0fb.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Kanata kara",
+    "route": "kanata-kara",
+    "romaji": "Kanata kara",
+    "english": "From Far Away",
+    "native": "彼方から",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T15:00:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/kanata-kara-940e70fb52e3c34cba5861d86d291374.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Tensei Kizoku, Kantei Skill de Nariagaru 3rd Season",
+    "route": "tensei-kizoku-kantei-skill-de-nariagaru-3rd-season",
+    "romaji": "Tensei Kizoku, Kantei Skill de Nariagaru 3rd Season",
+    "english": "As a Reincarnated Aristocrat, I'll Use My Appraisal Skill to Rise in the World 3rd Season",
+    "native": "転生貴族、鑑定スキルで成り上がる 第3期",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T15:00:00Z",
+    "episodeNumber": 2,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/tensei-kizoku-kantei-skill-de-nariagaru-3rd-season-7689b9229a0d8f6d9e85b5ce56bf6e84.jpg",
+    "streams": [
+      {
+        "platform": "apple",
+        "url": "apple.co/4d62Vmd",
+        "name": "Apple TV"
+      },
+      {
+        "platform": "crunchyroll",
+        "url": "www.crunchyroll.com/series/GG5H5XQMD/as-a-reincarnated-aristocrat-ill-use-my-appraisal-skill-to-rise-in-the-world",
+        "name": "Crunchyroll"
+      },
+      {
+        "platform": "youtube",
+        "url": "www.youtube.com/playlist?list=PLfEwGegYhFGY",
+        "name": "YouTube"
+      },
+      {
+        "platform": "bilibili",
+        "url": "www.bilibili.tv/en/media/2432255",
+        "name": "BiliBili TV"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Kanojo no Tomodachi",
+    "route": "kanojo-no-tomodachi",
+    "romaji": "Kanojo no Tomodachi",
+    "english": "My Girlfriend's Friend",
+    "native": "彼女の友達",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T16:05:00Z",
+    "episodeNumber": 1,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV",
+        "route": "tv"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/kanojo-no-tomodachi-a6cc56d6463e349139498c8ab30c9336.jpg",
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Dark Summoner to Dekiteiru",
+    "route": "dark-summoner-to-dekiteiru",
+    "romaji": "Dark Summoner to Dekiteiru",
+    "english": "I'm Dating a Dark Summoner!",
+    "native": "ダークサモナーとデキている",
+    "delayedFrom": "0001-01-01T00:00:00Z",
+    "delayedUntil": "0001-01-01T00:00:00Z",
+    "status": "Upcoming",
+    "episodeDate": "2026-10-04T16:20:00Z",
+    "episodeNumber": 1,
+    "lengthMin": 12,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/dark-summoner-to-dekiteiru-c53279826492fab429043f9385bfb47a.jpg",
+    "streams": [
+      {
+        "platform": "hidive",
+        "url": "www.hidive.com/season/39541",
+        "name": "HiDive"
+      }
+    ],
+    "airingStatus": "unaired"
+  },
+  {
+    "title": "Yami Shibai 17",
+    "route": "yami-shibai-17",
+    "romaji": "Yami Shibai 17",
+    "english": "Theatre of Darkness: Yamishibai 17",
+    "native": "闇芝居 十七期",
+    "delayedFrom": "2026-09-20T00:00:00Z",
+    "delayedUntil": "2026-09-27T00:00:00Z",
+    "status": "Ongoing",
+    "episodeDate": "2026-10-04T18:20:00Z",
+    "episodeNumber": 12,
+    "episodes": 13,
+    "lengthMin": 5,
+    "donghua": false,
+    "airType": "raw",
+    "mediaTypes": [
+      {
+        "name": "TV Short",
+        "route": "tv-short"
+      }
+    ],
+    "imageVersionRoute": "anime/jpg/default/yami-shibai-17-d192af157a4df4c533230fbd860b43c0.jpg",
+    "airingStatus": "unaired"
+  }
+]
