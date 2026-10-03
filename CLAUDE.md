@@ -13,7 +13,9 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 ## Layout
 
 - `src/app` — routes. `/` is the landing page.
-- `src/features/<name>` — create one folder per feature (none yet): `model.ts` (Mongoose), `schema.ts` (Zod), `service.ts` (DB logic), `actions.ts` (Server Actions), UI.
+- `src/features/<name>` — one folder per feature (`auth` so far): `model.ts` (Mongoose), `schema.ts` (Zod), `service.ts` (DB logic), `actions.ts` (Server Actions), UI.
+- `src/features/auth` — Better Auth. `auth.ts` builds the instance lazily (`getAuth()`); `session.ts` has the guards. Auth collections belong to the library, not Mongoose. Forms call the React client in `client.ts`; route paths live in `paths.ts`. Google sign-in is registered only when both `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set.
+- `src/app/(auth)` — two route groups with their own layouts: `(split)` (sign-in, sign-up: brand panel beside the form) and `(card)` (verify-email, forgot-password, reset-password: centred card). `src/app/dashboard` is the protected area. `src/proxy.ts` only checks that a session cookie exists.
 - `src/lib/db/mongoose.ts` — cached connection (`connectDb`). Call it inside services, not at module top level.
 - `src/components/ui` — shadcn components. Add more with `bunx --bun shadcn@latest add <name>`.
 
@@ -21,10 +23,10 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 
 - Validate all input with Zod at the Server Action / Route Handler boundary.
 - Server Actions write; Route Handlers are for external clients.
+- Every private page and Server Action starts with `requireSession()` or `requireAdmin()` from `src/features/auth/session.ts`. Roles (`user`, `admin`) are set once at account creation from `ADMIN_EMAILS`.
 - Theme tokens (Linen Stone, oklch) live in `src/app/globals.css`. Use semantic classes (`bg-card`, `text-muted-foreground`), not raw colors.
 - `src/components/ui/handwriting-text.tsx` is a verbatim third-party component; its lint exception is in `eslint.config.mjs`. The landing page self-hosts its font at `public/fonts/handwriting.ttf` (the default CDN font is blocked by CORS). It still loads opentype.js from a CDN at runtime and falls back to plain text if that fails.
 
 ## Next steps (not built yet)
 
-- Authentication with Better Auth.
-- Deployment config (none yet; defaults work on Vercel).
+- Deployment config (none yet; defaults work on Vercel). Auth rate limits are per client IP taken from `x-forwarded-for`; off Vercel, configure `advanced.ipAddress` in `src/features/auth/auth.ts` first or all clients share one bucket.

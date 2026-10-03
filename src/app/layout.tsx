@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Google_Sans_Code, Google_Sans_Flex } from "next/font/google";
 
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 const sans = Google_Sans_Flex({
@@ -30,7 +29,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           {children}
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>
