@@ -22,6 +22,9 @@ function recorder(answer: () => SendResult | Promise<SendResult> = () => ({ ok: 
       pushed.push({ lineUserId, text, retryKey });
       return answer();
     },
+    async reply() {
+      throw new Error("Nothing here replies.");
+    },
   };
   return { messenger, pushed };
 }
@@ -127,6 +130,9 @@ describe("pushWithinQuota", () => {
       name: "fake",
       push: async () => {
         throw new Error("boom");
+      },
+      reply: async () => {
+        throw new Error("Nothing here replies.");
       },
     };
 

@@ -3,7 +3,8 @@ import { fakesEnabled, lineMessagingEnv } from "@/lib/env";
 import { createFakeMessenger } from "./fake-messenger";
 
 // The one way this app sends LINE messages. Pushes cost quota, so nothing calls `push` directly:
-// it goes through the quota guard in `src/features/notifications/quota.ts`.
+// it goes through the quota guard in `src/features/notifications/quota.ts`. Replies are free and
+// are sent with `reply`.
 
 export type SendResult =
   | { ok: true }
@@ -18,10 +19,17 @@ export interface LineMessenger {
    * Never throws.
    */
   push(lineUserId: string, text: string, retryKey: string): Promise<SendResult>;
-  // Ticket 06 adds `reply(replyToken, text)` here; replies are free and are never counted.
+  /**
+   * Answers a message with one text message, through the reply token of its webhook event. A reply
+   * is free: it is not a push, is never counted against the quota and so does not go through the
+   * quota guard. A reply token works once and only for a short time, so a failed reply is not
+   * retried. Never throws.
+   */
+  reply(replyToken: string, text: string): Promise<SendResult>;
 }
 
 const PUSH_URL = "https://api.line.me/v2/bot/message/push";
+const REPLY_URL = "https://api.line.me/v2/bot/message/reply";
 const TIMEOUT_MS = 10_000;
 
 type MessagingApiOptions = {
@@ -36,42 +44,78 @@ async function lineMessage(response: Response): Promise<string> {
   return typeof message === "string" ? `: ${message}` : "";
 }
 
+type Call = {
+  /** Names the call in an error: "push" or "reply". */
+  kind: string;
+  url: string;
+  headers?: Record<string, string>;
+  body: Record<string, unknown>;
+  /** Statuses besides 2xx that mean the message was sent. */
+  alsoSent?: readonly number[];
+};
+
 /** The real sender: the LINE Messaging API over `fetch`, no SDK. */
 export function createMessagingApiMessenger(options: MessagingApiOptions): LineMessenger {
   const send = options.fetch ?? fetch;
+
+  async function call({ kind, url, headers, body, alsoSent = [] }: Call): Promise<SendResult> {
+    try {
+      const response = await send(url, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${options.channelAccessToken}`,
+          "content-type": "application/json",
+          ...headers,
+        },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (response.ok || alsoSent.includes(response.status)) return { ok: true };
+      return {
+        ok: false,
+        error: `LINE ${kind} failed (${response.status})${await lineMessage(response)}`,
+      };
+    } catch (error) {
+      // Only the kind of failure: an error message could repeat the request.
+      const reason = error instanceof Error ? error.name : "unknown error";
+      return { ok: false, error: `LINE ${kind} did not complete (${reason})` };
+    }
+  }
+
   return {
     name: "messaging-api",
-    async push(lineUserId, text, retryKey) {
-      try {
-        const response = await send(PUSH_URL, {
-          method: "POST",
-          headers: {
-            authorization: `Bearer ${options.channelAccessToken}`,
-            "content-type": "application/json",
-            "x-line-retry-key": retryKey,
-          },
-          body: JSON.stringify({ to: lineUserId, messages: [{ type: "text", text }] }),
-          signal: AbortSignal.timeout(TIMEOUT_MS),
-        });
+    push(lineUserId, text, retryKey) {
+      return call({
+        kind: "push",
+        url: PUSH_URL,
+        headers: { "x-line-retry-key": retryKey },
+        body: { to: lineUserId, messages: [{ type: "text", text }] },
         // 409: LINE already accepted a push with this retry key, so the message was sent.
-        if (response.ok || response.status === 409) return { ok: true };
-        return {
-          ok: false,
-          error: `LINE push failed (${response.status})${await lineMessage(response)}`,
-        };
-      } catch (error) {
-        // Only the kind of failure: an error message could repeat the request.
-        const reason = error instanceof Error ? error.name : "unknown error";
-        return { ok: false, error: `LINE push did not complete (${reason})` };
-      }
+        alsoSent: [409],
+      });
+    },
+    reply(replyToken, text) {
+      return call({
+        kind: "reply",
+        url: REPLY_URL,
+        body: { replyToken, messages: [{ type: "text", text }] },
+      });
     },
   };
 }
 
+const NOT_CONFIGURED: SendResult = {
+  ok: false,
+  error: "LINE_MESSAGING_CHANNEL_ACCESS_TOKEN is not set.",
+};
+
 const notConfigured: LineMessenger = {
   name: "messaging-api",
   async push() {
-    return { ok: false, error: "LINE_MESSAGING_CHANNEL_ACCESS_TOKEN is not set." };
+    return NOT_CONFIGURED;
+  },
+  async reply() {
+    return NOT_CONFIGURED;
   },
 };
 

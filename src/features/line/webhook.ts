@@ -33,10 +33,12 @@ function friendshipHandler(friend: boolean): LineEventHandler {
 }
 
 /**
- * What the webhook does for each LINE event type; a type that is not listed is ignored.
- * To handle another type (ticket 06: `message`, answered through `event.replyToken`), add its
- * handler here. A handler gets the whole event as LINE sent it and must not throw for a sender it
- * does not know.
+ * What this feature does for each LINE event type; a type that is not listed is ignored. A handler
+ * gets the whole event as LINE sent it and must not throw for a sender it does not know.
+ *
+ * The `message` handler (the bot's `today` and `week` answers) is not here: it needs follows and
+ * the schedule, so it lives in `src/features/notifications/bot-reply.ts`, whose
+ * `botEventHandlers()` adds it to these for the Route Handler.
  */
 export const lineEventHandlers: LineEventHandlers = {
   follow: friendshipHandler(true),

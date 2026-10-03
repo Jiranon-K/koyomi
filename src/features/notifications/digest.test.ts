@@ -62,6 +62,9 @@ function recordingMessenger(answer: () => SendResult | Promise<SendResult> = () 
       pushed.push({ lineUserId, text, retryKey });
       return answer();
     },
+    async reply() {
+      throw new Error("Nothing here replies.");
+    },
   };
   return { messenger, pushed };
 }

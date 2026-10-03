@@ -1,6 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createFakeMessenger, lineLog, pushesInLineLog } from "./fake-messenger";
+import {
+  createFakeMessenger,
+  lineLog,
+  pushesInLineLog,
+  repliesInLineLog,
+  replyLog,
+} from "./fake-messenger";
 import { createMessagingApiMessenger, lineMessenger } from "./messenger";
 
 const TOKEN = "test-channel-access-token";
@@ -75,6 +81,52 @@ describe("the Messaging API messenger", () => {
   });
 });
 
+describe("the Messaging API messenger's reply", () => {
+  it("posts one text message to the reply endpoint with the token and no retry key", async () => {
+    const { fetch, calls } = answering(() => Response.json({}));
+    const messenger = createMessagingApiMessenger({ channelAccessToken: TOKEN, fetch });
+
+    const result = await messenger.reply("reply-token", "first line\nsecond line");
+
+    expect(result).toEqual({ ok: true });
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.url).toBe("https://api.line.me/v2/bot/message/reply");
+    expect(calls[0]?.init.method).toBe("POST");
+    expect(Object.fromEntries(new Headers(calls[0]?.init.headers))).toEqual({
+      authorization: `Bearer ${TOKEN}`,
+      "content-type": "application/json",
+    });
+    expect(JSON.parse(String(calls[0]?.init.body))).toEqual({
+      replyToken: "reply-token",
+      messages: [{ type: "text", text: "first line\nsecond line" }],
+    });
+  });
+
+  it.each([400, 401, 429, 500])("reports a %i answer as a failure", async (status) => {
+    const { fetch } = answering(() =>
+      Response.json({ message: "Invalid reply token" }, { status }),
+    );
+    const messenger = createMessagingApiMessenger({ channelAccessToken: TOKEN, fetch });
+
+    expect(await messenger.reply("reply-token", "text")).toEqual({
+      ok: false,
+      error: `LINE reply failed (${status}): Invalid reply token`,
+    });
+  });
+
+  it("reports a network failure instead of throwing, without the token in the error", async () => {
+    const { fetch } = answering(() => {
+      throw new TypeError(`fetch failed for Bearer ${TOKEN}`);
+    });
+    const messenger = createMessagingApiMessenger({ channelAccessToken: TOKEN, fetch });
+
+    const result = await messenger.reply("reply-token", "text");
+
+    expect(result).toEqual({ ok: false, error: "LINE reply did not complete (TypeError)" });
+    expect(JSON.stringify(result)).not.toContain(TOKEN);
+  });
+});
+
 describe("lineMessenger", () => {
   it("is the fake when USE_FAKES is true", () => {
     process.env.USE_FAKES = "true";
@@ -90,12 +142,16 @@ describe("lineMessenger", () => {
     expect(lineMessenger().name).toBe("messaging-api");
   });
 
-  it("fails every push by variable name while no access token is configured", async () => {
+  it("fails every push and reply by variable name while no access token is configured", async () => {
     delete process.env.USE_FAKES;
     delete process.env.LINE_MESSAGING_CHANNEL_ACCESS_TOKEN;
     const network = vi.spyOn(globalThis, "fetch");
 
     expect(await lineMessenger().push("U-ada", "text", RETRY_KEY)).toEqual({
+      ok: false,
+      error: "LINE_MESSAGING_CHANNEL_ACCESS_TOKEN is not set.",
+    });
+    expect(await lineMessenger().reply("reply-token", "text")).toEqual({
       ok: false,
       error: "LINE_MESSAGING_CHANNEL_ACCESS_TOKEN is not set.",
     });
@@ -133,5 +189,24 @@ describe("the fake messenger and its log", () => {
     );
 
     expect(pushesInLineLog(log, "U-ada")).toEqual([push]);
+  });
+
+  const reply = { replyToken: "reply-token", text: 'Airing today\n22:30 "Quoted" title' };
+
+  it("writes each reply to the server log as one line that the reader gets back", async () => {
+    const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+
+    expect(await createFakeMessenger().reply(reply.replyToken, reply.text)).toEqual({ ok: true });
+
+    expect(log).toHaveBeenCalledExactlyOnceWith(replyLog(reply));
+    expect(replyLog(reply)).not.toContain("\n");
+    expect(repliesInLineLog(replyLog(reply))).toEqual([reply]);
+  });
+
+  it("keeps pushes and replies apart", () => {
+    const log = [lineLog(push), replyLog(reply), replyLog({ ...reply, text: "later" })].join("\n");
+
+    expect(pushesInLineLog(log, "U-ada")).toEqual([push]);
+    expect(repliesInLineLog(log)).toEqual([reply, { ...reply, text: "later" }]);
   });
 });
