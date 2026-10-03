@@ -5,6 +5,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { LineLink } from "./model";
 import {
   areRemindersOn,
+  findReminderRecipient,
   findUserIdByLineUserId,
   getLineStatus,
   listReminderRecipients,
@@ -288,5 +289,27 @@ describe("listReminderRecipients", () => {
 
   it("is empty when nobody has linked LINE", async () => {
     expect(await listReminderRecipients()).toEqual([]);
+  });
+});
+
+describe("findReminderRecipient", () => {
+  it("is the LINE user id of a user with reminders on", async () => {
+    await link("ada");
+
+    expect(await findReminderRecipient("user-ada")).toEqual({
+      userId: "user-ada",
+      lineUserId: "U-ada",
+    });
+  });
+
+  it("is null for anyone `areRemindersOn` says no to", async () => {
+    await link("off");
+    await setReminders("user-off", false);
+    await link("stranger", isNotFriend);
+
+    for (const userId of ["user-off", "user-stranger", "user-nobody"]) {
+      expect(await areRemindersOn(userId)).toBe(false);
+      expect(await findReminderRecipient(userId)).toBeNull();
+    }
   });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  dayWindowFor,
   dayWindowOf,
   formatAirTime,
   formatDateTime,
@@ -105,5 +106,14 @@ describe("formatting", () => {
 
     expect(formatWeekday(day)).toBe("Saturday");
     expect(formatDayDate(day)).toBe("3 Oct");
+  });
+});
+
+describe("dayWindowFor", () => {
+  it("is the window of the schedule day with that date", () => {
+    const window = dayWindowOf(utc("2026-10-03T17:30:00")); // 00:30 Bangkok on Sunday
+
+    expect(dayWindowFor("2026-10-03")).toEqual(window);
+    expect(dayWindowFor("2026-12-31").end.toISOString()).toBe("2026-12-31T22:00:00.000Z");
   });
 });

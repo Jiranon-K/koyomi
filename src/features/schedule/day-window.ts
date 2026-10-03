@@ -84,6 +84,11 @@ export function dayWindowOf(instant: Date): DayWindow {
   return windowStartingOn(wall.hour < DAY_START_HOUR ? calendarDay - DAY_MS : calendarDay);
 }
 
+/** The schedule day that starts on the Bangkok calendar date `day` (`YYYY-MM-DD`). */
+export function dayWindowFor(day: DayWindow["day"]): DayWindow {
+  return windowStartingOn(calendarDayMs(day));
+}
+
 /** `days` consecutive schedule days, the first being the one that contains `now`. */
 export function weekWindows(now: Date, days = 7): DayWindow[] {
   const first = calendarDayMs(dayWindowOf(now).day);

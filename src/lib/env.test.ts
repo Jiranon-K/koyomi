@@ -1,13 +1,17 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  appUrl,
   authEnv,
   dbEnv,
   devRoutesEnabled,
   fakesEnabled,
   lineBotEnv,
   lineLoginEnv,
+  lineMessagingEnv,
   lineWebhookEnv,
+  qstashEnv,
+  qstashSigningEnv,
   scheduleEnv,
 } from "./env";
 
@@ -249,5 +253,77 @@ describe("lineBotEnv", () => {
     expect(lineBotEnv({ LINE_BOT_BASIC_ID: "@123abcde" })).toEqual({
       addFriendUrl: "https://line.me/R/ti/p/%40123abcde",
     });
+  });
+});
+
+describe("lineMessagingEnv", () => {
+  it("returns the channel access token, or nothing when it is not set", () => {
+    expect(lineMessagingEnv({ LINE_MESSAGING_CHANNEL_ACCESS_TOKEN: "token-value" })).toEqual({
+      channelAccessToken: "token-value",
+    });
+    expect(lineMessagingEnv({})).toBeUndefined();
+    expect(lineMessagingEnv({ LINE_MESSAGING_CHANNEL_ACCESS_TOKEN: "" })).toBeUndefined();
+  });
+});
+
+describe("qstashEnv", () => {
+  it("returns the token and the default QStash address", () => {
+    expect(qstashEnv({ QSTASH_TOKEN: "token-value" })).toEqual({
+      token: "token-value",
+      url: "https://qstash.upstash.io",
+    });
+  });
+
+  it("takes another region's address from QSTASH_URL", () => {
+    expect(
+      qstashEnv({ QSTASH_TOKEN: "token-value", QSTASH_URL: "https://qstash-us-east-1.upstash.io" })
+        .url,
+    ).toBe("https://qstash-us-east-1.upstash.io");
+  });
+
+  it("names what is missing or malformed, never a value", () => {
+    expect(() => qstashEnv({})).toThrow(/QSTASH_TOKEN is not set/);
+    expect(() => qstashEnv({ QSTASH_TOKEN: "" })).toThrow(/QSTASH_TOKEN is not set/);
+    expect(() => qstashEnv({ QSTASH_TOKEN: "token-value", QSTASH_URL: "nonsense" })).toThrow(
+      /^QSTASH_URL must be a full URL\. See \.env\.example\.$/,
+    );
+  });
+});
+
+describe("qstashSigningEnv", () => {
+  it("returns both signing keys only when both are set", () => {
+    expect(
+      qstashSigningEnv({ QSTASH_CURRENT_SIGNING_KEY: "current", QSTASH_NEXT_SIGNING_KEY: "next" }),
+    ).toEqual({ currentSigningKey: "current", nextSigningKey: "next" });
+    expect(qstashSigningEnv({})).toBeUndefined();
+    expect(
+      qstashSigningEnv({ QSTASH_CURRENT_SIGNING_KEY: "", QSTASH_NEXT_SIGNING_KEY: "" }),
+    ).toBeUndefined();
+  });
+
+  it.each([
+    [{ QSTASH_CURRENT_SIGNING_KEY: "current-key-value" }, "QSTASH_NEXT_SIGNING_KEY"],
+    [{ QSTASH_NEXT_SIGNING_KEY: "next-key-value" }, "QSTASH_CURRENT_SIGNING_KEY"],
+  ])("is off with one key, and names the missing one once: %o", async (source, missing) => {
+    vi.resetModules();
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const fresh = await import("./env");
+
+    expect(fresh.qstashSigningEnv(source)).toBeUndefined();
+    expect(fresh.qstashSigningEnv(source)).toBeUndefined();
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(String(warn.mock.calls[0])).toContain(`${missing} is not set`);
+    expect(String(warn.mock.calls[0])).not.toMatch(/key-value/);
+    warn.mockRestore();
+  });
+});
+
+describe("appUrl", () => {
+  it("is the public origin from BETTER_AUTH_URL", () => {
+    expect(appUrl({ BETTER_AUTH_SECRET: SECRET, BETTER_AUTH_URL: "https://koyomi.example" })).toBe(
+      "https://koyomi.example",
+    );
+    expect(() => appUrl({ BETTER_AUTH_SECRET: SECRET })).toThrow(/BETTER_AUTH_URL is not set/);
   });
 });

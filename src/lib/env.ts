@@ -59,7 +59,7 @@ const scheduleSchema = z.object({
   ANIMESCHEDULE_TOKEN: z.preprocess(blankAsUnset, text("ANIMESCHEDULE_TOKEN")),
 });
 
-/** True when the external services (the schedule source so far) are replaced by their fakes. */
+/** True when the external services (schedule source, LINE sender, job queue) are replaced by fakes. */
 export function fakesEnabled(source: Source = process.env): boolean {
   return parse(fakesSchema, source).USE_FAKES === "true";
 }
@@ -125,4 +125,56 @@ export function lineBotEnv(source: Source = process.env): { addFriendUrl: string
     return undefined;
   }
   return { addFriendUrl: `https://line.me/R/ti/p/${encodeURIComponent(basicId)}` };
+}
+
+/** The public origin of this app (no trailing slash): what links in messages and job URLs use. */
+export function appUrl(source: Source = process.env): string {
+  return authEnv(source).BETTER_AUTH_URL;
+}
+
+/**
+ * The Messaging API channel access token that pushes are sent with, or `undefined` when it is not
+ * set. A caller must then report the push as failed, by variable name.
+ */
+export function lineMessagingEnv(
+  source: Source = process.env,
+): { channelAccessToken: string } | undefined {
+  const channelAccessToken = source.LINE_MESSAGING_CHANNEL_ACCESS_TOKEN;
+  return channelAccessToken ? { channelAccessToken } : undefined;
+}
+
+const qstashSchema = z.object({
+  QSTASH_TOKEN: z.preprocess(blankAsUnset, text("QSTASH_TOKEN")),
+  QSTASH_URL: z.preprocess(
+    blankAsUnset,
+    z
+      .string()
+      .refine((value) => URL.canParse(value), "QSTASH_URL must be a full URL.")
+      .default("https://qstash.upstash.io"),
+  ),
+});
+
+/** What publishing to QStash needs. Not read when the fakes are on. */
+export function qstashEnv(source: Source = process.env): { token: string; url: string } {
+  const { QSTASH_TOKEN, QSTASH_URL } = parse(qstashSchema, source);
+  return { token: QSTASH_TOKEN, url: QSTASH_URL.replace(/\/+$/, "") };
+}
+
+/**
+ * The two keys QStash signs job calls with, or `undefined` unless both are set. A job endpoint
+ * must then refuse the call; it must never skip the signature check.
+ */
+export function qstashSigningEnv(
+  source: Source = process.env,
+): { currentSigningKey: string; nextSigningKey: string } | undefined {
+  const currentSigningKey = source.QSTASH_CURRENT_SIGNING_KEY;
+  const nextSigningKey = source.QSTASH_NEXT_SIGNING_KEY;
+  if (currentSigningKey && nextSigningKey) return { currentSigningKey, nextSigningKey };
+  if (currentSigningKey || nextSigningKey) {
+    const missing = currentSigningKey ? "QSTASH_NEXT_SIGNING_KEY" : "QSTASH_CURRENT_SIGNING_KEY";
+    warnOnce(
+      `${missing} is not set, so the job endpoints refuse every call. Set both QSTASH_CURRENT_SIGNING_KEY and QSTASH_NEXT_SIGNING_KEY. See .env.example.`,
+    );
+  }
+  return undefined;
 }

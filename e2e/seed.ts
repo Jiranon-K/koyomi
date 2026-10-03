@@ -17,9 +17,12 @@ async function withDb<T>(run: (db: Db) => Promise<T>): Promise<T> {
   }
 }
 
-/** Give the account with this email a linked LINE account that is a friend of the bot. */
+/**
+ * Give the account with this email a linked LINE account that is a friend of the bot. Returns the app
+ * user id and the LINE user id.
+ */
 export async function linkLine(email: string, options: { reminderSlot: number | null }) {
-  await withDb(async (db) => {
+  return withDb(async (db) => {
     const user = await db.collection("user").findOne({ email });
     if (!user) throw new Error(`No user with the email ${email}`);
     const now = new Date();
@@ -40,6 +43,41 @@ export async function linkLine(email: string, options: { reminderSlot: number | 
       createdAt: now,
       updatedAt: now,
     });
+    return { userId: user._id.toHexString(), lineUserId };
+  });
+}
+
+/**
+ * A user that exists only as data: linked to LINE, a friend of the bot, reminders on, following
+ * `shows`. Enough for the digest, which never looks at the account itself. Returns the LINE user id.
+ */
+export async function seedSubscriber(name: string, reminderSlot: number, shows: string[]) {
+  return withDb(async (db) => {
+    const now = new Date();
+    const userId = `e2e-subscriber-${name}-${now.getTime()}`;
+    const lineUserId = `U-${userId}`;
+    await db.collection("linelinks").insertOne({
+      userId,
+      lineUserId,
+      friend: true,
+      friendEventAt: null,
+      reminderSlot,
+      createdAt: now,
+      updatedAt: now,
+    });
+    if (shows.length) {
+      await db
+        .collection("follows")
+        .insertMany(shows.map((showRoute) => ({ userId, showRoute, createdAt: now })));
+    }
+    return lineUserId;
+  });
+}
+
+/** Remove the LINE links these LINE users hold, and with them their reminder places. */
+export async function removeLineLinks(lineUserIds: string[]) {
+  await withDb(async (db) => {
+    await db.collection("linelinks").deleteMany({ lineUserId: { $in: lineUserIds } });
   });
 }
 

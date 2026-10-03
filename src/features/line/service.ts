@@ -185,3 +185,13 @@ export async function listReminderRecipients(): Promise<ReminderRecipient[]> {
   const links = await LineLink.find({ friend: true, reminderSlot: HOLDS_SLOT }).lean();
   return links.map(({ userId, lineUserId }) => ({ userId, lineUserId }));
 }
+
+/**
+ * The LINE user id to push to for one user, or null when reminders are not on for them: the same
+ * rule as `areRemindersOn`, asked again at the moment of sending.
+ */
+export async function findReminderRecipient(userId: string): Promise<ReminderRecipient | null> {
+  await ready();
+  const link = await LineLink.findOne({ userId, friend: true, reminderSlot: HOLDS_SLOT }).lean();
+  return link ? { userId: link.userId, lineUserId: link.lineUserId } : null;
+}
