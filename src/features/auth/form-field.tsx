@@ -1,5 +1,6 @@
 import { cn } from "cn";
 
+import { PresenceMessage } from "@/components/motion/presence-message";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -45,27 +46,33 @@ export function FormField({
           {hint}
         </p>
       ) : null}
-      {error ? (
-        <p id={errorId} role="alert" className="text-xs text-destructive">
-          {error}
-        </p>
-      ) : null}
+      <PresenceMessage>
+        {error ? (
+          <p id={errorId} role="alert" className="text-xs text-destructive">
+            {error}
+          </p>
+        ) : null}
+      </PresenceMessage>
     </div>
   );
 }
 
 export function FormError({ message }: { message: React.ReactNode }) {
   return (
-    <p role="alert" className="text-sm text-destructive empty:sr-only">
-      {message}
-    </p>
+    <div role="alert" className="empty:sr-only">
+      <PresenceMessage>
+        {message ? <p className="text-sm text-destructive">{message}</p> : null}
+      </PresenceMessage>
+    </div>
   );
 }
 
 export function FormNotice({ message }: { message: React.ReactNode }) {
   return (
-    <p role="status" className="text-sm text-muted-foreground empty:sr-only">
-      {message}
-    </p>
+    <div role="status" className="empty:sr-only">
+      <PresenceMessage>
+        {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
+      </PresenceMessage>
+    </div>
   );
 }

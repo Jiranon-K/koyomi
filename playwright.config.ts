@@ -7,7 +7,12 @@ export default defineConfig({
   forbidOnly: true,
   workers: 1,
   reporter: "list",
-  use: { baseURL: `http://localhost:${port}`, trace: "retain-on-failure" },
+  use: {
+    baseURL: `http://localhost:${port}`,
+    trace: "retain-on-failure",
+    // Scans must read final-state content, never a half-faded element.
+    reducedMotion: "reduce",
+  },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: "node e2e/server.mjs",

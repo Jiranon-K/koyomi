@@ -1,9 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-import { emailedLink } from "./outbox";
-
-const password = "e2e-journey-password";
+import { createVerifiedAccount, PASSWORD as password } from "./account";
 
 // Buttons animate colour changes, so scanning right after a theme switch would read mid-transition colours.
 const NO_TRANSITIONS = "*, *::before, *::after { transition: none !important; }";
@@ -27,17 +25,7 @@ test("a signed-out visitor to the dashboard is sent to sign-in", async ({ page }
 });
 
 test("sign up, verify the email, sign out and sign back in", async ({ page }) => {
-  const email = `e2e-${Date.now()}@example.com`;
-
-  await page.goto("/sign-up");
-  await page.getByLabel("Name").fill("Ada");
-  await page.getByLabel("Email address").fill(email);
-  await page.getByLabel("Password", { exact: true }).fill(password);
-  await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/verify-email$/);
-
-  await page.goto(await emailedLink(email, "Verify your email"));
-  await expect(page).toHaveURL(/\/dashboard$/);
+  const email = await createVerifiedAccount(page);
   await expect(page.getByText(email)).toBeVisible();
 
   expect(await seriousViolations(page)).toEqual([]);

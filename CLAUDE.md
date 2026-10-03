@@ -43,7 +43,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `src/lib/db/mongoose.ts` — cached connection (`connectDb`). Call it inside services, not at module top level.
 - `e2e/` — `server.mjs` builds, starts MongoDB in memory and runs `next start`, writing the server log to `.e2e/server.log`. `outbox.ts` reads emailed links from that log through `linkInEmailLog` in `src/features/auth/email.ts`, which also owns the format the stub prints (`emailLog`); change the two together. Keep a log transport for tests when a real provider lands. Sign-in is rate-limited to 5 per minute per IP, so keep sign-in attempts per run under that.
 - `src/lib/env.ts` — the only place that reads `process.env` (lint-enforced; tests are exempt). `dbEnv()` and `authEnv()` validate with Zod on each call and throw an error that names the variable, never its value. `googleEnv()` never throws: it returns the credentials only when both variables are set, and when exactly one is set it logs a warning naming the missing one, at most once per loaded copy of the module (so it can repeat across server bundles or dev reloads). Add a new variable to its schema here and to `.env.example`.
-- `src/components` — shared components that are not shadcn: `masthead.tsx` (the top strip of every page), `brand.ts` (shared brand copy), `text-link.tsx`, `theme-toggle.tsx`.
+- `src/components` — shared components that are not shadcn: `masthead.tsx` (the top strip of every page), `brand.ts` (shared brand copy), `text-link.tsx`, `theme-toggle.tsx`, and `motion/` (see Motion below).
 - `src/components/ui` — shadcn components. Add more with `bunx --bun shadcn@latest add <name>`.
 
 ## Conventions
@@ -63,6 +63,13 @@ The brand as a printed magazine: warm paper, ink text, one terracotta voice. Dec
 - **Type**: `font-display` (Instrument Serif, regular or italic, never bold) for page titles and card titles, with at most one italic `text-primary` word in a hero. Body text is Google Sans Flex. Labels and buttons are Google Sans Code through the `label-mono` utility (defined in `globals.css`).
 - **Shape**: square corners; structure is drawn with rules (`border-foreground` for major edges, `border-border` between rows), not rings or shadows. Fields are underlined, cards have a 1px `foreground` outline. Button sizes: `xs` 24, `sm` 32, default 40, `lg` 44 px; use `size="lg"` for a form's main action. There is no `large` input variant.
 - **Layout**: every page opens with `Masthead` (pages pass their actions as children). `HandwritingText` is the single decorative accent, at most one per screen, on the terracotta panel.
+- **Motion**: quiet, ease-out, no spring or bounce, built on the `motion` package. Spec: `docs/specs/motion.md` (local-only).
+  - `src/components/motion/tokens.ts` is the only place for durations, easing, travel, stagger and press scale; do not hard-code those numbers elsewhere.
+  - Pages and layouts stay Server Components: wrap content in the small client wrappers `Reveal` (mount or `inView`, `slideOnly` for content that must be visible from first paint), `Stagger`/`StaggerItem`, and `PresenceMessage` (an appearing error or notice). Keep the live region (`role="alert"` or `"status"`) outside `PresenceMessage` so it stays mounted. Use the `m` components, never `motion.*`: `LazyMotion` is `strict` in the root `MotionProvider`.
+  - Every wrapper element carries `data-arrive`, and `globals.css` forces its final state under `prefers-reduced-motion`. `motion` itself only applies transforms instantly in that mode, so keep the attribute and the rule in step; `Button` drops its press gesture with `useReducedMotion`.
+  - Opacity is only animated during an arrival and ends at 1; never put opacity on resting text. No hover scale, no shadow, no motion on `Masthead` or `HandwritingText`, no page transitions.
+  - `src/components/ui/button.tsx` is a locally edited shadcn component (press feedback, narrowed `transition`); `shadcn add button --overwrite` would drop the edits.
+  - Tests: Playwright runs with reduced motion on, so scans read final-state content. `e2e/motion.spec.ts` is the one place that lets animations play. Its checks measure the opacity compounded up the ancestors, not the element's own, and each new wrapper needs a case there. Prove a new guard bites by forcing the end state to 0.5 for a run.
 
 ## Next steps (not built yet)
 

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Google_Sans_Code, Google_Sans_Flex, Instrument_Serif } from "next/font/google";
 
 import { ThemeProvider } from "next-themes";
+
+import { MotionProvider } from "@/components/motion/motion-provider";
 import "./globals.css";
 
 const sans = Google_Sans_Flex({
@@ -35,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          {children}
+          <MotionProvider>{children}</MotionProvider>
         </ThemeProvider>
       </body>
     </html>
