@@ -54,7 +54,7 @@ test("a wrong password shows a generic error and leaves the form usable", async 
 });
 
 for (const theme of ["light", "dark"]) {
-  for (const path of ["/sign-in", "/sign-up"]) {
+  for (const path of ["/sign-in", "/sign-up", "/forgot-password", "/verify-email"]) {
     test(`${path} has no serious accessibility violations in the ${theme} theme`, async ({
       page,
     }) => {

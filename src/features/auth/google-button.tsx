@@ -1,12 +1,11 @@
 "use client";
 
-import { cn } from "cn";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
 import { signInWithGoogle } from "./client";
-import { FormError, LARGE_CONTROL } from "./form-field";
+import { FormError } from "./form-field";
 
 function GoogleMark() {
   return (
@@ -58,10 +57,10 @@ export function GoogleButton() {
       <Button
         type="button"
         variant="outline"
+        size="lg"
         onClick={onClick}
         disabled={pending}
         aria-busy={pending}
-        className={cn(LARGE_CONTROL, "gap-2")}
       >
         <GoogleMark />
         {pending ? "Redirecting to Google…" : "Continue with Google"}

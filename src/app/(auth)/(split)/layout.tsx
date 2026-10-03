@@ -26,7 +26,7 @@ export default function SplitAuthLayout({ children }: { children: React.ReactNod
           <p className="text-4xl leading-tight font-semibold text-balance">
             A calm place to start your next full-stack project.
           </p>
-          <p className="mt-4 text-sm text-primary-foreground/70">
+          <p className="mt-4 text-sm text-primary-foreground">
             Next.js, MongoDB and authentication, already wired together.
           </p>
         </div>

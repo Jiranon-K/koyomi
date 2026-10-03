@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "cn";
 import { useRouter } from "next/navigation";
 
 import { TextLink } from "@/components/text-link";
@@ -9,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
 import { signIn } from "./client";
-import { FormError, FormField, LARGE_CONTROL } from "./form-field";
+import { FormError, FormField } from "./form-field";
 import { PasswordField } from "./password-field";
 import { DASHBOARD_PATH, FORGOT_PASSWORD_PATH, VERIFY_EMAIL_PATH } from "./paths";
 import { signInSchema } from "./schema";
@@ -36,7 +35,6 @@ export function SignInForm() {
         type="email"
         autoComplete="email"
         required
-        large
         error={errors.email}
       />
       <PasswordField
@@ -44,7 +42,6 @@ export function SignInForm() {
         label="Password"
         autoComplete="current-password"
         required
-        large
         error={errors.password}
       />
       <div className="flex items-center justify-between text-sm">
@@ -55,12 +52,7 @@ export function SignInForm() {
         <TextLink href={FORGOT_PASSWORD_PATH}>Forgot password?</TextLink>
       </div>
       <FormError message={message} />
-      <Button
-        type="submit"
-        disabled={pending}
-        aria-busy={pending}
-        className={cn(LARGE_CONTROL, "text-base")}
-      >
+      <Button type="submit" disabled={pending} aria-busy={pending} size="lg">
         {pending ? "Signing in…" : "Sign in"}
       </Button>
     </form>
