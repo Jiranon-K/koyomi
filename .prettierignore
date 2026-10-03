@@ -7,3 +7,6 @@ next-env.d.ts
 public
 *.md
 src/components/ui/handwriting-text.tsx
+.e2e
+test-results
+playwright-report

@@ -11,6 +11,7 @@
     "format:check": "prettier --check .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
+    "e2e": "playwright test",
     "verify": "bash ./verify.sh",
     "audit": "bun audit",
     "prepare": "git config core.hooksPath .githooks"
@@ -33,6 +34,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -9,11 +9,12 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `bun dev` — dev server. Needs MongoDB at `MONGODB_URI` (copy `.env.example` to `.env.local`).
 - `./verify.sh` (`bun run verify`) — the baseline gate: format check, lint, typecheck, tests, build. Run it before claiming work is done.
 - `bun run test` — Vitest. DB tests use `mongodb-memory-server`, so no local mongod is needed.
+- `bun run e2e` — Playwright (Chromium) against a production build on port 3100 with an in-memory MongoDB; no local mongod or `.env.local` needed. First time on a machine: `bunx playwright install --only-shell chromium`. Tests live in `e2e/`.
 - `bun run audit` — dependency vulnerability scan (needs network, so it is not part of `verify.sh`). Run it before adding or upgrading a dependency.
 
 ## Gates (mechanical, do not bypass)
 
-- Git hooks live in `.githooks/` and are enabled by `bun install` (`prepare` sets `core.hooksPath`). `pre-commit` blocks env files and secret-shaped strings, then checks formatting, lints the staged files and typechecks. `pre-push` runs `./verify.sh`.
+- Git hooks live in `.githooks/` and are enabled by `bun install` (`prepare` sets `core.hooksPath`). `pre-commit` blocks env files and secret-shaped strings, then checks formatting, lints the staged files and typechecks. `pre-push` runs `./verify.sh`, then the end-to-end tests.
 - Never use `--no-verify`, `eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `any`, or `!` to get past a gate. Fix the code. A genuine exception goes in `eslint.config.mjs` as a per-file override with the reason recorded here.
 - Formatting is Prettier (width 100, Tailwind classes sorted). Run `bun run format` before committing; do not hand-format. Markdown and `handwriting-text.tsx` are ignored in `.prettierignore`.
 - Lint fails on any warning. Typed rules are on: every promise is awaited, returned or explicitly `void`ed.
@@ -37,6 +38,7 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 - `src/features/auth` — Better Auth. `auth.ts` builds the instance lazily (`getAuth()`); `session.ts` has the guards. Auth collections belong to the library, not Mongoose. Forms call the React client in `client.ts`; route paths live in `paths.ts`. Google sign-in is registered only when both `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set.
 - `src/app/(auth)` — two route groups with their own layouts: `(split)` (sign-in, sign-up: brand panel beside the form) and `(card)` (verify-email, forgot-password, reset-password: centred card). `src/app/dashboard` is the protected area. `src/proxy.ts` only checks that a session cookie exists.
 - `src/lib/db/mongoose.ts` — cached connection (`connectDb`). Call it inside services, not at module top level.
+- `e2e/` — `server.mjs` builds, starts MongoDB in memory and runs `next start`, writing the server log to `.e2e/server.log`. `outbox.ts` reads emailed links from that log, so it depends on the `[email]` lines printed by the stub in `src/features/auth/email.ts`; keep a log transport for tests when a real provider lands. Sign-in is rate-limited to 5 per minute per IP, so keep sign-in attempts per run under that.
 - `src/lib/env.ts` — the only place that reads `process.env` (lint-enforced; tests are exempt). `dbEnv()`, `authEnv()` and `googleEnv()` validate with Zod on each call and throw an error that names the variable, never its value. Add a new variable to its schema here and to `.env.example`.
 - `src/components/ui` — shadcn components. Add more with `bunx --bun shadcn@latest add <name>`.
 
