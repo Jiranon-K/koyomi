@@ -51,10 +51,10 @@ function scaleOf(locator: Locator) {
 }
 
 const dashboardText = (page: Page, email: string) => [
-  page.getByRole("heading", { level: 1, name: "Dashboard" }),
-  page.getByText("You are signed in."),
+  page.getByRole("heading", { level: 1, name: "My week" }),
   page.getByText(email),
-  page.locator("dd", { hasText: /^User$/ }),
+  page.getByText("You are not following any shows yet."),
+  page.getByRole("link", { name: "Browse the schedule" }),
 ];
 
 const AUTH_PAGES = [
@@ -77,7 +77,7 @@ test.describe("with motion", () => {
     });
   }
 
-  test("the dashboard title and rows arrive at full opacity", async ({ page }) => {
+  test("the dashboard title and empty state arrive at full opacity", async ({ page }) => {
     const email = await createVerifiedAccount(page, "e2e-motion");
 
     for (const text of dashboardText(page, email)) {
@@ -155,7 +155,7 @@ test.describe("with motion in a tall window", () => {
 test.describe("with reduced motion", () => {
   test.use({ reducedMotion: "reduce" });
 
-  test("the dashboard rows are at full opacity at once", async ({ page }) => {
+  test("the dashboard title and empty state are at full opacity at once", async ({ page }) => {
     const email = await createVerifiedAccount(page, "e2e-motion");
 
     for (const text of dashboardText(page, email)) {

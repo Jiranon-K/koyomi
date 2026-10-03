@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 
 import { TextLink } from "@/components/text-link";
-import { SIGN_UP_PATH } from "@/features/auth/paths";
+import { RETURN_PARAM, safeReturnPath, SIGN_UP_PATH } from "@/features/auth/paths";
 import { redirectSignedIn } from "@/features/auth/session";
 import { SignInForm } from "@/features/auth/sign-in-form";
 
 export const metadata: Metadata = { title: "Sign in" };
 
 export default async function SignInPage({ searchParams }: PageProps<"/sign-in">) {
-  await redirectSignedIn();
-  const { reset } = await searchParams;
+  const { reset, [RETURN_PARAM]: next } = await searchParams;
+  const returnTo = safeReturnPath(next);
+  await redirectSignedIn(returnTo);
 
   return (
     <>
@@ -23,7 +24,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
             Your password was updated. Sign in with the new one.
           </p>
         ) : null}
-        <SignInForm />
+        <SignInForm returnTo={returnTo} />
       </div>
     </>
   );

@@ -13,6 +13,11 @@ const getSession = cache(async () => {
   return auth.api.getSession({ headers: requestHeaders });
 });
 
+/** The session of the current request, or null. For public pages that adapt to a signed-in visitor. */
+export async function currentSession() {
+  return getSession();
+}
+
 export async function requireSession() {
   const session = await getSession();
   if (!session) redirect(SIGN_IN_PATH);
@@ -25,7 +30,7 @@ export async function requireAdmin() {
   return session;
 }
 
-export async function redirectSignedIn(): Promise<void> {
+export async function redirectSignedIn(to: string = DASHBOARD_PATH): Promise<void> {
   const session = await getSession();
-  if (session) redirect(DASHBOARD_PATH);
+  if (session) redirect(to);
 }
