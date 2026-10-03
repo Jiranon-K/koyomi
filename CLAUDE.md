@@ -7,14 +7,15 @@ Next.js (App Router, TypeScript) template with shadcn/ui, Tailwind v4 and MongoD
 ## Commands (bun)
 
 - `bun dev` — dev server. Needs MongoDB at `MONGODB_URI` (copy `.env.example` to `.env.local`).
-- `./verify.sh` (`bun run verify`) — the baseline gate: lint, typecheck, tests, build. Run it before claiming work is done.
+- `./verify.sh` (`bun run verify`) — the baseline gate: format check, lint, typecheck, tests, build. Run it before claiming work is done.
 - `bun run test` — Vitest. DB tests use `mongodb-memory-server`, so no local mongod is needed.
 - `bun run audit` — dependency vulnerability scan (needs network, so it is not part of `verify.sh`). Run it before adding or upgrading a dependency.
 
 ## Gates (mechanical, do not bypass)
 
-- Git hooks live in `.githooks/` and are enabled by `bun install` (`prepare` sets `core.hooksPath`). `pre-commit` blocks env files and secret-shaped strings, then lints the staged files and typechecks. `pre-push` runs `./verify.sh`.
+- Git hooks live in `.githooks/` and are enabled by `bun install` (`prepare` sets `core.hooksPath`). `pre-commit` blocks env files and secret-shaped strings, then checks formatting, lints the staged files and typechecks. `pre-push` runs `./verify.sh`.
 - Never use `--no-verify`, `eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `any`, or `!` to get past a gate. Fix the code. A genuine exception goes in `eslint.config.mjs` as a per-file override with the reason recorded here.
+- Formatting is Prettier (width 100, Tailwind classes sorted). Run `bun run format` before committing; do not hand-format. Markdown and `handwriting-text.tsx` are ignored in `.prettierignore`.
 - Lint fails on any warning. Typed rules are on: every promise is awaited, returned or explicitly `void`ed.
 - `noUncheckedIndexedAccess` is on: `array[0]` is `T | undefined`. Handle the missing case; do not assert it away.
 - `src/components` and `src/lib` must not import from `src/features` or `src/app` (lint-enforced). Features may import shared code, never the reverse.
