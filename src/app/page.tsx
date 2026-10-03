@@ -73,6 +73,8 @@ export default function Home() {
               words={["tonight.", "on LINE.", "at 09:00."]}
               fontUrl="/fonts/handwriting.ttf"
               height="5rem"
+              accent="LINE"
+              accentClassName="text-line"
             />
             <Reveal inView>
               <p className="mt-6 max-w-xs text-lg">

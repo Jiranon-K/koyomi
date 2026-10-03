@@ -59,11 +59,22 @@ export interface HandwritingTextProps {
   /** CSS height of the rendered word; width follows the glyphs. */
   height?: string;
   className?: string;
+  /**
+   * Local addition (not in the upstream component): a substring of the word whose letters
+   * take `accentClassName` (a text colour class; the paths use `currentColor`). Ignored when
+   * the font does not map one glyph to each character.
+   */
+  accent?: string;
+  accentClassName?: string;
 }
 
 type Geometry = {
   full: string;
   contours: string[];
+  /** Per contour: whether it belongs to an accented letter. Empty when there is no accent. */
+  accented: boolean[];
+  /** The fill, cut into runs of whole letters that share a colour. Empty when there is no accent. */
+  fills: { d: string; accented: boolean }[];
   x: number;
   y: number;
   w: number;
@@ -127,6 +138,8 @@ export function HandwritingText({
   fill = true,
   height = "1.15em",
   className,
+  accent,
+  accentClassName,
 }: HandwritingTextProps) {
   const cycle = Boolean(words && words.length > 0);
   const [index, setIndex] = useState(0);
@@ -158,10 +171,40 @@ export function HandwritingText({
     const box = path.getBoundingBox();
     const pad = EM * 0.12; // room for the stroke and any descenders
     const full = path.toPathData(2);
+    // Split on the moveto that opens each contour, keeping the M with its segment.
+    const split = (d: string): string[] =>
+      d.split(/(?=M)/).filter((part: string) => part.trim().length > 1);
+    const contours = split(full);
+
+    // Accent: one path per glyph tells which contours and which part of the fill belong to
+    // the accented letters. A letter's counters stay in the same run, so holes stay holes.
+    const accented: boolean[] = [];
+    const fills: { d: string; accented: boolean }[] = [];
+    const from = accent ? current.indexOf(accent) : -1;
+    if (accent && from >= 0) {
+      const glyphs: any[] = font.getPaths(current, 0, EM, EM);
+      if (glyphs.length === current.length) {
+        glyphs.forEach((glyph, i) => {
+          const d: string = glyph.toPathData(2);
+          const on = i >= from && i < from + accent.length;
+          split(d).forEach(() => accented.push(on));
+          const last = fills[fills.length - 1];
+          if (last && last.accented === on) last.d += d;
+          else fills.push({ d, accented: on });
+        });
+      }
+      // The per-glyph paths must describe the same contours as the whole word.
+      if (accented.length !== contours.length) {
+        accented.length = 0;
+        fills.length = 0;
+      }
+    }
+
     setGeom({
       full,
-      // Split on the moveto that opens each contour, keeping the M with its segment.
-      contours: full.split(/(?=M)/).filter((d: string) => d.trim().length > 1),
+      contours,
+      accented,
+      fills,
       x: box.x1 - pad,
       y: box.y1 - pad,
       w: box.x2 - box.x1 + pad * 2,
@@ -169,7 +212,7 @@ export function HandwritingText({
     });
     setDrawn(false);
     setLengths([]);
-  }, [font, current]);
+  }, [font, current, accent]);
 
   useEffect(() => {
     if (!geom) return undefined;
@@ -206,19 +249,24 @@ export function HandwritingText({
         overflow: "visible",
       }}
     >
-      {fill && (
-        <path
-          d={geom.full}
-          fill="currentColor"
-          stroke="none"
-          style={{
-            opacity: drawn ? 1 : 0,
-            transition: drawn
-              ? `opacity 0.45s ease-out ${(delay + duration * 0.72).toFixed(3)}s`
-              : "none",
-          }}
-        />
-      )}
+      {fill &&
+        (geom.fills.length > 0 ? geom.fills : [{ d: geom.full, accented: false }]).map(
+          (run, i) => (
+            <path
+              key={`fill-${i}`}
+              d={run.d}
+              fill="currentColor"
+              stroke="none"
+              className={run.accented ? accentClassName : undefined}
+              style={{
+                opacity: drawn ? 1 : 0,
+                transition: drawn
+                  ? `opacity 0.45s ease-out ${(delay + duration * 0.72).toFixed(3)}s`
+                  : "none",
+              }}
+            />
+          ),
+        )}
       {geom.contours.map((d, i) => {
         const length = lengths[i] || 0;
         // Contours overlap slightly so the stroke reads as one continuous movement
@@ -232,6 +280,7 @@ export function HandwritingText({
             d={d}
             fill="none"
             stroke="currentColor"
+            className={geom.accented[i] ? accentClassName : undefined}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"
