@@ -14,7 +14,7 @@ export default async function SignUpPage() {
 
   return (
     <>
-      <h1 className="text-3xl font-semibold">Create your account</h1>
+      <h1 className="font-display text-5xl leading-none">Create your account</h1>
       <p className="mt-2 text-muted-foreground">
         Already have an account? <TextLink href={SIGN_IN_PATH}>Sign in</TextLink>
       </p>
