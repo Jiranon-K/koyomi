@@ -44,6 +44,12 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
 
   await page.getByRole("button", { name: `Follow ${lantern}` }).click();
   await expect(page.getByRole("button", { name: `Unfollow ${lantern}` })).toBeVisible();
+  await expect(
+    page.getByRole("listitem").filter({ hasText: lantern }).getByText("Following"),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("listitem").filter({ hasText: "Clockwork Orchard" }).getByText("Following"),
+  ).toHaveCount(0);
   await followBehindTheServer(email, "harbor-of-paper-cranes");
 
   await page.getByRole("link", { name: "My week" }).click();

@@ -10,10 +10,15 @@ import { DASHBOARD_PATH, SIGN_IN_PATH, signInPathReturningTo } from "@/features/
 import { currentSession } from "@/features/auth/session";
 import { FollowButton } from "@/features/follows/follow-button";
 import { followedRoutes } from "@/features/follows/service";
-import { formatDateTime } from "@/features/schedule/day-window";
+import {
+  dayWindowOf,
+  formatDateTime,
+  formatDayDate,
+  formatWeekday,
+} from "@/features/schedule/day-window";
 import { SCHEDULE_PATH } from "@/features/schedule/paths";
+import { PosterWall } from "@/features/schedule/poster-wall";
 import { cachedWeekSchedule } from "@/features/schedule/sync";
-import { WeekList } from "@/features/schedule/week-list";
 
 export const metadata: Metadata = { title: "Schedule" };
 
@@ -25,6 +30,7 @@ export default async function SchedulePage() {
     session ? followedRoutes(session.user.id) : [],
   ]);
   const follows = new Set(followed);
+  const today = dayWindowOf(now).day;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -39,10 +45,15 @@ export default async function SchedulePage() {
         <ThemeToggle />
       </Masthead>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-16 sm:px-10">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-16 sm:px-10">
         <Reveal>
-          <h1 className="font-display text-5xl leading-none">This week</h1>
-          <p className="mt-2 max-w-xl text-muted-foreground">
+          <p className="label-mono text-muted-foreground">
+            {formatWeekday(today)} · {formatDayDate(today)} · Thai time
+          </p>
+          <h1 className="mt-4 font-display text-6xl leading-none sm:text-7xl">
+            On air this <em className="text-primary">week</em>
+          </h1>
+          <p className="mt-4 max-w-xl text-muted-foreground">
             Japanese broadcast times, shown in Thai time. A day runs from 05:00 to 05:00, so a
             late-night episode stays with the evening it belongs to.
           </p>
@@ -50,9 +61,10 @@ export default async function SchedulePage() {
 
         <div className="mt-12">
           {lastSyncedAt ? (
-            <WeekList
+            <PosterWall
               days={days}
-              now={now}
+              today={today}
+              followed={follows}
               action={(entry) =>
                 session ? (
                   <FollowButton
@@ -81,7 +93,7 @@ export default async function SchedulePage() {
 
         <footer className="mt-12 border-t border-foreground pt-4 text-sm text-muted-foreground">
           <p>
-            Schedule data from{" "}
+            Schedule data and covers from{" "}
             <TextLink href="https://animeschedule.net" target="_blank" rel="noopener noreferrer">
               AnimeSchedule.net
             </TextLink>

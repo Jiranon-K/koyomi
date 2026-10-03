@@ -147,6 +147,16 @@ export function formatWeekday(day: DayWindow["day"]): string {
   return weekday.format(calendarDayMs(day));
 }
 
+const weekdayShort = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short" });
+
+export function formatWeekdayShort(day: DayWindow["day"]): string {
+  return weekdayShort.format(calendarDayMs(day));
+}
+
+export function dayOfMonth(day: DayWindow["day"]): number {
+  return new Date(calendarDayMs(day)).getUTCDate();
+}
+
 export function formatDayDate(day: DayWindow["day"]): string {
   return dayDate.format(calendarDayMs(day));
 }

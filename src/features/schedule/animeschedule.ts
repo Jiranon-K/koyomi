@@ -1,5 +1,6 @@
 import * as z from "zod";
 
+import { COVER_HOST } from "./cover-host";
 import {
   ScheduleSourceError,
   SHOW_STATUSES,
@@ -10,7 +11,7 @@ import {
 } from "./source";
 
 const BASE_URL = "https://animeschedule.net/api/v3";
-const COVER_BASE_URL = "https://img.animeschedule.net/production/assets/public/img/";
+const COVER_BASE_URL = `${COVER_HOST.protocol}://${COVER_HOST.hostname}${COVER_HOST.pathname}`;
 const COVER_PATH = /^[a-z0-9_-]+(\/[a-z0-9_-][a-z0-9_.-]*)*\.(avif|jpe?g|png|webp)$/i;
 const REQUEST_TIMEOUT_MS = 15_000;
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;

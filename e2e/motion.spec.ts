@@ -88,11 +88,13 @@ test.describe("with motion", () => {
     await expectArrived(page.getByText("Users with reminders switched on."));
   });
 
-  test("the schedule title, day blocks and rows arrive at full opacity", async ({ page }) => {
+  test("the schedule title arrives at full opacity and the wall under it is not held back", async ({
+    page,
+  }) => {
     await syncSchedule(page.request, "base");
     await page.goto("/schedule");
 
-    await expectArrived(page.getByRole("heading", { level: 1, name: "This week" }));
+    await expectArrived(page.getByRole("heading", { level: 1, name: "On air this week" }));
     await expectArrived(page.getByText("Lantern Street Diaries"));
     await expectArrived(page.getByRole("heading", { level: 2 }).last());
   });

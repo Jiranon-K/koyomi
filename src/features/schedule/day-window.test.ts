@@ -5,8 +5,10 @@ import {
   dayWindowOf,
   formatAirTime,
   formatDateTime,
+  dayOfMonth,
   formatDayDate,
   formatWeekday,
+  formatWeekdayShort,
   groupByDay,
   weekWindows,
 } from "./day-window";
@@ -105,6 +107,12 @@ describe("formatting", () => {
 
     expect(formatWeekday(day)).toBe("Saturday");
     expect(formatDayDate(day)).toBe("3 Oct");
+  });
+
+  it("gives a schedule day's short weekday and its day of the month", () => {
+    expect(formatWeekdayShort("2026-10-03")).toBe("Sat");
+    expect(dayOfMonth("2026-10-03")).toBe(3);
+    expect(dayOfMonth("2026-10-31")).toBe(31);
   });
 });
 
