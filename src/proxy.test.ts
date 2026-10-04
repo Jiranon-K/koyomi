@@ -3,14 +3,11 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { isGuarded } from "@/features/auth/guard-check";
+
 import { config } from "./proxy";
 
 const APP_DIR = join(import.meta.dirname, "app");
-
-function isGuarded(source: string): boolean {
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
-  return /\bawait require(Session|Admin)\(/.test(code);
-}
 
 function routeOf(pageFile: string): string {
   const segments = pageFile

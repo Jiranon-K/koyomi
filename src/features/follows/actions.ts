@@ -15,21 +15,23 @@ function refresh(): void {
 }
 
 async function withShowRoute(
+  userId: string,
   formData: FormData,
   run: (userId: string, showRoute: string) => Promise<unknown>,
 ): Promise<void> {
-  const { user } = await requireSession();
   const parsed = followSchema.safeParse({ showRoute: formData.get("showRoute") });
   if (!parsed.success) return;
 
-  await run(user.id, parsed.data.showRoute);
+  await run(userId, parsed.data.showRoute);
   refresh();
 }
 
 export async function followAction(formData: FormData): Promise<void> {
-  await withShowRoute(formData, followShow);
+  const { user } = await requireSession();
+  await withShowRoute(user.id, formData, followShow);
 }
 
 export async function unfollowAction(formData: FormData): Promise<void> {
-  await withShowRoute(formData, unfollowShow);
+  const { user } = await requireSession();
+  await withShowRoute(user.id, formData, unfollowShow);
 }
