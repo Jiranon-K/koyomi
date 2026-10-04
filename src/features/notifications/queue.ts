@@ -22,6 +22,14 @@ export function jobUrl(appUrl: string, job: JobName): string {
   return `${appUrl}${jobPath(job)}`;
 }
 
+// Why QStash could not call this origin, or undefined when it can. Both scripts that talk to a real
+// QStash account check it first: a job published to an address QStash cannot reach only fails later.
+export function publicOriginProblem(origin: string): string | undefined {
+  const { hostname, protocol } = new URL(origin);
+  if (protocol === "https:" && !["localhost", "127.0.0.1", "[::1]"].includes(hostname)) return;
+  return `BETTER_AUTH_URL is ${origin}: QStash cannot reach it. Use a public HTTPS origin.`;
+}
+
 export const JOB_RETRIES = 3;
 
 type QStashOptions = {

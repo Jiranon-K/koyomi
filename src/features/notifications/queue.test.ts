@@ -1,6 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { createInProcessQueue, createQStashQueue, jobPath, jobUrl, JOB_NAMES } from "./queue";
+import {
+  createInProcessQueue,
+  createQStashQueue,
+  jobPath,
+  jobUrl,
+  JOB_NAMES,
+  publicOriginProblem,
+} from "./queue";
 
 const TOKEN = "test-qstash-token";
 const APP = "https://koyomi.example";
@@ -30,6 +37,22 @@ describe("job addresses", () => {
       "/api/jobs/digest-send",
     ]);
     expect(jobUrl(APP, "digest-send")).toBe("https://koyomi.example/api/jobs/digest-send");
+  });
+});
+
+describe("publicOriginProblem", () => {
+  it("accepts an HTTPS origin on a public host", () => {
+    expect(publicOriginProblem("https://koyomi.example")).toBeUndefined();
+    expect(publicOriginProblem("https://odd-words.trycloudflare.com")).toBeUndefined();
+  });
+
+  it.each([
+    ["plain HTTP", "http://koyomi.example"],
+    ["localhost", "https://localhost"],
+    ["the loopback address", "https://127.0.0.1"],
+    ["the IPv6 loopback address", "https://[::1]"],
+  ])("explains why %s cannot be reached by QStash", (_name, origin) => {
+    expect(publicOriginProblem(origin)).toContain(origin);
   });
 });
 
