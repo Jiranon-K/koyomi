@@ -1,6 +1,6 @@
 import { Client } from "@upstash/qstash";
 
-import { jobUrl } from "../src/features/notifications/queue";
+import { jobUrl, publicOriginProblem } from "../src/features/notifications/queue";
 import { JOB_SCHEDULES } from "../src/features/notifications/schedules";
 import { appUrl, qstashEnv } from "../src/lib/env";
 
@@ -8,12 +8,10 @@ const print = (line: string) => process.stdout.write(`${line}\n`);
 
 const dryRun = process.argv.includes("--dry-run");
 const origin = appUrl();
-const { hostname, protocol } = new URL(origin);
+const problem = publicOriginProblem(origin);
 
-if (protocol !== "https:" || ["localhost", "127.0.0.1", "[::1]"].includes(hostname)) {
-  print(
-    `BETTER_AUTH_URL is ${origin}: QStash cannot reach it. Run this with the deployed HTTPS origin.`,
-  );
+if (problem) {
+  print(problem);
   if (!dryRun) process.exit(1);
 }
 
