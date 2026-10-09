@@ -34,8 +34,6 @@ type Geometry = {
   h: number;
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 let libPromise: Promise<any> | null = null;
 
 function loadOpentype(): Promise<any> {

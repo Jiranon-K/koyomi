@@ -148,7 +148,7 @@ export async function sendDigest(
       text: digestText(episodes, deps.dashboardUrl),
       retryKey: digestRetryKey(target),
     },
-    now,
+    window.start,
   );
 
   if (outcome.kind === "sent") {

@@ -141,6 +141,7 @@ describe("syncSchedule", () => {
       shows: 0,
       episodes: 0,
       error: "AnimeSchedule rate limit reached (429).",
+      errorKind: "rate-limited",
     });
     expect(await Episode.countDocuments()).toBe(1);
     expect(await SyncRun.countDocuments()).toBe(2);

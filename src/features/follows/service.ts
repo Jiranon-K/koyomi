@@ -84,7 +84,7 @@ export async function myWeek(userId: string, now: Date = new Date()): Promise<My
     Show.find({ route: { $in: routes } })
       .select({ route: 1, title: 1, coverUrl: 1, status: 1, lastSeenAt: 1 })
       .lean(),
-    Episode.distinct("showRoute", { showRoute: { $in: routes }, airAt: { $gte: start } }),
+    Episode.distinct("showRoute", { showRoute: { $in: routes }, airAt: { $gte: now } }),
     lastSyncRun("success"),
   ]);
 

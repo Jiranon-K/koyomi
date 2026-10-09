@@ -104,11 +104,14 @@ export function groupByDay<Item>(
   airAt: (item: Item) => Date,
   windows: readonly DayWindow[],
 ): { window: DayWindow; items: Item[] }[] {
+  const timed = items
+    .map((item) => ({ item, at: airAt(item).getTime() }))
+    .sort((a, b) => a.at - b.at);
   return windows.map((window) => ({
     window,
-    items: items
-      .filter((item) => airAt(item) >= window.start && airAt(item) < window.end)
-      .sort((a, b) => airAt(a).getTime() - airAt(b).getTime()),
+    items: timed
+      .filter(({ at }) => at >= window.start.getTime() && at < window.end.getTime())
+      .map(({ item }) => item),
   }));
 }
 

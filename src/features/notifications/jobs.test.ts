@@ -100,6 +100,17 @@ describe("the sync job", () => {
     expect(result).toMatchObject({ status: "ran", retry: true, result: { outcome: "failure" } });
     expect(await lastSyncRun()).toMatchObject({ outcome: "failure" });
   });
+
+  it("asks for no retry when the source rejects the token", async () => {
+    process.env.USE_FAKES = "false";
+    process.env.ANIMESCHEDULE_TOKEN = "test-token";
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 401 }));
+
+    const result = await runJob("sync-schedule", {});
+
+    expect(result).toMatchObject({ status: "ran", retry: false, result: { outcome: "failure" } });
+    expect(await lastSyncRun()).toMatchObject({ errorKind: "unauthorized" });
+  });
 });
 
 describe("the digest jobs with the fakes on", () => {

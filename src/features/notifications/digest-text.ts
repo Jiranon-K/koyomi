@@ -1,5 +1,5 @@
 import { formatAirTime } from "@/features/schedule/day-window";
-import { delayNote } from "@/features/schedule/episode-label";
+import { delayNote, episodeLabel } from "@/features/schedule/episode-label";
 import type { ScheduleEntry } from "@/features/schedule/service";
 
 export const AIRING_TODAY_HEADING = "Airing today (Thai time):";
@@ -23,10 +23,8 @@ export function fitted(lines: readonly string[], footer: readonly string[] = [])
   return [...kept, ...tail].join("\n");
 }
 
-function episodeLabel(entry: ScheduleEntry): string {
-  return entry.firstEpisodeNumber === null
-    ? `episode ${entry.episodeNumber}`
-    : `episodes ${entry.firstEpisodeNumber}-${entry.episodeNumber}`;
+function plainEpisodeLabel(entry: ScheduleEntry): string {
+  return episodeLabel(entry).toLowerCase().replace("–", "-");
 }
 
 function delayedMark(entry: ScheduleEntry): string {
@@ -37,7 +35,7 @@ function delayedMark(entry: ScheduleEntry): string {
 
 export function episodeLine(entry: ScheduleEntry): string {
   const time = formatAirTime(new Date(entry.airAt));
-  return `${time} ${entry.title}, ${episodeLabel(entry)}${delayedMark(entry)}`;
+  return `${time} ${entry.title}, ${plainEpisodeLabel(entry)}${delayedMark(entry)}`;
 }
 
 export function digestText(entries: readonly ScheduleEntry[], dashboardUrl: string): string {

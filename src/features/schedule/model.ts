@@ -2,7 +2,12 @@ import { Schema } from "mongoose";
 
 import { defineModel } from "@/lib/db/mongoose";
 
-import { SHOW_STATUSES, type ScheduleSourceName, type ShowStatus } from "./source";
+import {
+  SHOW_STATUSES,
+  type ScheduleSourceFailure,
+  type ScheduleSourceName,
+  type ShowStatus,
+} from "./source";
 
 const EPISODE_RETENTION_SECONDS = 30 * 24 * 60 * 60;
 
@@ -37,6 +42,7 @@ export type SyncRunDoc = {
   episodes: number;
   skipped: number;
   error: string | null;
+  errorKind?: ScheduleSourceFailure | null;
 };
 
 const showSchema = new Schema<ShowDoc>({
@@ -70,6 +76,7 @@ const syncRunSchema = new Schema<SyncRunDoc>({
   episodes: { type: Number, required: true },
   skipped: { type: Number, required: true },
   error: { type: String, default: null },
+  errorKind: { type: String, default: null },
 });
 syncRunSchema.index({ startedAt: -1 });
 

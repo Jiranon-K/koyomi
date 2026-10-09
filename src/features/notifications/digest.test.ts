@@ -361,6 +361,24 @@ describe("sendDigest", () => {
     });
   });
 
+  it("counts a digest sent after midnight against the month of its day", async () => {
+    const monthEnd = new Date("2026-10-31T02:00:00Z");
+    const afterMidnight = new Date("2026-10-31T17:30:00Z");
+    await syncSchedule(createFakeSource(), monthEnd);
+    const ada = await subscriber("ada", [TODAY_SHOW]);
+    const { messenger } = recordingMessenger();
+
+    const outcome = await sendDigest(
+      { userId: ada, day: "2026-10-31" },
+      { messenger, dashboardUrl: DASHBOARD },
+      afterMidnight,
+    );
+
+    expect(outcome).toEqual({ kind: "sent" });
+    expect((await pushesThisMonth(monthEnd)).count).toBe(1);
+    expect((await pushesThisMonth(afterMidnight)).count).toBe(0);
+  });
+
   it("refuses without sending once the month's 290 pushes are used", async () => {
     const ada = await subscriber("ada", [TODAY_SHOW]);
     await PushQuota.create({
