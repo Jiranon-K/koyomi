@@ -14,7 +14,8 @@ An anime airing tracker with LINE reminders in Thai time (spec: `docs/specs/koyo
 
 ## Gates (mechanical, do not bypass)
 
-- Git hooks live in `.githooks/` and are enabled by `bun install` (`prepare` sets `core.hooksPath`). `pre-commit` blocks env files and secret-shaped strings, then checks formatting, lints the staged files and typechecks. `pre-push` runs `./verify.sh`, then the end-to-end tests.
+- Git hooks live in `.githooks/` and are enabled by `bun install` (`prepare` sets `core.hooksPath`). `pre-commit` blocks env files and secret-shaped strings, then checks formatting, lints the staged files and typechecks. `pre-commit` also refuses a commit on `main`. `commit-msg` checks the message format. `pre-push` refuses a push to `main` or from a badly named branch, then runs `./verify.sh` and the end-to-end tests.
+- Branch, commit and pull request names follow `CONTRIBUTING.md`: branches are `<type>/<topic>`, commit messages and pull request titles are Conventional Commits (`feat(schedule): add a month view`). The rules are in `scripts/git-conventions.ts`, which the hooks and the `conventions` check both call through `scripts/check-git-conventions.ts`; change a rule there, with its test, and nowhere else.
 - Never use `--no-verify`, `eslint-disable`, `@ts-ignore`, `@ts-expect-error`, `any`, or `!` to get past a gate. Fix the code. A genuine exception goes in `eslint.config.mjs` as a per-file override with the reason recorded here.
 - Formatting is Prettier (width 100, Tailwind classes sorted). Run `bun run format` before committing; do not hand-format. Markdown and `handwriting-text.tsx` are ignored in `.prettierignore`.
 - Lint fails on any warning. Typed rules are on: every promise is awaited, returned or explicitly `void`ed.
@@ -23,15 +24,16 @@ An anime airing tracker with LINE reminders in Thai time (spec: `docs/specs/koyo
 - `bunfig.toml` installs exact versions that are at least 3 days old. Do not lower the cooldown to get a fresh release.
 
 - CI (Continuous Integration) is `.github/workflows/ci.yml`: audit, `./verify.sh`, then the end-to-end tests, on every push to the default branch and every pull request. Actions are pinned to commit hashes; Dependabot (`.github/dependabot.yml`) proposes weekly grouped updates for the actions only: it cannot read this `bun.lock` (lockfile version 2). Package updates are manual: `bun outdated`, then `bun update <name>`, `bun run audit` and `./verify.sh`.
-- `main` on GitHub is protected: no force push, no deletion, and pull requests need the `verify` check. The owner can still push directly; the `pre-push` hook is the gate for that path.
+- `.github/workflows/pr.yml` runs `conventions` on every pull request (also when its title is edited): the branch name and the title.
+- `main` on GitHub is protected, for the owner too: no direct push, no force push, no deletion; a change needs a pull request with `verify` and `conventions` green. Squash is the only merge method, the pull request title becomes the commit, and the branch is deleted on merge. `git log --first-parent main` is the one-line-per-change history; the work before 2026-10-10 was regrouped that day into one merge per feature.
 
 ## Workflow (one ticket at a time)
 
 1. Idea → `/grilling` until the open questions are settled.
 2. Spec → `docs/specs/<feature>.md`.
 3. Tickets → `.scratch/<feature>/issues/NN-<slug>.md`, each a vertical slice with checkbox acceptance criteria.
-4. Implement one ticket test-first (`/tdd`): failing test, minimal code, refactor. Only one ticket is `in progress` at a time.
-5. `./verify.sh` green → record the command and result in the ticket → `/code-review` → commit. One ticket per commit; the message names the ticket and what was verified.
+4. Implement one ticket test-first (`/tdd`) on its own branch (`feat/<topic>`, never `main`): failing test, minimal code, refactor. Only one ticket is `in progress` at a time.
+5. `./verify.sh` green → record the command and result in the ticket → `/code-review` → commit. One ticket per pull request; the title names the ticket (`feat(admin): add the status page (koyomi 07)`) and the body, from `.github/pull_request_template.md`, says what was verified. Pushing the branch and opening or merging the pull request are the owner's call.
 6. UI tickets also need a recorded browser check before they are `done`.
 
 ## Layout
