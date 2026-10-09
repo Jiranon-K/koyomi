@@ -6,6 +6,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { E2E_SIGNING_KEYS } from "./signing-keys.mjs";
 
 const port = process.env.E2E_PORT ?? "3100";
+const dir = process.env.E2E_DIR ?? ".e2e";
 const next = "node_modules/next/dist/bin/next";
 
 if (!process.env.E2E_SKIP_BUILD) {
@@ -14,9 +15,9 @@ if (!process.env.E2E_SKIP_BUILD) {
 }
 
 const mongo = await MongoMemoryServer.create();
-mkdirSync(".e2e", { recursive: true });
-const log = createWriteStream(".e2e/server.log");
-writeFileSync(".e2e/mongo-uri", mongo.getUri("e2e"));
+mkdirSync(dir, { recursive: true });
+const log = createWriteStream(`${dir}/server.log`);
+writeFileSync(`${dir}/mongo-uri`, mongo.getUri("e2e"));
 
 const line = Object.fromEntries(
   [

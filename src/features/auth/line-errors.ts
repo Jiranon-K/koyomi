@@ -2,7 +2,7 @@ import type { DisconnectLineOutcome } from "./line-account";
 
 const SIGN_IN_ERRORS: Record<string, string> = {
   email_not_verified:
-    "LINE sign-in needs a verified email. We sent a link to the address LINE shared; open it, then continue with LINE again.",
+    "LINE sign-in needs a verified email. We sent a link to the address LINE shared; open it, then log in with LINE again.",
   account_not_linked:
     "An account with that email already exists. Sign in with your password, then connect LINE in Settings.",
   email_not_found:

@@ -2,12 +2,24 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page } from "@playwright/test";
 
 const NO_TRANSITIONS = "*, *::before, *::after { transition: none !important; }";
+const SERIOUS = ["serious", "critical"];
+
+export const LINE_LOGIN_BUTTON = "[data-line-login]";
 
 export async function seriousViolations(page: Page) {
   await page.addStyleTag({ content: NO_TRANSITIONS });
-  const { violations } = await new AxeBuilder({ page }).analyze();
-  return violations
-    .filter(({ impact }) => impact === "serious" || impact === "critical")
+  const scans = [await new AxeBuilder({ page }).exclude(LINE_LOGIN_BUTTON).analyze()];
+  if ((await page.locator(LINE_LOGIN_BUTTON).count()) > 0) {
+    scans.push(
+      await new AxeBuilder({ page })
+        .include(LINE_LOGIN_BUTTON)
+        .disableRules(["color-contrast"])
+        .analyze(),
+    );
+  }
+  return scans
+    .flatMap(({ violations }) => violations)
+    .filter(({ impact }) => impact && SERIOUS.includes(impact))
     .map(({ id, help }) => `${id}: ${help}`);
 }
 

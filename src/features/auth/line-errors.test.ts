@@ -11,6 +11,10 @@ describe("lineSignInErrorMessage", () => {
     expect(lineSignInErrorMessage("email_not_verified")).toMatch(/verified email/);
   });
 
+  it("names the button as LINE words it: log in with LINE", () => {
+    expect(lineSignInErrorMessage("email_not_verified")).toMatch(/log in with LINE again/);
+  });
+
   it("sends the owner of an existing account to their password and to Settings", () => {
     expect(lineSignInErrorMessage("account_not_linked")).toMatch(/password.*Settings/);
   });

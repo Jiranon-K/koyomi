@@ -38,6 +38,14 @@
   --color-scrim-foreground: var(--scrim-foreground);
   --color-scrim: var(--scrim);
   --color-line: var(--line);
+  --color-line-button: var(--line-button);
+  --color-line-button-hover: var(--line-button-hover);
+  --color-line-button-press: var(--line-button-press);
+  --color-line-button-foreground: var(--line-button-foreground);
+  --color-line-button-rule: var(--line-button-rule);
+  --color-line-button-disabled: var(--line-button-disabled);
+  --color-line-button-disabled-foreground: var(--line-button-disabled-foreground);
+  --color-line-button-disabled-rule: var(--line-button-disabled-rule);
   --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
@@ -88,6 +96,14 @@
   --scrim: oklch(0.16 0.005 60);
   --scrim-foreground: oklch(0.97 0.01 88);
   --line: oklch(0.74 0.21 149);
+  --line-button: #06c755;
+  --line-button-hover: #05b34d;
+  --line-button-press: #048b3c;
+  --line-button-foreground: #ffffff;
+  --line-button-rule: rgb(0 0 0 / 8%);
+  --line-button-disabled: #ffffff;
+  --line-button-disabled-foreground: rgb(30 30 30 / 20%);
+  --line-button-disabled-rule: rgb(229 229 229 / 60%);
 }
 
 .dark {
@@ -156,6 +172,11 @@
   to {
     transform: translateX(-50%);
   }
+}
+
+@utility line-login-icon {
+  background-color: currentColor;
+  mask: url("/images/line-login-icon.png") center / contain no-repeat;
 }
 
 @utility label-mono {
