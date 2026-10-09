@@ -102,7 +102,7 @@ test("tour: the whole flow with the fakes, one screenshot per step", async ({ pa
 
   const digest = await page.request.post("/api/dev/digest");
   expect(digest.status()).toBe(200);
-  expect(await digest.json()).toMatchObject({ outcome: "enqueued", deliveries: { sent: 1 } });
+  expect(await digest.json()).toMatchObject({ outcome: "enqueued", enqueued: 1 });
   const pushes = await linePushes(lineUserId, 1);
   expect(pushes).toHaveLength(1);
   const text = pushes[0]?.text ?? "";
