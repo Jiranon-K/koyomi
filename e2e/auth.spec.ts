@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { createVerifiedAccount, PASSWORD as password } from "./account";
-import { seriousViolations } from "./axe";
+import { scanBothThemes, seriousViolations } from "./axe";
 import { followBehindTheServer, syncSchedule } from "./schedule";
 
 async function signOut(page: Page) {
@@ -25,10 +25,7 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
   await expect(page.getByText(email)).toBeVisible();
   await expect(page.getByText("You are not following any shows yet.")).toBeVisible();
 
-  expect(await seriousViolations(page)).toEqual([]);
-  await page.getByRole("button", { name: "Toggle theme" }).click();
-  await expect(page.locator("html")).toContainClass("dark");
-  expect(await seriousViolations(page)).toEqual([]);
+  await scanBothThemes(page);
 
   await signOut(page);
   await page.goto("/dashboard");
@@ -68,10 +65,7 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
     new RegExp(harbor),
   ]);
 
-  expect(await seriousViolations(page)).toEqual([]);
-  await page.getByRole("button", { name: "Toggle theme" }).click();
-  await expect(page.locator("html")).toContainClass("light");
-  expect(await seriousViolations(page)).toEqual([]);
+  await scanBothThemes(page);
 
   await page.getByRole("link", { name: "Settings" }).click();
   await expect(page.getByRole("button", { name: "Feature" })).toHaveAttribute(
@@ -89,10 +83,7 @@ test("sign up, verify, follow a show from the schedule, see my week and unfollow
   await expect(rows).toHaveText([new RegExp(lantern), new RegExp(`${harbor}.*Finished`)]);
   await expect(page.getByText("Clockwork Orchard")).toHaveCount(0);
 
-  expect(await seriousViolations(page)).toEqual([]);
-  await page.getByRole("button", { name: "Toggle theme" }).click();
-  await expect(page.locator("html")).toContainClass("dark");
-  expect(await seriousViolations(page)).toEqual([]);
+  await scanBothThemes(page);
 
   await page.goto("/");
   const banner = page.getByRole("banner");

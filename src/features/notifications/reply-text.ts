@@ -1,5 +1,5 @@
-import { formatDayDate, formatWeekday, type DayWindow } from "@/features/schedule/day-window";
-import type { ScheduleEntry } from "@/features/schedule/service";
+import { formatDayDate, formatWeekday } from "@/features/schedule/day-window";
+import type { ScheduleDay, ScheduleEntry } from "@/features/schedule/service";
 
 import { AIRING_TODAY_HEADING, episodeLine, fitted } from "./digest-text";
 
@@ -16,17 +16,15 @@ export function todayReply(entries: readonly ScheduleEntry[]): string {
   return fitted([AIRING_TODAY_HEADING, ...entries.map(episodeLine)]);
 }
 
-export function weekReply(
-  days: readonly { window: DayWindow; items: readonly ScheduleEntry[] }[],
-): string {
-  const airing = days.filter((day) => day.items.length > 0);
+export function weekReply(days: readonly ScheduleDay[]): string {
+  const airing = days.filter((day) => day.entries.length > 0);
   if (airing.length === 0) return NOTHING_THIS_WEEK_REPLY;
   return fitted([
     "Your next seven days (Thai time):",
-    ...airing.flatMap(({ window, items }) => [
+    ...airing.flatMap(({ day, entries }) => [
       "",
-      `${formatWeekday(window.day)} ${formatDayDate(window.day)}`,
-      ...items.map(episodeLine),
+      `${formatWeekday(day)} ${formatDayDate(day)}`,
+      ...entries.map(episodeLine),
     ]),
   ]);
 }

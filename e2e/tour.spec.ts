@@ -2,7 +2,7 @@ import { mkdir } from "node:fs/promises";
 
 import { expect, test, type Page } from "@playwright/test";
 
-import { PASSWORD } from "./account";
+import { PASSWORD, submitSignUp } from "./account";
 import { LINE_SERVER } from "./line-server";
 import { emailedLink, linePushes } from "./outbox";
 import { followBehindTheServer, syncSchedule } from "./schedule";
@@ -56,12 +56,7 @@ test("tour: the whole flow with the fakes, one screenshot per step", async ({ pa
   await page.getByLabel("Email address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
   await shot(page, "03-sign-up");
-  await expect(async () => {
-    if (!/\/verify-email$/.test(page.url())) {
-      await page.getByRole("button", { name: "Create account" }).click({ timeout: 1000 });
-    }
-    await expect(page).toHaveURL(/\/verify-email$/, { timeout: 3000 });
-  }).toPass({ timeout: 25_000 });
+  await submitSignUp(page);
   await shot(page, "04-verify-email");
 
   await page.goto(await emailedLink(email, "Verify your email"));

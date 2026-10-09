@@ -20,7 +20,7 @@ import {
   dayWindowOf,
   formatAirTime,
   formatUntil,
-  formatWeekdayShort,
+  dayLabelShort,
 } from "@/features/schedule/day-window";
 import { episodeLabel } from "@/features/schedule/episode-label";
 import { Cover } from "@/features/schedule/poster-wall";
@@ -42,7 +42,7 @@ function when(row: IndexRow, today: string): string {
   if (!row.next) return REST[row.status];
   const airAt = new Date(row.next.airAt);
   const day = dayWindowOf(airAt).day;
-  return `${day === today ? "Today" : formatWeekdayShort(day)} ${formatAirTime(airAt)}`;
+  return `${dayLabelShort(day, today)} ${formatAirTime(airAt)}`;
 }
 
 type PinnedProps = { row: IndexRow; under: IndexRow | undefined; now: Date; today: string };

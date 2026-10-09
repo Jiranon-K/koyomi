@@ -10,8 +10,8 @@ import {
   formatAirTime,
   formatDayDate,
   formatUntil,
-  formatWeekday,
-  formatWeekdayShort,
+  dayLabel,
+  dayLabelShort,
 } from "@/features/schedule/day-window";
 import { entryKey, episodeLabel } from "@/features/schedule/episode-label";
 import { Cover } from "@/features/schedule/poster-wall";
@@ -75,7 +75,7 @@ function SectionTitle({ id, children }: { id: string; children: React.ReactNode 
 function Feature({ entry, now, today }: { entry: WallEntry; now: Date; today: string }) {
   const airAt = new Date(entry.airAt);
   const day = dayWindowOf(airAt).day;
-  const dayName = day === today ? "Today" : formatWeekday(day);
+  const dayName = dayLabel(day, today);
 
   return (
     <section
@@ -166,7 +166,7 @@ export function FeatureView({ wall, now, following, finished }: FeatureViewProps
             {days.map(({ day, entries }, column) => (
               <section
                 key={day}
-                aria-label={`${day === today.day ? "Today" : formatWeekday(day)}, ${formatDayDate(day)}`}
+                aria-label={`${dayLabel(day, today.day)}, ${formatDayDate(day)}`}
                 className="grid grid-cols-[4rem_1fr] gap-4 border-b border-border py-5 lg:block lg:border-b-0 lg:border-l lg:px-3 lg:first:border-l-0 lg:first:pl-0"
               >
                 <Reveal inView delay={column * STAGGER}>
@@ -176,7 +176,7 @@ export function FeatureView({ wall, now, following, finished }: FeatureViewProps
                       day === today.day ? "text-primary" : "text-muted-foreground",
                     )}
                   >
-                    {day === today.day ? "Today" : formatWeekdayShort(day)}
+                    {dayLabelShort(day, today.day)}
                   </p>
                   <p className="font-display text-5xl leading-none">{dayOfMonth(day)}</p>
                 </Reveal>

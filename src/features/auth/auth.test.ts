@@ -410,7 +410,7 @@ describe("role changes", () => {
     const headers = await signInHeaders(auth, credentials);
 
     await expect(
-      // @ts-expect-error role is not part of the update input; a raw HTTP client can still send it.
+      /* @ts-expect-error role is not in the update input; a raw HTTP client can still send it. */
       auth.api.updateUser({ headers, body: { role: "admin" } }),
     ).rejects.toMatchObject({ status: "BAD_REQUEST" });
 

@@ -2,9 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 const port = 3101;
 
-// Records the pictures in README.md from the real app: the real schedule source and
-// the MongoDB in .env.local (in a database of its own). Run with `bun run media`. Not part of
-// verify or the end-to-end suite.
+/* Records the README pictures from the real app (`bun run media`); not part of verify or e2e. */
 export default defineConfig({
   testDir: "scripts/media",
   workers: 1,

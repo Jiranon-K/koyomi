@@ -1,12 +1,11 @@
-// Text checks behind the tests that every private page and every Server Action calls a guard.
-// They read source, not behaviour: they catch a forgotten guard, not a guard that misbehaves.
+/* Text checks for a forgotten guard: they read source, not behaviour. */
 
 const GUARD_CALL = /\bawait require(Session|Admin)\(/;
 const GUARD_FIRST = /^(?:(?:const|let)\s+[^=;]+=\s*)?await require(?:Session|Admin)\(\s*\)\s*;/;
 const FILE_DIRECTIVE = /^\s*["']use server["']/;
 const INLINE_DIRECTIVE = /\{\s*["']use server["']/;
 const ASYNC_FUNCTION = /^export\s+async\s+function\s+(\w+)\s*\(/;
-// A string (kept, group 1) or a comment (dropped), so a `//` inside a string is not a comment.
+/* A string (kept, group 1) or a comment (dropped): a `//` inside a string is not a comment. */
 const STRING_OR_COMMENT =
   /("(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`)|\/\*[\s\S]*?\*\/|\/\/.*$/gm;
 
@@ -22,7 +21,7 @@ export function isActionFile(source: string): boolean {
   return FILE_DIRECTIVE.test(stripComments(source));
 }
 
-// The text after the `{` that opens a function body, given the index just after its `(`.
+/* The text after the `{` that opens a function body, given the index just after its `(`. */
 function bodyAfter(code: string, afterOpenParen: number): string | undefined {
   let depth = 1;
   let i = afterOpenParen;
@@ -31,8 +30,7 @@ function bodyAfter(code: string, afterOpenParen: number): string | undefined {
     else if (code[i] === ")") depth--;
   }
 
-  // Angle brackets only matter for braces in a return type such as Promise<{ ... }>; the `>` of an
-  // arrow inside it is not a closing bracket. A `;` first means a signature with no body.
+  /* Skip braces inside a return type's `<...>`; a `;` first means there is no body. */
   let angle = 0;
   for (; i < code.length; i++) {
     const char = code[i];
@@ -44,8 +42,7 @@ function bodyAfter(code: string, afterOpenParen: number): string | undefined {
   return undefined;
 }
 
-// What is wrong with the Server Actions in a source file, one sentence each. A file that is not
-// a "use server" file has nothing to say unless it hides a directive this check cannot read.
+/* What is wrong with the Server Actions in a source file, one sentence each. */
 export function actionProblems(source: string): string[] {
   const code = stripComments(source);
 

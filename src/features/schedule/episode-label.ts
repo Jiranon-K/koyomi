@@ -7,7 +7,8 @@ export function episodeLabel(entry: ScheduleEntry): string {
 }
 
 export function delayNote(entry: ScheduleEntry): string | null {
-  return entry.delayedText && entry.delayedText !== "Delayed" ? entry.delayedText : null;
+  const reason = entry.delayedText?.trim();
+  return reason && reason.toLowerCase() !== "delayed" ? reason : null;
 }
 
 export function entryKey(entry: ScheduleEntry): string {

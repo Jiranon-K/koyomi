@@ -1,9 +1,13 @@
-import { createQStashQueue, publicOriginProblem } from "../src/features/notifications/queue";
+import {
+  createQStashQueue,
+  jobUrl,
+  publicOriginProblem,
+} from "../src/features/notifications/queue";
 import { appUrl, qstashEnv } from "../src/lib/env";
 
 const print = (line: string) => process.stdout.write(`${line}\n`);
 
-// digest-send needs a user and a day, so it is only ever enqueued by digest-fanout.
+/* digest-send needs a user and a day, so it is only ever enqueued by digest-fanout. */
 const PUBLISHABLE = ["sync-schedule", "digest-fanout"] as const;
 const job = PUBLISHABLE.find((name) => name === process.argv[2]);
 
@@ -21,4 +25,4 @@ if (problem) {
 
 const { token, url } = qstashEnv();
 await createQStashQueue({ token, url, appUrl: origin }).enqueue(job, {});
-print(`Published ${job} to QStash for ${origin}/api/jobs/${job}.`);
+print(`Published ${job} to QStash for ${jobUrl(origin, job)}.`);

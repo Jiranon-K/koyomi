@@ -3,9 +3,7 @@ import { createWriteStream, mkdirSync, readFileSync } from "node:fs";
 
 import { MongoClient } from "mongodb";
 
-// The real app: production build, the real schedule source and the MongoDB from .env.local, with
-// only the database name, the origin and the administrator swapped so nothing of the owner's
-// development data is touched. The media database is dropped at the start of every run.
+/* The real app on a media database of its own, dropped at the start of every run. */
 export const MEDIA_EMAIL = "demo@example.com";
 
 const port = process.env.E2E_PORT ?? "3101";

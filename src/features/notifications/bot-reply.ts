@@ -9,7 +9,8 @@ import {
   type LineEventHandler,
   type LineEventHandlers,
 } from "@/features/line/webhook";
-import { dayWindowOf, groupByDay, weekRange } from "@/features/schedule/day-window";
+import { dayWindowOf, weekRange } from "@/features/schedule/day-window";
+import { scheduleDays } from "@/features/schedule/service";
 import { appUrl } from "@/lib/env";
 
 import { notLinkedReply, todayReply, USAGE_REPLY, weekReply } from "./reply-text";
@@ -42,9 +43,8 @@ async function answerTo(command: Command, lineUserId: string, deps: BotReplyDeps
     const { start, end } = dayWindowOf(now);
     return todayReply(await followedEpisodesBetween(userId, start, end));
   }
-  const { start, end, windows } = weekRange(now);
-  const entries = await followedEpisodesBetween(userId, start, end);
-  return weekReply(groupByDay(entries, (entry) => new Date(entry.airAt), windows));
+  const { start, end } = weekRange(now);
+  return weekReply(scheduleDays(await followedEpisodesBetween(userId, start, end), now));
 }
 
 function messageHandler(deps: BotReplyDeps = {}): LineEventHandler {

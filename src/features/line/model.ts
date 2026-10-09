@@ -1,4 +1,6 @@
-import mongoose, { type InferSchemaType, type Model } from "mongoose";
+import mongoose, { type InferSchemaType } from "mongoose";
+
+import { defineModel } from "@/lib/db/mongoose";
 
 const lineLinkSchema = new mongoose.Schema(
   {
@@ -20,8 +22,4 @@ lineLinkSchema.index(
 
 export type LineLinkDoc = InferSchemaType<typeof lineLinkSchema>;
 
-const existing: unknown = mongoose.models.LineLink;
-
-export const LineLink: Model<LineLinkDoc> = existing
-  ? (existing as Model<LineLinkDoc>)
-  : mongoose.model("LineLink", lineLinkSchema);
+export const LineLink = defineModel<LineLinkDoc>("LineLink", lineLinkSchema);

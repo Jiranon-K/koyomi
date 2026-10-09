@@ -1,4 +1,5 @@
 import { formatAirTime } from "@/features/schedule/day-window";
+import { delayNote } from "@/features/schedule/episode-label";
 import type { ScheduleEntry } from "@/features/schedule/service";
 
 export const AIRING_TODAY_HEADING = "Airing today (Thai time):";
@@ -30,8 +31,8 @@ function episodeLabel(entry: ScheduleEntry): string {
 
 function delayedMark(entry: ScheduleEntry): string {
   if (!entry.delayed) return "";
-  const reason = entry.delayedText?.trim();
-  return reason && reason.toLowerCase() !== "delayed" ? ` (delayed: ${reason})` : " (delayed)";
+  const reason = delayNote(entry);
+  return reason ? ` (delayed: ${reason})` : " (delayed)";
 }
 
 export function episodeLine(entry: ScheduleEntry): string {

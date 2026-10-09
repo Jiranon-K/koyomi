@@ -42,18 +42,17 @@ function parseReply(line: string): LoggedReply | undefined {
     : undefined;
 }
 
+const LINE_BREAK = /\r?\n/;
+
 export function pushesInLineLog(log: string, lineUserId: string): LoggedPush[] {
-  return log.split(/\r?\n/).flatMap((line) => {
+  return log.split(LINE_BREAK).flatMap((line) => {
     const push = parsePush(line);
     return push?.to === lineUserId ? [push] : [];
   });
 }
 
 export function repliesInLineLog(log: string): LoggedReply[] {
-  return log.split(/\r?\n/).flatMap((line) => {
-    const reply = parseReply(line);
-    return reply ? [reply] : [];
-  });
+  return log.split(LINE_BREAK).flatMap((line) => parseReply(line) ?? []);
 }
 
 export function createFakeMessenger(): LineMessenger {
