@@ -1,0 +1,30 @@
+name: PR
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  conventions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
+      - name: Branch name
+        run: bun scripts/check-git-conventions.ts branch "$HEAD_REF"
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+      - name: Pull request title
+        run: bun scripts/check-git-conventions.ts title "$PR_TITLE"
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
