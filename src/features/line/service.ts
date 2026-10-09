@@ -61,9 +61,11 @@ export async function recordLineAccount(
   const { userId, lineUserId } = account;
   const probing = account.accessToken ? probe(account.accessToken) : undefined;
 
-  await LineLink.deleteMany({ lineUserId, userId: { $ne: userId } });
-
-  const [existing, probed] = await Promise.all([LineLink.findOne({ userId }).lean(), probing]);
+  const [existing, probed] = await Promise.all([
+    LineLink.findOne({ userId }).lean(),
+    probing,
+    LineLink.deleteMany({ lineUserId, userId: { $ne: userId } }),
+  ]);
   if (existing?.lineUserId === lineUserId) {
     if (probed !== undefined) await LineLink.updateOne({ userId }, { $set: { friend: probed } });
     return;

@@ -12,6 +12,24 @@ export async function withDb<T>(run: (db: Db) => Promise<T>): Promise<T> {
   }
 }
 
+export async function userIdOf(db: Db, email: string): Promise<string> {
+  const user = await db.collection("user").findOne({ email });
+  if (!user) throw new Error(`No user with the email ${email}`);
+  return user._id.toHexString();
+}
+
+function lineLinkRow(userId: string, lineUserId: string, reminderSlot: number | null, now: Date) {
+  return {
+    userId,
+    lineUserId,
+    friend: true,
+    friendEventAt: null,
+    reminderSlot,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
 export async function linkLine(email: string, options: { reminderSlot: number | null }) {
   return withDb(async (db) => {
     const user = await db.collection("user").findOne({ email });
@@ -25,16 +43,11 @@ export async function linkLine(email: string, options: { reminderSlot: number | 
       createdAt: now,
       updatedAt: now,
     });
-    await db.collection("linelinks").insertOne({
-      userId: user._id.toHexString(),
-      lineUserId,
-      friend: true,
-      friendEventAt: null,
-      reminderSlot: options.reminderSlot,
-      createdAt: now,
-      updatedAt: now,
-    });
-    return { userId: user._id.toHexString(), lineUserId };
+    const userId = user._id.toHexString();
+    await db
+      .collection("linelinks")
+      .insertOne(lineLinkRow(userId, lineUserId, options.reminderSlot, now));
+    return { userId, lineUserId };
   });
 }
 
@@ -43,15 +56,7 @@ export async function seedSubscriber(name: string, reminderSlot: number, shows: 
     const now = new Date();
     const userId = `e2e-subscriber-${name}-${now.getTime()}`;
     const lineUserId = `U-${userId}`;
-    await db.collection("linelinks").insertOne({
-      userId,
-      lineUserId,
-      friend: true,
-      friendEventAt: null,
-      reminderSlot,
-      createdAt: now,
-      updatedAt: now,
-    });
+    await db.collection("linelinks").insertOne(lineLinkRow(userId, lineUserId, reminderSlot, now));
     if (shows.length) {
       await db
         .collection("follows")
@@ -72,15 +77,8 @@ export async function fillReminderSlots(firstSlot: number) {
     const now = new Date();
     const links = [];
     for (let slot = firstSlot; slot <= 10; slot++) {
-      links.push({
-        userId: `e2e-filler-${slot}-${now.getTime()}`,
-        lineUserId: `U-e2e-filler-${slot}-${now.getTime()}`,
-        friend: true,
-        friendEventAt: null,
-        reminderSlot: slot,
-        createdAt: now,
-        updatedAt: now,
-      });
+      const userId = `e2e-filler-${slot}-${now.getTime()}`;
+      links.push(lineLinkRow(userId, `U-${userId}`, slot, now));
     }
     await db.collection("linelinks").insertMany(links);
   });
@@ -128,10 +126,9 @@ export async function clearSeededSyncs() {
 
 export async function chooseDashboardView(email: string, dashboardView: "feature" | "index") {
   await withDb(async (db) => {
-    const user = await db.collection("user").findOne({ email });
-    if (!user) throw new Error(`No user with the email ${email}`);
+    const userId = await userIdOf(db, email);
     await db
       .collection("preferences")
-      .updateOne({ userId: user._id.toHexString() }, { $set: { dashboardView } }, { upsert: true });
+      .updateOne({ userId }, { $set: { dashboardView } }, { upsert: true });
   });
 }

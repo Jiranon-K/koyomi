@@ -6,19 +6,15 @@ import { cache } from "react";
 import { getAuth } from "./auth";
 import { DASHBOARD_PATH, SIGN_IN_PATH } from "./paths";
 
-const getSession = cache(async () => {
+export const currentSession = cache(async () => {
   const requestHeaders = await headers();
   if (!getSessionCookie(requestHeaders)) return null;
   const auth = await getAuth();
   return auth.api.getSession({ headers: requestHeaders });
 });
 
-export async function currentSession() {
-  return getSession();
-}
-
 export async function requireSession() {
-  const session = await getSession();
+  const session = await currentSession();
   if (!session) redirect(SIGN_IN_PATH);
   return session;
 }
@@ -30,6 +26,6 @@ export async function requireAdmin() {
 }
 
 export async function redirectSignedIn(to: string = DASHBOARD_PATH): Promise<void> {
-  const session = await getSession();
+  const session = await currentSession();
   if (session) redirect(to);
 }

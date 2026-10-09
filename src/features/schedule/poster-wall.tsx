@@ -1,13 +1,7 @@
 import { cn } from "cn";
 import Image from "next/image";
 
-import {
-  dayOfMonth,
-  formatAirTime,
-  formatDayDate,
-  formatWeekday,
-  formatWeekdayShort,
-} from "./day-window";
+import { dayOfMonth, formatAirTime, formatDayDate, dayLabel, dayLabelShort } from "./day-window";
 import { delayNote, entryKey, episodeLabel } from "./episode-label";
 import type { ScheduleEntry } from "./service";
 import type { WallDay, WallEntry } from "./wall";
@@ -37,14 +31,14 @@ function DayLinks({ days, today }: { days: readonly WallDay[]; today: string }) 
             key={day}
             href={`#${dayId(day)}`}
             aria-current={isToday ? "date" : undefined}
-            aria-label={`${isToday ? "Today" : formatWeekday(day)}, ${formatDayDate(day)}, ${episodeCount(entries.length)}`}
+            aria-label={`${dayLabel(day, today)}, ${formatDayDate(day)}, ${episodeCount(entries.length)}`}
             className={cn(
               "flex flex-col items-center border-l border-border px-0.5 py-2 outline-none first:border-l-0 focus-visible:ring-3 focus-visible:ring-ring/50 sm:items-start sm:px-3",
               isToday ? "bg-primary text-primary-foreground" : "hover:bg-muted",
             )}
           >
             <span className="label-mono max-sm:text-[0.625rem] max-sm:tracking-normal">
-              {isToday ? "Today" : formatWeekdayShort(day)}
+              {dayLabelShort(day, today)}
             </span>
             <span className="font-display text-2xl leading-none sm:text-3xl">
               {dayOfMonth(day)}
@@ -146,7 +140,7 @@ export function PosterWall({ days, today, action }: PosterWallProps) {
               id={`${dayId(day)}-title`}
               className="font-display text-4xl leading-none sm:text-5xl"
             >
-              {day === today ? "Today" : formatWeekday(day)}
+              {dayLabel(day, today)}
             </h2>
             <p className="label-mono text-muted-foreground">
               {formatDayDate(day)} · {episodeCount(entries.length)}

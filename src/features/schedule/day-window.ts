@@ -163,6 +163,14 @@ export function formatWeekdayShort(day: DayWindow["day"]): string {
   return weekdayShort.format(calendarDayMs(day));
 }
 
+export function dayLabel(day: DayWindow["day"], today: DayWindow["day"]): string {
+  return day === today ? "Today" : formatWeekday(day);
+}
+
+export function dayLabelShort(day: DayWindow["day"], today: DayWindow["day"]): string {
+  return day === today ? "Today" : formatWeekdayShort(day);
+}
+
 export function dayOfMonth(day: DayWindow["day"]): number {
   return new Date(calendarDayMs(day)).getUTCDate();
 }
