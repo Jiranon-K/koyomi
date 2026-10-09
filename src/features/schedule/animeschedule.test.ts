@@ -137,6 +137,22 @@ describe("parseTimetable", () => {
   it("rejects a body that is not a list", () => {
     expect(() => parseTimetable({ message: "nope" })).toThrow(ScheduleSourceError);
   });
+
+  it("keeps an episode whose delay dates are null", () => {
+    const { episodes, skipped } = parseTimetable([
+      {
+        route: "null-delay",
+        title: "Null Delay",
+        episodeDate: "2026-10-09T16:00:00Z",
+        episodeNumber: 2,
+        delayedFrom: null,
+        delayedUntil: null,
+      },
+    ]);
+
+    expect(skipped).toBe(0);
+    expect(episodes[0]).toMatchObject({ episodeNumber: 2, delayed: false });
+  });
 });
 
 describe("parseTimetable on a week recorded from the real API", () => {

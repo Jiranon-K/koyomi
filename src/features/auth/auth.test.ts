@@ -409,10 +409,11 @@ describe("role changes", () => {
     await signUpVerified(auth, credentials);
     const headers = await signInHeaders(auth, credentials);
 
-    await expect(
-      /* @ts-expect-error role is not in the update input; a raw HTTP client can still send it. */
-      auth.api.updateUser({ headers, body: { role: "admin" } }),
-    ).rejects.toMatchObject({ status: "BAD_REQUEST" });
+    /* role is not in the update input; a raw HTTP client can still send it. */
+    const body: Record<string, unknown> = { role: "admin" };
+    await expect(auth.api.updateUser({ headers, body })).rejects.toMatchObject({
+      status: "BAD_REQUEST",
+    });
 
     const session = await auth.api.getSession({ headers });
     expect(session?.user.role).toBe("user");

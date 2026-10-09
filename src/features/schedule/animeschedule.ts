@@ -22,7 +22,7 @@ const WEEKS_AHEAD = [0, 1] as const;
 
 const datetime = z
   .string()
-  .optional()
+  .nullish()
   .transform((value) => {
     const time = value ? Date.parse(value) : Number.NaN;
     return Number.isNaN(time) || time <= 0 ? null : new Date(time);

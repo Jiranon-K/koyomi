@@ -3,6 +3,7 @@ import * as z from "zod";
 import { DASHBOARD_PATH } from "@/features/auth/paths";
 import { lineMessenger } from "@/features/line/messenger";
 import { isScheduleDay } from "@/features/schedule/day-window";
+import type { ScheduleSourceFailure } from "@/features/schedule/source";
 import { runScheduleSync } from "@/features/schedule/sync";
 import { appUrl, fakesEnabled, qstashEnv } from "@/lib/env";
 
@@ -28,6 +29,12 @@ const digestSendPayload = z.object({
     .refine(isScheduleDay),
 });
 
+const NOT_WORTH_RETRYING: readonly ScheduleSourceFailure[] = [
+  "unauthorized",
+  "rate-limited",
+  "invalid",
+];
+
 type Ran = { retry: boolean; result: JobPayload };
 
 type Job<Payload> = { payload: z.ZodType<Payload>; run(payload: Payload): Promise<Ran> };
@@ -39,7 +46,9 @@ const syncScheduleJob = job({
   async run() {
     const run = await runScheduleSync();
     return {
-      retry: run.outcome !== "success",
+      retry:
+        run.outcome !== "success" &&
+        !(run.errorKind != null && NOT_WORTH_RETRYING.includes(run.errorKind)),
       result: { outcome: run.outcome, episodes: run.episodes },
     };
   },

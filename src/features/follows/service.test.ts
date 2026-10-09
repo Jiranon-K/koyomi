@@ -193,6 +193,21 @@ describe("myWeek", () => {
     ]);
   });
 
+  it("lists a finished show as finished once its last episode has aired, the same day", async () => {
+    await followShow(ADA, "lantern-street-diaries");
+    await Show.updateOne({ route: "lantern-street-diaries" }, { $set: { status: "finished" } });
+    const { end } = dayWindowOf(NOW);
+    await Episode.deleteMany({ showRoute: "lantern-street-diaries", airAt: { $gte: end } });
+    const last = await Episode.findOne({ showRoute: "lantern-street-diaries" }).sort({ airAt: -1 });
+    const after = new Date((last?.airAt.getTime() ?? 0) + 60_000);
+    expect(dayWindowOf(after).day).toBe(dayWindowOf(NOW).day);
+
+    const week = await myWeek(ADA, after);
+
+    expect(week.finished.map((show) => show.route)).toEqual(["lantern-street-diaries"]);
+    expect(week.following).toEqual([]);
+  });
+
   it("treats a show that dropped out of the timetable as finished", async () => {
     await followShow(ADA, "the-ninth-platform");
     const later = new Date(NOW.getTime() + 14 * 24 * 60 * 60 * 1000);

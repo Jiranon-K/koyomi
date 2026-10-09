@@ -2,7 +2,12 @@ import { indexesReady } from "@/lib/db/mongoose";
 
 import { groupByDay, weekRange } from "./day-window";
 import { Episode, Show, SyncRun, type SyncOutcome, type SyncRunDoc } from "./model";
-import type { ScheduleSource, SourceEpisode, SourceShow } from "./source";
+import {
+  ScheduleSourceError,
+  type ScheduleSource,
+  type SourceEpisode,
+  type SourceShow,
+} from "./source";
 
 export type ScheduleEntry = {
   showRoute: string;
@@ -84,7 +89,10 @@ export async function syncSchedule(
 ): Promise<SyncRunDoc> {
   await ready();
 
-  let result: Pick<SyncRunDoc, "outcome" | "requests" | "shows" | "episodes" | "skipped" | "error">;
+  let result: Pick<
+    SyncRunDoc,
+    "outcome" | "requests" | "shows" | "episodes" | "skipped" | "error" | "errorKind"
+  >;
   try {
     const timetable = await source.fetchTimetable(now);
     result = {
@@ -103,6 +111,7 @@ export async function syncSchedule(
       episodes: 0,
       skipped: 0,
       error: error instanceof Error ? error.message : String(error),
+      errorKind: error instanceof ScheduleSourceError ? error.kind : null,
     };
   }
 
