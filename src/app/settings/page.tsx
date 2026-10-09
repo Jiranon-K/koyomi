@@ -92,8 +92,8 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
               {lineEnabled ? (
                 <>
                   <Note>
-                    You will be asked to add the Koyomi bot as a friend on the way, so that its
-                    messages can reach you.
+                    Log in with LINE to connect it to this account. You will be asked to add the
+                    Koyomi bot as a friend on the way, so that its messages can reach you.
                   </Note>
                   <ConnectLineButton />
                 </>
