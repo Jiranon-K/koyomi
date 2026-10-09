@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
-
 import { signInWithLine } from "./client";
 import { FormError } from "./form-field";
 
@@ -31,16 +29,22 @@ export function LineButton({ returnTo }: { returnTo?: string }) {
         <span className="h-px flex-1 bg-border" />
       </div>
       <FormError message={formError} />
-      <Button
+      <button
         type="button"
-        variant="outline"
-        size="lg"
+        data-line-login
         onClick={onClick}
         disabled={pending}
         aria-busy={pending}
+        className="group flex h-11 w-full bg-line-button text-base leading-none font-bold text-line-button-foreground outline-none hover:bg-line-button-hover focus-visible:ring-3 focus-visible:ring-ring/50 active:bg-line-button-press disabled:pointer-events-none disabled:bg-line-button-disabled disabled:text-line-button-disabled-foreground disabled:inset-ring disabled:inset-ring-line-button-disabled-rule"
       >
-        {pending ? "Redirecting to LINE…" : "Continue with LINE"}
-      </Button>
+        <span data-line-icon aria-hidden="true" className="size-11 shrink-0 line-login-icon" />
+        <span
+          data-line-label
+          className="flex flex-1 items-center justify-center border-l border-line-button-rule px-8 whitespace-nowrap group-disabled:border-line-button-disabled-rule"
+        >
+          Log in with LINE
+        </span>
+      </button>
     </div>
   );
 }
