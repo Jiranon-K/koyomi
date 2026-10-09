@@ -4,6 +4,7 @@ import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/features/auth/form-field";
+import { LineLoginButton } from "@/features/auth/line-login-button";
 
 import { connectLineAction, disconnectLineAction, setRemindersAction } from "./actions";
 import type { SettingsActionState } from "./schema";
@@ -14,10 +15,8 @@ export function ConnectLineButton() {
   const [state, action, pending] = useActionState(connectLineAction, IDLE);
 
   return (
-    <form action={action} className="grid justify-items-start gap-3">
-      <Button type="submit" disabled={pending} aria-busy={pending}>
-        {pending ? "Redirecting to LINE…" : "Connect LINE"}
-      </Button>
+    <form action={action} className="grid gap-3">
+      <LineLoginButton type="submit" pending={pending} className="max-w-xs" />
       <FormError message={state.error} />
     </form>
   );

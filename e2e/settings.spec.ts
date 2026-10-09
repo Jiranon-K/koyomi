@@ -45,7 +45,7 @@ test("settings: connection state, the reminder switch, the cap and disconnecting
   await expect(page).toHaveTitle("Settings · Koyomi");
   await expect(page.getByText("Not connected")).toBeVisible();
   await expect(page.getByText("LINE is not set up on this server yet.")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Connect LINE" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Log in with LINE" })).toHaveCount(0);
   await expect(reminders(page)).toHaveCount(0);
   await scanBothThemes(page);
 
