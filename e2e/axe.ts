@@ -7,6 +7,8 @@ const SERIOUS = ["serious", "critical"];
 export const LINE_LOGIN_BUTTON = "[data-line-login]";
 
 export async function seriousViolations(page: Page) {
+  // A Server Action's refresh re-mounts <title>; a scan in that gap reports a page without one.
+  await expect(page, "the page has a title to scan").not.toHaveTitle("");
   await page.addStyleTag({ content: NO_TRANSITIONS });
   const scans = [await new AxeBuilder({ page }).exclude(LINE_LOGIN_BUTTON).analyze()];
   if ((await page.locator(LINE_LOGIN_BUTTON).count()) > 0) {
