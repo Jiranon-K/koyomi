@@ -107,11 +107,11 @@ The brand as a printed magazine: warm paper, ink text, one terracotta voice. Dec
 
 ### Issue tracker
 
-Local markdown: specs in `docs/specs/<feature>.md`, tickets in `.scratch/<feature>/issues/` (both local-only, excluded from git). See `docs/agents/issue-tracker.md`.
+Two places with different jobs. GitHub Issues for inbound work and the unattended-agent queue; local markdown for the breakdown (specs in `docs/specs/<feature>.md`, tickets in `.scratch/<feature>/issues/`, both local-only and excluded from git). See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
-The five default roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`), recorded on each ticket's `**Status:**` line. See `docs/agents/triage-labels.md`.
+The five default roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`), as repo labels on GitHub Issues and as each local ticket's `**Status:**` line. GitHub adds `risk:*`, `agent:wip` and `agent:done` for the queue. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
