@@ -2,6 +2,16 @@
 
 Specs and issues for this repo live as markdown files on disk. Both locations are listed in `.git/info/exclude`, so they are local-only and have no git history.
 
+## Two trackers, two jobs
+
+**GitHub Issues** is the inbound tracker: anything reported from outside the repo, and the queue an unattended agent picks from. Status other people need to see lives there, as repo labels (`triage-labels.md`).
+
+**The markdown files below** are the local breakdown: one spec, then one file per implementation ticket. They are listed in `.git/info/exclude`, so they have no history and nobody else can read them.
+
+- A GitHub issue stays the source of truth for its own status; a local ticket does not change it.
+- An issue big enough to need a spec is broken down into local tickets and names its spec slug.
+- Not every local ticket needs a GitHub issue. Small slices of a spec stay local.
+
 ## Conventions
 
 - One feature per slug: `<feature-slug>` (for example `better-auth`)
