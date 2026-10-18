@@ -7,7 +7,8 @@ import {
   LINE_SERVER_PORT,
 } from "./e2e/line-server";
 
-const port = 3100;
+/* Overridable so a run can step around a port another process already holds. */
+const port = Number(process.env.E2E_PORT ?? 3100);
 
 export default defineConfig({
   testDir: "e2e",
